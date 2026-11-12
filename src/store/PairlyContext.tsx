@@ -8,6 +8,7 @@ import { generatePicks, type Picks } from "@/lib/matching";
 import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { POSTS, type SocialPost } from "@/data/social";
+import type { PresetRequest } from "@/lib/devPresets";
 
 export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
 export type Tab = "match" | "social" | "saved" | "me";
@@ -53,6 +54,7 @@ interface PairlyCtx extends PairlyState {
   addFeedback: (id: string, chip: string) => void;
   createPost: (p: Pick<SocialPost, "image" | "pickImages" | "question" | "occasion">) => void;
   bumpUserPost: (id: string, up: number, down: number) => void;
+  loadPreset: (r: PresetRequest) => void;
 }
 
 // Keep one context object across hot reloads; a re-created context makes the
@@ -105,6 +107,13 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       posts: [{ ...p, id: `u${Date.now()}`, author: "@you", styleType: s.styleType ?? DEFAULT_CODE, votesUp: 0, votesDown: 0, topFeedback: [], isUserPost: true }, ...s.posts],
     })),
     bumpUserPost: (id, up, down) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id ? { ...p, votesUp: p.votesUp + up, votesDown: p.votesDown + down } : p) })),
+    loadPreset: ({ preset, type, sample }) => {
+      const item: UploadedItem = { image: sample.image, category: sample.category, attributes: sample.attributes, source: "sample", name: sample.name };
+      const base: PairlyState = { ...initial, styleType: preset === "welcome" || preset === "diagnosis" ? null : type };
+      if (preset === "welcome" || preset === "diagnosis" || preset === "reveal" || preset === "upload") return setState({ ...base, screen: preset });
+      const picks = generatePicks(CATALOG, item.category, item.name ?? item.category, type, null);
+      setState({ ...base, uploadedItem: item, picks, screen: "results", activeTab: preset === "social" ? "social" : "match" });
+    },
   }), [state]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
