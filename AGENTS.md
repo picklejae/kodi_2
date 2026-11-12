@@ -32,3 +32,5 @@ use the editor.
 ## Project rules
 - Single route `/` switches screens from the global `PairlyContext` store; why: demo flow shares one in-memory state, no URLs needed.
 - Mock data lives in `src/data/*`, pure logic in `src/lib/*` with vitest tests beside it; why: keeps rules testable without UI.
+- Share swipe gestures through SwipePhotoCard across quiz and Social; why: keeps drag, tilt, stamps, and cancellation consistent.
+- Store quiz axis scores, skip status, and exploration separately from the internal style code; why: Reveal needs continuous markers and Results can later consume exploration without changing types.

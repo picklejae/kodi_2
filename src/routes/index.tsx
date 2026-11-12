@@ -18,9 +18,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Pairly · Find your Style Type" },
-      { name: "description", content: "Pick between outfits for 8 rounds to find your Style Type, then get 3 matches for a piece you own." },
+      { name: "description", content: "Swipe 12 looks to find your style, then get 3 ways to wear one piece you own." },
       { property: "og:title", content: "Pairly · Find your Style Type" },
-      { property: "og:description", content: "8 quick rounds to your Style Type, then 3 matches for one piece you own." },
+      { property: "og:description", content: "Swipe 12 looks to find your style, then get 3 ways to wear one piece you own." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

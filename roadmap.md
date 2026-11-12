@@ -4,3 +4,5 @@
 - [x] Chunk 2: Upload screen
 - [x] Chunk 3: Results
 - [x] Chunk 4: Social, Saved, Me
+- [x] Update Welcome copy, 12-card swipe diagnosis, Reveal, and name-only shared chips; preserve demo presets
+- [x] Verify the updated flow and quiz rules

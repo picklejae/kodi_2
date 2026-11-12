@@ -1,17 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { ROUNDS } from "@/data/diagnosis";
-import { computeStyleType } from "./styleType";
+import { ROUNDS, type DiagnosisCard } from "@/data/diagnosis";
+import { computeDiagnosis, computeStyleType, type Answer } from "./styleType";
 
 describe("computeStyleType", () => {
-  it("all B answers gives RCDS", () => {
-    expect(computeStyleType(ROUNDS, Array(8).fill("B"))).toBe("RCDS");
+  it("uses 12 outfit cards", () => {
+    expect(ROUNDS).toHaveLength(12);
   });
-  it("no answers (all Neither/Skip) falls back to TNPF", () => {
-    expect(computeStyleType(ROUNDS, Array(8).fill(null))).toBe("TNPF");
+  it("no yes votes falls back to TNPF", () => {
+    expect(computeStyleType(ROUNDS, Array(12).fill("no"))).toBe("TNPF");
+    expect(computeStyleType(ROUNDS, [])).toBe("TNPF");
   });
-  it("a tie on an axis uses the TNPF letter", () => {
-    // fit rounds are index 0 and 4: one T, one R -> tie -> T
-    const a: ("A" | "B" | null)[] = ["A", "B", "B", "B", "B", "B", "B", "B"];
-    expect(computeStyleType(ROUNDS, a)).toBe("TCDS");
+  it("a tie on every axis uses TNPF", () => {
+    const cards: DiagnosisCard[] = [{ id: 1, image: "", tags: "TNPF" }, { id: 2, image: "", tags: "RCDS" }];
+    expect(computeStyleType(cards, ["yes", "yes"])).toBe("TNPF");
+  });
+  it("only yes votes contribute to all four axes", () => {
+    const answers: Answer[] = ROUNDS.map((c) => c.tags === "RCDS" ? "yes" : "no");
+    expect(computeDiagnosis(ROUNDS, answers)).toMatchObject({ styleType: "RCDS", axisScores: [1, 1, 1, 1], exploreLevel: "low" });
+  });
+  it("exploration is high for four combinations varying on three or more axes", () => {
+    expect(computeDiagnosis(ROUNDS, Array(12).fill("yes")).exploreLevel).toBe("high");
+    expect(computeDiagnosis(ROUNDS, Array(3).fill("yes")).exploreLevel).toBe("low");
+  });
+  it("undo removes the last vote from the result", () => {
+    const answers: Answer[] = ["no", "yes"];
+    expect(computeStyleType(ROUNDS, answers)).toBe("RNPS");
+    expect(computeStyleType(ROUNDS, answers.slice(0, -1))).toBe("TNPF");
   });
 });

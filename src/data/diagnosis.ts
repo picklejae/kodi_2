@@ -1,16 +1,19 @@
-import { LOOK_IMAGES as L, type Axis } from "./styleTypes";
+import { LOOK_IMAGES as L, type StyleTypeCode } from "./styleTypes";
 
-export interface DiagnosisOption { image: string; letter: string; label: string }
-export interface DiagnosisRound { id: number; axis: Axis; a: DiagnosisOption; b: DiagnosisOption }
+export interface DiagnosisCard { id: number; image: string; tags: StyleTypeCode }
 
-// 8 rounds, 2 per axis.
-export const ROUNDS: DiagnosisRound[] = [
-  { id: 1, axis: "fit", a: { image: L.suit, letter: "T", label: "Sharp and fitted" }, b: { image: L.casual, letter: "R", label: "Loose and easy" } },
-  { id: 2, axis: "color", a: { image: L.coat, letter: "N", label: "Calm tones" }, b: { image: L.fashion, letter: "C", label: "Some color" } },
-  { id: 3, axis: "detail", a: { image: L.tee, letter: "P", label: "Plain and clean" }, b: { image: L.denim, letter: "D", label: "Texture and wear" } },
-  { id: 4, axis: "mood", a: { image: L.suit2, letter: "F", label: "Dressed up" }, b: { image: L.street, letter: "S", label: "Street ready" } },
-  { id: 5, axis: "fit", a: { image: L.suit3, letter: "T", label: "Structured" }, b: { image: L.street2, letter: "R", label: "Relaxed" } },
-  { id: 6, axis: "color", a: { image: L.suit, letter: "N", label: "Navy and grey" }, b: { image: L.street, letter: "C", label: "Bright accents" } },
-  { id: 7, axis: "detail", a: { image: L.suit2, letter: "P", label: "Solid" }, b: { image: L.suit3, letter: "D", label: "Pattern" } },
-  { id: 8, axis: "mood", a: { image: L.coat, letter: "F", label: "Polished" }, b: { image: L.denim, letter: "S", label: "Casual" } },
+// Tags are demo annotations, not visible labels or image-analysis results.
+export const ROUNDS: DiagnosisCard[] = [
+  { id: 1, image: L.suit, tags: "TNPF" },
+  { id: 2, image: L.casual, tags: "RNPS" },
+  { id: 3, image: L.suit3, tags: "TNDF" },
+  { id: 4, image: L.street, tags: "RCDS" },
+  { id: 5, image: L.fashion, tags: "TCPF" },
+  { id: 6, image: L.denim, tags: "RNDS" },
+  { id: 7, image: L.suit2, tags: "TNPF" },
+  { id: 8, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=70", tags: "RCPS" },
+  { id: 9, image: L.coat, tags: "RNPF" },
+  { id: 10, image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=600&q=70", tags: "TCDF" },
+  { id: 11, image: "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=600&q=70", tags: "RCPS" },
+  { id: 12, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=70", tags: "RCDF" },
 ];

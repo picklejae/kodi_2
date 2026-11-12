@@ -3,7 +3,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 import { ROUNDS } from "@/data/diagnosis";
 import type { ItemCategory, Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
-import { computeStyleType, type Answer } from "@/lib/styleType";
+import { computeDiagnosis, type Answer, type ExploreLevel } from "@/lib/styleType";
 import { generatePicks, type Picks } from "@/lib/matching";
 import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
@@ -26,6 +26,9 @@ interface PairlyState {
   screen: Screen;
   answers: Answer[];
   styleType: StyleTypeCode | null;
+  axisScores: number[] | null;
+  exploreLevel: ExploreLevel;
+  quizSkipped: boolean;
   uploadedItem: UploadedItem | null;
   occasion: Occasion | null;
   picks: Picks | null;
@@ -36,11 +39,12 @@ interface PairlyState {
   draft: PostDraft | null;
 }
 
-const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, uploadedItem: null, occasion: null, picks: null, savedItems: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
+const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, picks: null, savedItems: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
 
 interface PairlyCtx extends PairlyState {
   go: (s: Screen) => void;
   answer: (a: Answer) => void;
+  skipQuiz: () => void;
   back: () => void;
   retake: () => void;
   reset: () => void;
@@ -69,19 +73,27 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     go: (screen) => setState((s) => ({ ...s, screen, activeTab: screen === "upload" || screen === "results" ? "match" : s.activeTab })),
     answer: (a) =>
       setState((s) => {
+        if (s.answers.length >= ROUNDS.length) return s;
         const answers = [...s.answers, a];
         if (answers.length >= ROUNDS.length) {
-          const styleType = computeStyleType(ROUNDS, answers);
+          const diagnosis = computeDiagnosis(ROUNDS, answers);
+          const { styleType } = diagnosis;
           const picks = s.uploadedItem && s.picks
             ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, styleType, s.occasion)
             : s.picks;
-          return { ...s, answers, styleType, picks, screen: "reveal" };
+          return { ...s, ...diagnosis, answers, quizSkipped: false, picks, screen: "reveal" };
         }
         return { ...s, answers };
       }),
+    skipQuiz: () => setState((s) => ({
+      ...s, styleType: DEFAULT_CODE, axisScores: [0.5, 0.5, 0.5, 0.5], exploreLevel: "low", quizSkipped: true, screen: "reveal",
+      picks: s.uploadedItem && s.picks
+        ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, DEFAULT_CODE, s.occasion)
+        : s.picks,
+    })),
     back: () =>
       setState((s) => (s.answers.length ? { ...s, answers: s.answers.slice(0, -1) } : { ...s, screen: "welcome" })),
-    retake: () => setState((s) => ({ ...s, answers: [], screen: "diagnosis" })),
+    retake: () => setState((s) => ({ ...s, answers: [], quizSkipped: false, screen: "diagnosis" })),
     reset: () => setState(initial),
     setUploadedItem: (uploadedItem) => setState((s) => ({ ...s, uploadedItem })),
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),

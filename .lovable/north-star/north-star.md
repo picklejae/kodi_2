@@ -2,7 +2,7 @@
 
 # North star
 
-Men wear pieces they already own, paired with new pieces that suit their style
+People wear pieces they already own, paired with new pieces that suit their style
 
 ## Metric
 
