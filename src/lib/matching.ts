@@ -22,7 +22,7 @@ export function score(item: CatalogItem, type: StyleTypeCode, occasion: Occasion
 const VIBE: Record<string, string> = { F: "sharp", S: "easy", N: "calm", C: "lively" };
 
 export function reasonFor(item: CatalogItem, b: Boldness, itemName: string, type: StyleTypeCode) {
-  const mood = VIBE[type[3]], color = VIBE[type[1]];
+  const mood = VIBE[type.charAt(3)], color = VIBE[type.charAt(1)];
   if (b === "safe") return `${item.name} keep your ${itemName} ${color} and ${mood}.`.replace(/^(.*?) keep/, (m, n) => (/s$/.test(n) ? m : `${n} keeps`));
   if (b === "step") return `${item.name} adds texture to your ${itemName} without breaking your ${mood} style.`;
   return `${item.name} gives your ${itemName} one confident accent.`;
@@ -35,6 +35,7 @@ export function generatePicks(catalog: CatalogItem[], category: ItemCategory, it
     const best = catalog
       .filter((c) => c.boldness === b && !used.has(c.category))
       .sort((x, y) => score(y, type, occasion) - score(x, type, occasion) || x.price - y.price)[0];
+    if (!best) throw new Error(`No ${b} pick available`);
     used.add(best.category);
     out[b] = { item: best, boldness: b, reason: reasonFor(best, b, itemName.toLowerCase(), type) };
   }
