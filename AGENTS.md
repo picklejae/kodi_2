@@ -36,3 +36,4 @@ use the editor.
 - Store quiz axis scores, skip status, and exploration separately from the internal style code; why: Reveal needs continuous markers and Results can later consume exploration without changing types.
 - Matching returns three tiered looks with two catalog picks each, enforcing the missing garment per look; why: outfit completeness must hold independently of rendering.
 - Feedback composes the selected outfit board into a browser-generated image and retains its two pick images; why: Social can show full-look posts without altering its flow.
+- Keep attributed vote cohorts and feedback on mock posts, and retain saved look snapshots plus posted boards in the shared store; why: Social filters and Me history must stay consistent after switching pieces.

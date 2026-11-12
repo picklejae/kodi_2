@@ -7,12 +7,13 @@ import { computeDiagnosis, type Answer, type ExploreLevel } from "@/lib/styleTyp
 import { generatePicks, type Picks, type Pick as Look } from "@/lib/matching";
 import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
-import { POSTS, type SocialPost } from "@/data/social";
+import { POSTS, mockFeedback, type SocialPost } from "@/data/social";
 import type { PresetRequest } from "@/lib/devPresets";
 
 export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
 export type Tab = "match" | "social" | "saved" | "me";
 export interface PostDraft { image: string | null; pickImages?: string[]; look?: Look; ownedImage?: string }
+export interface SavedLook { id: string; look: Look; ownedImage: string; ownedName: string }
 
 export interface UploadedItem {
   image: string;
@@ -35,13 +36,14 @@ interface PairlyState {
   shopClicks: number;
   picks: Picks | null;
   savedItems: string[];
+  savedLooks: SavedLook[];
   activeTab: Tab;
   posts: SocialPost[];
   userVotes: Record<string, "up" | "down">;
   draft: PostDraft | null;
 }
 
-const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
+const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
 
 interface PairlyCtx extends PairlyState {
   go: (s: Screen) => void;
@@ -110,21 +112,35 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       } : s),
     toggleSave: (id) => {
       const saving = !state.savedItems.includes(id);
-      setState((s) => ({ ...s, savedItems: saving ? [...s.savedItems, id] : s.savedItems.filter((x) => x !== id) }));
+      setState((s) => {
+        const savedItems = saving ? [...s.savedItems, id] : s.savedItems.filter((x) => x !== id);
+        const savedLooks = s.savedLooks.filter((entry) => entry.look.items.some((item) => savedItems.includes(item.id)));
+        if (saving && s.picks && s.uploadedItem) {
+          const owned = s.uploadedItem;
+          Object.values(s.picks).filter((look) => look.items.some((item) => item.id === id)).forEach((look) => {
+            const key = `${owned.image}:${look.boldness}:${look.items.map((item) => item.id).join(":")}`;
+            if (!savedLooks.some((entry) => entry.id === key)) savedLooks.unshift({ id: key, look, ownedImage: owned.image, ownedName: owned.name ?? owned.category });
+          });
+        }
+        return { ...s, savedItems, savedLooks };
+      });
       return saving;
     },
     setTab: (activeTab) => setState((s) => ({ ...s, activeTab })),
     openDraft: (draft) => setState((s) => ({ ...s, draft })),
     vote: (id, v) => setState((s) => ({
       ...s, userVotes: { ...s.userVotes, [id]: v },
-      posts: s.posts.map((p) => p.id === id ? { ...p, votesUp: p.votesUp + (v === "up" ? 1 : 0), votesDown: p.votesDown + (v === "down" ? 1 : 0) } : p),
+      posts: s.posts.map((p) => p.id === id ? { ...p, votesUp: p.votesUp + (v === "up" ? 1 : 0), votesDown: p.votesDown + (v === "down" ? 1 : 0),
+        voteGroups: [...p.voteGroups, { styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, yes: v === "up" ? 1 : 0, no: v === "down" ? 1 : 0 }] } : p),
     })),
-    addFeedback: (id, chip) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id && !p.topFeedback.includes(chip) ? { ...p, topFeedback: [chip, ...p.topFeedback].slice(0, 3) } : p) })),
+    addFeedback: (id, chip) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id ? { ...p, topFeedback: [chip, ...p.topFeedback].slice(0, 3), feedback: [{ text: chip, styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel }, ...p.feedback].slice(0, 4) } : p) })),
     createPost: (p) => setState((s) => ({
       ...s, draft: null, activeTab: "social",
-      posts: [{ ...p, id: `u${Date.now()}`, author: "@you", styleType: s.styleType ?? DEFAULT_CODE, votesUp: 0, votesDown: 0, topFeedback: [], isUserPost: true }, ...s.posts],
+      posts: [{ ...p, ...(s.draft?.look ? { look: s.draft.look } : {}), ...(s.draft?.ownedImage ? { ownedImage: s.draft.ownedImage } : {}), id: `u${crypto.randomUUID()}`, author: "@you", styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true }, ...s.posts],
     })),
-    bumpUserPost: (id, up, down) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id ? { ...p, votesUp: p.votesUp + up, votesDown: p.votesDown + down } : p) })),
+    bumpUserPost: (id, up, down) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id ? { ...p, votesUp: p.votesUp + up, votesDown: p.votesDown + down,
+      voteGroups: [...p.voteGroups, { styleType: p.styleType, exploreLevel: "low", yes: Math.ceil(up / 2), no: 0 }, { styleType: "RCDS", exploreLevel: "high", yes: Math.floor(up / 2), no: down }],
+      feedback: p.votesUp + up > 3 ? mockFeedback(["Great fit", "Add a layer", "Try darker shoes"]) : p.feedback } : p) })),
     loadPreset: ({ preset, type, sample }) => {
       const item: UploadedItem = { image: sample.image, category: sample.category, attributes: sample.attributes, source: "sample", name: sample.name };
       const base: PairlyState = { ...initial, styleType: preset === "welcome" || preset === "diagnosis" ? null : type };

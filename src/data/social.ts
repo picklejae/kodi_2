@@ -1,12 +1,30 @@
 import type { Occasion } from "./samples";
 import { LOOK_IMAGES as L, type StyleTypeCode } from "./styleTypes";
+import type { ExploreLevel } from "@/lib/styleType";
+import type { Pick as Look } from "@/lib/matching";
+
+export interface VoteGroup { styleType: StyleTypeCode; exploreLevel: ExploreLevel; yes: number; no: number }
+export interface Feedback { text: string; styleType: StyleTypeCode; exploreLevel: ExploreLevel }
+
+export function mockVoteGroups(up: number, down: number): VoteGroup[] {
+  const profiles: [StyleTypeCode, ExploreLevel][] = [["TNPF", "low"], ["RNPS", "low"], ["TNDF", "low"], ["RNDS", "low"], ["RCDS", "high"], ["TCDF", "high"]];
+  return profiles.map(([styleType, exploreLevel], i) => ({ styleType, exploreLevel,
+    yes: Math.floor(up / profiles.length) + (i < up % profiles.length ? 1 : 0),
+    no: Math.floor(down / profiles.length) + (i >= profiles.length - down % profiles.length ? 1 : 0),
+  }));
+}
+export function mockFeedback(texts: string[]): Feedback[] {
+  return texts.map((text, i) => ({ text, styleType: (["TNPF", "RNDS", "RCDS"] as const)[i % 3] ?? "TNPF", exploreLevel: i % 3 === 2 ? "high" : "low" }));
+}
 
 export interface SocialPost {
   id: string; author: string; image: string; pickImages?: string[];
   styleType: StyleTypeCode; occasion: Occasion | null; question: string;
   votesUp: number; votesDown: number; topFeedback: string[]; isUserPost?: boolean;
+  exploreLevel: ExploreLevel; voteGroups: VoteGroup[]; feedback: Feedback[];
+  look?: Look; ownedImage?: string;
 }
-export interface Trend { id: string; title: string; postCount: number; image: string; description: string; votesUp: number; votesDown: number; topFeedback: string[] }
+export interface Trend { id: string; title: string; postCount: number; image: string; description: string; votesUp: number; votesDown: number; topFeedback: string[]; voteGroups: VoteGroup[]; feedback: Feedback[] }
 
 export const FEEDBACK_CHIPS = ["Great fit", "Try darker shoes", "Too formal", "Add a layer"];
 
@@ -29,12 +47,13 @@ const rows: R[] = [
   ["@eli.s", u("1492562080023-ab3db95bfbce"), "RCPS", "weekend", "Bright jacket for a game day?", 83, 30, ["Great fit", "Add a layer", "Too formal"]],
   ["@max.v", u("1506794778202-cad84cf45f1d"), "TNPF", "date", "Shirt tucked or untucked?", 120, 16, ["Great fit", "Too formal", "Try darker shoes"]],
 ];
-export const POSTS: SocialPost[] = rows.map(([author, image, styleType, occasion, question, votesUp, votesDown, topFeedback], i) => ({ id: `p${i + 1}`, author, image, styleType, occasion, question, votesUp, votesDown, topFeedback }));
+export const POSTS: SocialPost[] = rows.map(([author, image, styleType, occasion, question, votesUp, votesDown, topFeedback], i) => ({ id: `p${i + 1}`, author, image, styleType, occasion, question, votesUp, votesDown, topFeedback, exploreLevel: styleType.includes("C") ? "high" : "low", voteGroups: mockVoteGroups(votesUp, votesDown), feedback: mockFeedback(topFeedback) }));
 
-export const TRENDS: Trend[] = [
+const trendRows = [
   { id: "t1", title: "Quiet layering", postCount: 248, image: L.coat, description: "Knit under coat, all in close neutrals.", votesUp: 412, votesDown: 38, topFeedback: ["Great fit", "Add a layer", "Too formal"] },
   { id: "t2", title: "Relaxed trousers", postCount: 196, image: L.casual, description: "Wider legs with a neat top half.", votesUp: 301, votesDown: 47, topFeedback: ["Great fit", "Try darker shoes", "Add a layer"] },
   { id: "t3", title: "Loafers over sneakers", postCount: 173, image: L.suit2, description: "Swapping sneakers for loafers with jeans.", votesUp: 288, votesDown: 52, topFeedback: ["Great fit", "Too formal", "Try darker shoes"] },
   { id: "t4", title: "Workwear jackets", postCount: 151, image: L.denim, description: "Chore coats and canvas in earthy tones.", votesUp: 240, votesDown: 41, topFeedback: ["Great fit", "Add a layer", "Try darker shoes"] },
   { id: "t5", title: "One color pop", postCount: 128, image: L.fashion, description: "Neutral outfit, one bright piece.", votesUp: 199, votesDown: 44, topFeedback: ["Great fit", "Too formal", "Add a layer"] },
 ];
+export const TRENDS: Trend[] = trendRows.map((t) => ({ ...t, voteGroups: mockVoteGroups(t.votesUp, t.votesDown), feedback: mockFeedback(t.topFeedback) }));

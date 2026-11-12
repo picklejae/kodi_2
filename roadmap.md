@@ -8,3 +8,5 @@
 - [x] Verify the updated flow and quiz rules
 - [x] Update Upload note, full-look Results, current-look feedback, shop counts, toast placement, and Reveal article
 - [x] Verify look rules, ordering, notes, shopping, and posting at phone size
+- [x] Add Social badges, cohort filters and summaries, latest pinned post, and Me look history
+- [x] Verify filters, summaries, saved and posted look history, and demo presets
