@@ -1,8 +1,9 @@
 import { BOLDNESS_LABEL, type Boldness, type CatalogCategory, type CatalogItem } from "@/data/catalog";
 import type { ItemCategory, Occasion } from "@/data/samples";
-import type { StyleTypeCode } from "@/data/styleTypes";
+import { STYLE_TYPES, type StyleTypeCode } from "@/data/styleTypes";
+import type { ExploreLevel } from "./styleType";
 
-export interface Pick { item: CatalogItem; boldness: Boldness; reason: string }
+export interface Pick { items: [CatalogItem, CatalogItem]; boldness: Boldness; reason: string }
 export type Picks = Record<Boldness, Pick>;
 
 // Same or near-duplicate catalog categories for an uploaded item.
@@ -19,25 +20,31 @@ export function score(item: CatalogItem, type: StyleTypeCode, occasion: Occasion
   return s;
 }
 
-const VIBE: Record<string, string> = { F: "sharp", S: "easy", N: "calm", C: "lively" };
+export function lookOrder(exploreLevel: ExploreLevel): Boldness[] {
+  return exploreLevel === "low" ? ["safe", "step", "bold"] : ["step", "safe", "bold"];
+}
 
-export function reasonFor(item: CatalogItem, b: Boldness, itemName: string, type: StyleTypeCode) {
-  const mood = VIBE[type.charAt(3)], color = VIBE[type.charAt(1)];
-  if (b === "safe") return `${item.name} keep your ${itemName} ${color} and ${mood}.`.replace(/^(.*?) keep/, (m, n) => (/s$/.test(n) ? m : `${n} keeps`));
-  if (b === "step") return `${item.name} adds texture to your ${itemName} without breaking your ${mood} style.`;
-  return `${item.name} gives your ${itemName} one confident accent.`;
+export function reasonFor(items: [CatalogItem, CatalogItem], b: Boldness, itemName: string, type: StyleTypeCode) {
+  const accent = b === "safe" ? "a familiar pairing" : b === "step" ? "a fresh texture" : "a confident accent";
+  return `${items[0].name} and ${items[1].name} give your ${itemName} ${accent} that suits your ${STYLE_TYPES[type].name} style.`;
 }
 
 export function generatePicks(catalog: CatalogItem[], category: ItemCategory, itemName: string, type: StyleTypeCode, occasion: Occasion | null): Picks {
-  const used = new Set<CatalogCategory>(EXCLUDED[category]);
   const out = {} as Picks;
   for (const b of ["safe", "step", "bold"] as Boldness[]) {
-    const best = catalog
-      .filter((c) => c.boldness === b && !used.has(c.category))
-      .sort((x, y) => score(y, type, occasion) - score(x, type, occasion) || x.price - y.price)[0];
-    if (!best) throw new Error(`No ${b} pick available`);
-    used.add(best.category);
-    out[b] = { item: best, boldness: b, reason: reasonFor(best, b, itemName.toLowerCase(), type) };
+    const eligible = catalog.filter((c) => !EXCLUDED[category].includes(c.category));
+    const rank = (items: CatalogItem[]) => [...items].sort((x, y) => score(y, type, occasion) - score(x, type, occasion) || x.price - y.price);
+    const mainCategories: CatalogCategory[] = category === "pants" ? ["shirts", "knits"] : ["pants"];
+    const main = rank(eligible.filter((c) => c.boldness === b && mainCategories.includes(c.category)))[0];
+    if (!main) throw new Error(`No ${b} main garment available`);
+    const candidates = eligible.filter((c) => c.category !== main.category && c.category !== "tees");
+    // Footwear completes the silhouette; prefer the tier, then fall back to style fit.
+    const second = rank(candidates.filter((c) => c.category === "shoes" && c.boldness === b))[0]
+      ?? rank(candidates.filter((c) => c.boldness === b))[0]
+      ?? rank(candidates)[0];
+    if (!second) throw new Error(`No ${b} companion garment available`);
+    const items: [CatalogItem, CatalogItem] = [main, second];
+    out[b] = { items, boldness: b, reason: reasonFor(items, b, itemName.toLowerCase(), type) };
   }
   return out;
 }

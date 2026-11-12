@@ -3,6 +3,19 @@ import { describe, expect, it } from "vitest";
 import { PairlyProvider, usePairly } from "./PairlyContext";
 
 describe("quiz state", () => {
+  it("carries the optional note to Results and counts every shop tap until reset", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setNote("Dinner in the city, not too formal"));
+    act(() => result.current.setUploadedItem({ image: "item", category: "shirt", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    expect(result.current.note).toBe("Dinner in the city, not too formal");
+    expect(result.current.screen).toBe("results");
+    act(() => { result.current.countShopClick(); result.current.countShopClick(); });
+    expect(result.current.shopClicks).toBe(2);
+    act(() => result.current.reset());
+    expect(result.current.shopClicks).toBe(0);
+    expect(result.current.note).toBe("");
+  });
   it("skip quiz uses the classic fallback and resets exploration even after yes votes", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.answer("yes"));

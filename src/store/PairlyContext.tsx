@@ -4,7 +4,7 @@ import { ROUNDS } from "@/data/diagnosis";
 import type { ItemCategory, Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
 import { computeDiagnosis, type Answer, type ExploreLevel } from "@/lib/styleType";
-import { generatePicks, type Picks } from "@/lib/matching";
+import { generatePicks, type Picks, type Pick as Look } from "@/lib/matching";
 import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { POSTS, type SocialPost } from "@/data/social";
@@ -12,7 +12,7 @@ import type { PresetRequest } from "@/lib/devPresets";
 
 export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
 export type Tab = "match" | "social" | "saved" | "me";
-export interface PostDraft { image: string | null; pickImages?: string[] }
+export interface PostDraft { image: string | null; pickImages?: string[]; look?: Look; ownedImage?: string }
 
 export interface UploadedItem {
   image: string;
@@ -31,6 +31,8 @@ interface PairlyState {
   quizSkipped: boolean;
   uploadedItem: UploadedItem | null;
   occasion: Occasion | null;
+  note: string;
+  shopClicks: number;
   picks: Picks | null;
   savedItems: string[];
   activeTab: Tab;
@@ -39,7 +41,7 @@ interface PairlyState {
   draft: PostDraft | null;
 }
 
-const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, picks: null, savedItems: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
+const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
 
 interface PairlyCtx extends PairlyState {
   go: (s: Screen) => void;
@@ -50,6 +52,8 @@ interface PairlyCtx extends PairlyState {
   reset: () => void;
   setUploadedItem: (i: UploadedItem | null) => void;
   setOccasion: (o: Occasion | null) => void;
+  setNote: (note: string) => void;
+  countShopClick: () => void;
   findMatches: () => void;
   toggleSave: (id: string) => boolean;
   setTab: (t: Tab) => void;
@@ -97,6 +101,8 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     reset: () => setState(initial),
     setUploadedItem: (uploadedItem) => setState((s) => ({ ...s, uploadedItem })),
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),
+    setNote: (note) => setState((s) => ({ ...s, note })),
+    countShopClick: () => setState((s) => ({ ...s, shopClicks: s.shopClicks + 1 })),
     findMatches: () =>
       setState((s) => s.uploadedItem ? {
         ...s, screen: "results",

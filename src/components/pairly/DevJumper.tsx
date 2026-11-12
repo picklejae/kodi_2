@@ -7,7 +7,7 @@ import { DEFAULT_CODE } from "@/data/styleTypes";
 const KEY = "pairly.devHidden";
 
 export function DevJumper() {
-  const { loadPreset } = usePairly();
+  const { loadPreset, shopClicks } = usePairly();
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -41,6 +41,7 @@ export function DevJumper() {
             </button>
           ))}
           <hr className="my-1 border-border" />
+          <p className="px-2 py-1.5 text-muted-foreground">Shop taps: {shopClicks}</p>
           <button className="block w-full rounded px-2 py-1.5 text-left text-muted-foreground hover:bg-muted"
             onClick={() => { localStorage.setItem(KEY, "1"); setVisible(false); }}>
             Hide DEV button (Shift+D to restore)

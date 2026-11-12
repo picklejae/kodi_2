@@ -14,7 +14,7 @@ export function Reveal() {
   return (
     <div className="flex flex-1 flex-col px-6 pb-8 pt-14 animate-in fade-in duration-500">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</p>
-      <h1 className="mt-3 font-serif text-4xl leading-tight">You're a {t.name}</h1>
+      <h1 className="mt-3 font-serif text-4xl leading-tight">You're {/^[AEIOU]/i.test(t.name) ? "an" : "a"} {t.name}</h1>
       {quizSkipped && <p className="mt-3 text-sm text-muted-foreground">Not sure yet? Here's a classic starting point.</p>}
       <div className="mt-6 space-y-4">
         {AXES.map((a, idx) => {

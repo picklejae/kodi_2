@@ -34,3 +34,5 @@ use the editor.
 - Mock data lives in `src/data/*`, pure logic in `src/lib/*` with vitest tests beside it; why: keeps rules testable without UI.
 - Share swipe gestures through SwipePhotoCard across quiz and Social; why: keeps drag, tilt, stamps, and cancellation consistent.
 - Store quiz axis scores, skip status, and exploration separately from the internal style code; why: Reveal needs continuous markers and Results can later consume exploration without changing types.
+- Matching returns three tiered looks with two catalog picks each, enforcing the missing garment per look; why: outfit completeness must hold independently of rendering.
+- Feedback composes the selected outfit board into a browser-generated image and retains its two pick images; why: Social can show full-look posts without altering its flow.

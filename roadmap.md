@@ -6,3 +6,5 @@
 - [x] Chunk 4: Social, Saved, Me
 - [x] Update Welcome copy, 12-card swipe diagnosis, Reveal, and name-only shared chips; preserve demo presets
 - [x] Verify the updated flow and quiz rules
+- [x] Update Upload note, full-look Results, current-look feedback, shop counts, toast placement, and Reveal article
+- [x] Verify look rules, ordering, notes, shopping, and posting at phone size

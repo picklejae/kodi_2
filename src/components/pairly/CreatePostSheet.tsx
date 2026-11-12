@@ -9,6 +9,7 @@ import { StyleTypeChip } from "./StyleTypeChip";
 import { OCCASIONS, SAMPLES, type Occasion } from "@/data/samples";
 import { cn } from "@/lib/utils";
 import { usePairly } from "@/store/PairlyContext";
+import { OutfitBoard } from "./OutfitBoard";
 
 export function CreatePostSheet() {
   const { draft, openDraft, createPost, occasion: storeOccasion } = usePairly();
@@ -29,7 +30,9 @@ export function CreatePostSheet() {
     <BottomSheet open={!!draft} onClose={() => openDraft(null)} title="Get feedback">
       <div className="mt-2"><StyleTypeChip /></div>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
-      {image ? (
+      {draft?.look && draft.ownedImage ? (
+        <div className="mt-4"><OutfitBoard itemImage={draft.ownedImage} items={draft.look.items} /><p className="mt-3 text-sm">{draft.look.reason}</p></div>
+      ) : image ? (
         <div className="mt-4 flex gap-2">
           <Photo src={image} alt="Your photo" className="h-40 flex-1 rounded-2xl" />
           {draft?.pickImages && (

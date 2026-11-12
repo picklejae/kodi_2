@@ -9,7 +9,7 @@ import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, SAMPLES, type ItemCategory }
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, go, findMatches } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches } = usePairly();
   const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -80,7 +80,7 @@ export function Upload() {
             <div className="animate-in fade-in duration-300">
               {uploadedItem.source === "upload" ? (
                 <div className="mt-5">
-                  <p className="text-xs text-muted-foreground">Looks like a…</p>
+                  <p className="text-xs text-muted-foreground">Which piece should we style?</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {CATEGORIES.map((c) => <SelectChip key={c} active={uploadedItem.category === c} onClick={() => setCategory(c)}><span className="capitalize">{c}</span></SelectChip>)}
                   </div>
@@ -93,6 +93,9 @@ export function Upload() {
               <div className="mt-2 flex flex-wrap gap-2">
                 {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
               </div>
+              <label htmlFor="outfit-note" className="mt-5 block text-sm font-medium">Anything else? A place or a vibe.</label>
+              <input id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Dinner in the city, not too formal"
+                className="mt-2 h-11 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none focus:border-foreground" />
             </div>
           )}
         </div>
