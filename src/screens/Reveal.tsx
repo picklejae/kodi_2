@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { Chip } from "@/components/pairly/Chip";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
@@ -8,7 +7,7 @@ import { usePairly } from "@/store/PairlyContext";
 const AXES: Axis[] = ["fit", "color", "detail", "mood"];
 
 export function Reveal() {
-  const { styleType, retake } = usePairly();
+  const { styleType, retake, go } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   return (
     <div className="flex flex-1 flex-col px-6 pb-8 pt-14 animate-in fade-in duration-500">
@@ -36,7 +35,7 @@ export function Reveal() {
         {t.looks.map((l, i) => <Photo key={i} src={l} alt={`${t.name} look ${i + 1}`} className="h-36 rounded-2xl" />)}
       </div>
       <div className="mt-auto space-y-3 pt-8">
-        <PillButton onClick={() => toast("Coming soon")}>Find matches</PillButton>
+        <PillButton onClick={() => go("upload")}>Find matches</PillButton>
         <PillButton variant="outline" onClick={retake}>Retake</PillButton>
       </div>
     </div>

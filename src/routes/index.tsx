@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PhoneFrame } from "@/components/pairly/PhoneFrame";
 import { Diagnosis } from "@/screens/Diagnosis";
+import { Results } from "@/screens/Results";
 import { Reveal } from "@/screens/Reveal";
+import { Upload } from "@/screens/Upload";
 import { Welcome } from "@/screens/Welcome";
 import { PairlyProvider, usePairly } from "@/store/PairlyContext";
 
@@ -23,6 +25,8 @@ function Screens() {
   const { screen } = usePairly();
   if (screen === "diagnosis") return <Diagnosis />;
   if (screen === "reveal") return <Reveal />;
+  if (screen === "upload") return <Upload />;
+  if (screen === "results") return <Results />;
   return <Welcome />;
 }
 
