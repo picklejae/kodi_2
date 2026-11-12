@@ -9,7 +9,7 @@ import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, SAMPLES, type ItemCategory }
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, go } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, go, findMatches } = usePairly();
   const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -99,7 +99,7 @@ export function Upload() {
       )}
 
       <div className="mt-auto pt-8">
-        <PillButton disabled={!uploadedItem || analyzing} onClick={() => go("results")}>Find 3 matches</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing} onClick={findMatches}>Find 3 matches</PillButton>
       </div>
     </div>
   );
