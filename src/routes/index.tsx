@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PhoneFrame } from "@/components/pairly/PhoneFrame";
 import { Diagnosis } from "@/screens/Diagnosis";
@@ -5,6 +6,11 @@ import { Results } from "@/screens/Results";
 import { Reveal } from "@/screens/Reveal";
 import { Upload } from "@/screens/Upload";
 import { Welcome } from "@/screens/Welcome";
+import { Social } from "@/screens/Social";
+import { Saved } from "@/screens/Saved";
+import { Me } from "@/screens/Me";
+import { BottomTabBar } from "@/components/pairly/BottomTabBar";
+import { CreatePostSheet } from "@/components/pairly/CreatePostSheet";
 import { PairlyProvider, usePairly } from "@/store/PairlyContext";
 
 export const Route = createFileRoute("/")({
@@ -22,12 +28,20 @@ export const Route = createFileRoute("/")({
 });
 
 function Screens() {
-  const { screen } = usePairly();
+  const { screen, activeTab } = usePairly();
+  useEffect(() => { window.scrollTo(0, 0); }, [screen, activeTab]);
   if (screen === "diagnosis") return <Diagnosis />;
   if (screen === "reveal") return <Reveal />;
-  if (screen === "upload") return <Upload />;
-  if (screen === "results") return <Results />;
-  return <Welcome />;
+  if (screen === "welcome") return <Welcome />;
+  return (
+    <>
+      <div className="flex flex-1 flex-col pb-24">
+        {activeTab === "social" ? <Social /> : activeTab === "saved" ? <Saved /> : activeTab === "me" ? <Me /> : screen === "results" ? <Results /> : <Upload />}
+      </div>
+      <BottomTabBar />
+      <CreatePostSheet />
+    </>
+  );
 }
 
 function Index() {

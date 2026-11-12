@@ -12,7 +12,7 @@ import { usePairly } from "@/store/PairlyContext";
 const ORDER: Boldness[] = ["safe", "step", "bold"];
 
 export function Results() {
-  const { picks, uploadedItem, go } = usePairly();
+  const { picks, uploadedItem, go, openDraft } = usePairly();
   const [active, setActive] = useState<Boldness>("safe");
   const refs = useRef<Partial<Record<Boldness, HTMLDivElement | null>>>({});
   if (!picks || !uploadedItem) return <div className="flex flex-1 items-center justify-center px-6"><PillButton onClick={() => go("upload")}>Pick a piece first</PillButton></div>;
@@ -47,7 +47,7 @@ export function Results() {
       <p className="mt-5 text-center text-xs text-muted-foreground">Ranked by fit with your style. No sponsored placements.</p>
 
       <div className="mt-8 space-y-3">
-        <PillButton onClick={() => toast("Coming soon")}>Get feedback</PillButton>
+        <PillButton onClick={() => openDraft({ image: uploadedItem.image, pickImages: ORDER.map((b) => picks[b].item.image) })}>Get feedback</PillButton>
         <PillButton variant="outline" onClick={() => go("upload")}>Try another piece</PillButton>
       </div>
     </div>
