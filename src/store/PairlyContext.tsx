@@ -1,3 +1,4 @@
+import type React from "react";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import { ROUNDS } from "@/data/diagnosis";
 import type { StyleTypeCode } from "@/data/styleTypes";
@@ -21,7 +22,10 @@ interface PairlyCtx extends PairlyState {
   reset: () => void;
 }
 
-const Ctx = createContext<PairlyCtx | null>(null);
+// Keep one context object across hot reloads; a re-created context makes the
+// provider and consumers disagree and throws "must be used inside PairlyProvider".
+const g = globalThis as { __pairlyCtx?: React.Context<PairlyCtx | null> };
+const Ctx = (g.__pairlyCtx ??= createContext<PairlyCtx | null>(null));
 
 export function PairlyProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PairlyState>(initial);
