@@ -16,7 +16,8 @@ export function computeStyleType(rounds: DiagnosisRound[], answers: Answer[]): S
       counts[letter] = (counts[letter] ?? 0) + 1;
     });
     const entries = Object.entries(counts).sort((x, y) => y[1] - x[1]);
-    if (!entries.length || (entries[1] && entries[1][1] === entries[0][1])) return DEFAULT_CODE[i];
-    return entries[0][0];
+    const [top, second] = entries;
+    if (!top || (second && second[1] === top[1])) return DEFAULT_CODE[i];
+    return top[0];
   }).join("") as StyleTypeCode;
 }

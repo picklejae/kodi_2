@@ -7,7 +7,7 @@ import { usePairly } from "@/store/PairlyContext";
 export function Diagnosis() {
   const { answers, answer, back } = usePairly();
   const i = Math.min(answers.length, ROUNDS.length - 1);
-  const r = ROUNDS[i];
+  const r = ROUNDS[i]!;
   return (
     <div className="flex flex-1 flex-col px-5 pb-8 pt-12">
       <div className="flex items-center justify-between">
