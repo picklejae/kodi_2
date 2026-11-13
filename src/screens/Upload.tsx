@@ -1,3 +1,4 @@
+import { Sentences } from "@/components/pairly/Sentences";
 import { useEffect, useRef, useState } from "react";
 import { Camera, ChevronLeft, ImageIcon, Loader2, X } from "lucide-react";
 import { Chip } from "@/components/pairly/Chip";
@@ -5,12 +6,12 @@ import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
-import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
 import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, UPLOAD_SAMPLES, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
+  useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
   const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -50,7 +51,7 @@ export function Upload() {
         <>
           <div className="mt-6 flex flex-col items-center rounded-3xl border-2 border-dashed border-foreground/25 bg-card/60 px-5 py-10 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground" />
-            <p className="mt-3 text-sm text-muted-foreground">A jacket, coat, pants or shirt. Flat or on a hanger works best.</p>
+            <p className="mt-3 text-sm text-muted-foreground"><Sentences text="A jacket, coat, pants or shirt. Flat or on a hanger works best." /></p>
             <div className="mt-6 w-full space-y-3">
               <PillButton onClick={() => camRef.current?.click()}><Camera className="mr-2 h-4 w-4" />Take photo</PillButton>
               <PillButton variant="outline" onClick={() => libRef.current?.click()}>Choose from library</PillButton>
@@ -105,8 +106,7 @@ export function Upload() {
 
       </div>
       <div className="mt-auto pt-8 lg:mt-0">
-        <div className="mb-4"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Looking for</p><PreferenceChoice compact /></div>
-        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating moodboards" : "Create outfit moodboards"}</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating looks" : "Kodi me"}</PillButton>
       </div>
     </div>
   );

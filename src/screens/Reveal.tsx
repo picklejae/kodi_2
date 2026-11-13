@@ -8,7 +8,7 @@ import { stylePresentation } from "@/lib/stylePresentation";
 const AXES: Axis[] = ["fit", "color", "detail", "mood"];
 
 export function Reveal() {
-  const { styleType, axisScores, quizSkipped, retake, go } = usePairly();
+  const { styleType, axisScores, quizSkipped, go } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   const { line, pieces } = stylePresentation(t.code);
   return (
@@ -40,8 +40,7 @@ export function Reveal() {
         {pieces.map((piece) => <div key={piece.id}><Photo src={piece.image} alt={piece.name} className="aspect-[3/4] rounded-lg" /><p className="mt-2 text-[11px] leading-snug">{piece.name}</p></div>)}
       </div>
       <div className="mt-auto space-y-3 pt-8">
-        <PillButton onClick={() => go("budget")}>Find matches</PillButton>
-        <PillButton variant="outline" onClick={retake}>Retake</PillButton>
+        <PillButton onClick={() => go("budget")}>Let's get started</PillButton>
       </div>
       </div>
     </div>
