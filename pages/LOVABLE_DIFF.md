@@ -1,6 +1,6 @@
 # proto ↔ Lovable diff log
 
-`main` = what Lovable has (Lovable syncs only `main`). `proto` = Claude's local prototype, published at
+Repo: **picklejae/kodi_2** (moved here 11/13 from marco318/pairly). `main` = what Lovable has (Lovable syncs only `main`). `proto` = Claude's local prototype, published at
 https://marco318.github.io/pairly-notes/kodi/ for the team. Lovable never sees this branch.
 
 - See every difference: `git diff main..proto -- src`
@@ -8,27 +8,19 @@ https://marco318.github.io/pairly-notes/kodi/ for the team. Lovable never sees t
 - Build: `npm run build:pages` → `dist-pages/` → copy into `pairly-notes/kodi/`
 - When an item lands in Lovable: mark it ✅ with the Lovable commit, then merge `main` into `proto`
 
-Base: `main` @ d35705e (2026-11-13 01:33 CT)
+Base: kodi_2 `main` @ 2183350 (2026-11-13 10:11 CT). Earlier base: pairly `main` @ d35705e.
 
 | # | Change (src/) | Why | Lovable status |
 |---|---|---|---|
-| 1 | `components/pairly/PhoneFrame.tsx`: `min-h-screen` → `min-h-dvh` (2 places) | Bug: on phones (<768px) `min-h-screen` computes to **20px**, because the custom `--spacing-screen` token overrides Tailwind's `screen` keyword. Real iPhones get screens that aren't full height (Welcome top-aligned, not centered). Lovable's desktop preview hides it (fixed 402×874 frame). | ⏳ prompt 1 |
-| 2 | `screens/Welcome.tsx`: 42px spacer under headline + `pt-[21px]` on lower block | Keep the lower block where it was before the tagline + divider were removed (ef21fbf, 8fb9b55) | ⏳ prompt 2 |
+| 1 | `components/pairly/PhoneFrame.tsx`: `min-h-screen` → `min-h-dvh` (2 places) | Bug: on phones (<768px) `min-h-screen` computes to **20px**, because the custom `--spacing-screen` token overrides Tailwind's `screen` keyword. Real iPhones get screens that aren't full height (Welcome top-aligned, not centered). Lovable's desktop preview hides it (fixed 402×874 frame). | ✅ already in main (team fixed it the same way, d76f4c7) |
+| 2 | `screens/Welcome.tsx`: 42px spacer under headline + `pt-[21px]` on lower block | Keep the lower block where it was before the tagline + divider were removed (ef21fbf, 8fb9b55) | ❌ dropped: the team restructured Welcome (863a71c…bad37a2), proto now uses theirs |
 | 3 | `screens/Social.tsx`: Your look card slides 48px + fades in over 320ms (ease-out-cubic) from the side of the arrow pressed, clipped inside the card; label shows `· 2/3` | Team: hard to notice the card changed when pressing ← →. v1 (16px/200ms) was too subtle — looked like a glitch. Respects reduced motion. | ⏳ prompt 3 |
 | 4 | `screens/Reveal.tsx`, `components/pairly/StyleScales.tsx` (`reveal` prop, Reveal only), `styles.css` (2 keyframes) | "Wow" moment after the quiz, kept refined: one staggered ~1.6s sequence — label → name rises out of a blur → 4 slider dots glide from centre to the user's scores → line, tags, piece photos rise in order → button last. Me screen's sliders unchanged. Reduced motion = no animation. | ⏳ prompt 4 |
 | — | `pages/stubs.ts` (prototype only, do not port) | Static site has no AI: planStyle/renderStyleLook return saved results. Oxford sample → Oxford set (3 looks exported from the Lovable cache, `pages/cache/`); pants sample → chinos set A; jacket/coat sample → leather set B; any upload → one of the three by image fingerprint. Shopping off. | n/a |
 
 ## Prompts for Lovable (enter after the account move)
 
-**Prompt 1**
-```
-Bug on real phones: in PhoneFrame, `min-h-screen` resolves to 20px below 768px wide, because our `--spacing-screen` token overrides Tailwind's `screen` size. Replace `min-h-screen` with `min-h-dvh` in PhoneFrame (both divs). Change nothing else.
-```
-
-**Prompt 2**
-```
-Welcome screen: after the tagline and divider were removed, the lower block ("What are you looking for?", the toggle, Find My Style, Sign in) moved up about 40px because the column is vertically centered. Put it back where it was without bringing back the text or the line: under the headline add an empty 42px spacer (aria-hidden), and give the lower block 21px top padding. Change nothing else.
-```
+_Prompts 1–2 no longer needed (see table)._
 
 **Prompt 3**
 ```
