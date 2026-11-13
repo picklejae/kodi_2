@@ -51,3 +51,4 @@
 - [x] Welcome CTA hierarchy
 - [x] Reveal single button
 - [x] Sentence-level line breaks
+- [ ] Upload: Kodi me button, remove preference toggle
