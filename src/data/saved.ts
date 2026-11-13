@@ -26,6 +26,7 @@ export interface SavedOutfit {
   explanation: string;
   ownedName: string;
   products: ConceptItem[];
+  feedbackImage?: string;
 }
 const names = [
   "Brown Sweater",

@@ -4,7 +4,7 @@ import type { ExploreLevel } from "@/lib/styleType";
 import type { Pick as Look } from "@/lib/matching";
 
 export interface VoteGroup { styleType: StyleTypeCode; exploreLevel: ExploreLevel; yes: number; no: number }
-export interface Feedback { text: string; styleType: StyleTypeCode; exploreLevel: ExploreLevel }
+export interface Feedback { text: string; styleType: StyleTypeCode; exploreLevel: ExploreLevel; author?: string; createdAt?: string; daysAgo?: number }
 
 export function mockVoteGroups(up: number, down: number): VoteGroup[] {
   const profiles: [StyleTypeCode, ExploreLevel][] = [["TNPF", "low"], ["RNPS", "low"], ["TNDF", "low"], ["RNDS", "low"], ["RCDS", "high"], ["TCDF", "high"]];
@@ -22,7 +22,7 @@ export interface SocialPost {
   styleType: StyleTypeCode; occasion: Occasion | null; question: string;
   votesUp: number; votesDown: number; topFeedback: string[]; isUserPost?: boolean;
   exploreLevel: ExploreLevel; voteGroups: VoteGroup[]; feedback: Feedback[];
-  look?: Look; ownedImage?: string;
+  look?: Look; ownedImage?: string; createdAt?: string; daysAgo?: number;
 }
 export interface Trend { id: string; title: string; postCount: number; image: string; description: string; votesUp: number; votesDown: number; topFeedback: string[]; voteGroups: VoteGroup[]; feedback: Feedback[] }
 
