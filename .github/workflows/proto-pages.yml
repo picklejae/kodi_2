@@ -12,7 +12,7 @@ permissions:
   id-token: write
 concurrency:
   group: proto-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
         run: |
           sleep 20
           for i in $(seq 1 30); do
-            n=$(gh run list -R "${{ github.repository }}" -w "pages build and deployment" -L 5 --json status --jq '[.[] | select(.status != "completed")] | length')
+            n=$(gh run list -R "${{ github.repository }}" -L 15 --json name,status --jq '[.[] | select(.name == "pages build and deployment" and .status != "completed")] | length' || echo 0)
             [ "$n" = "0" ] && break
             sleep 10
           done
