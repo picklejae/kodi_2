@@ -99,7 +99,7 @@ export function Upload() {
                 <Photo src={r.imageUrl} alt={r.productName} className="aspect-square rounded-2xl shadow-soft" />
               </button>
             ) : (
-              <div key={`empty-${i}`} aria-hidden="true" className="aspect-square rounded-2xl border-2 border-dashed border-foreground/15 bg-card/40" />
+              <div key={`empty-${i}`} aria-hidden="true" className="aspect-square rounded-2xl bg-secondary" />
             ))}
           </div>
         </>
