@@ -12,7 +12,7 @@ export function Reveal() {
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   const { line, pieces } = stylePresentation(t.code);
   return (
-    <div className="flex flex-1 flex-col px-screen pb-8 pt-14 animate-in fade-in duration-500 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+    <div className="flex flex-1 flex-col px-screen pb-8 pt-14 animate-in fade-in duration-500">
       <div>
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</p>
       <h1 className="mt-3 font-serif text-4xl leading-tight">You're {/^[AEIOU]/i.test(t.name) ? "an" : "a"} {t.name}</h1>
