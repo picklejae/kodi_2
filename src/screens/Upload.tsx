@@ -75,7 +75,7 @@ export function Upload() {
       </div>
       {/* Once a piece is chosen the title gives its room to the photo (the tab bar already says Style). */}
       <h1 className={uploadedItem ? "sr-only" : "mt-6 text-title font-bold"}>Style</h1>
-      {!uploadedItem && <p className="mt-2 text-sm text-muted-foreground">Snap one piece you already own.</p>}
+      {!uploadedItem && <p className="mt-2 text-sm text-muted-foreground">Which piece are we styling</p>}
 
       <input ref={libRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       <input ref={camRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
