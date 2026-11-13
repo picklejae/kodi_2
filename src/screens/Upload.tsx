@@ -116,10 +116,10 @@ export function Upload() {
       )}
 
       </div>
-      {/* Restored CTA (removed in 465ea7c without a replacement). Anchored just above the tab bar even when the page scrolls. "Me" in the key color. */}
-      <div ref={ctaRef} className="sticky bottom-tabbar z-20 -mb-8 mt-auto bg-background pb-2 pt-3">
-        <PillButton disabled={!uploadedItem || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
-      </div>
+      {/* CTA only once a piece is chosen (upload or sample); anchored just above the tab bar. Key color #812F46. */}
+      {uploadedItem && <div ref={ctaRef} className="sticky bottom-tabbar z-20 -mb-8 mt-auto bg-background pb-2 pt-3">
+        <PillButton accent disabled={!stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : "KODI Me"}</PillButton>
+      </div>}
     </div>
   );
 }
