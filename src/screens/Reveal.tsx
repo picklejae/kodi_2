@@ -8,7 +8,7 @@ import { stylePresentation } from "@/lib/stylePresentation";
 const AXES: Axis[] = ["fit", "color", "detail", "mood"];
 
 export function Reveal() {
-  const { styleType, axisScores, quizSkipped, retake, go } = usePairly();
+  const { styleType, axisScores, quizSkipped, go } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   const { line, pieces } = stylePresentation(t.code);
   return (
