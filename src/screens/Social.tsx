@@ -49,10 +49,12 @@ export function Social() {
       <h1 className="text-title font-bold lg:col-span-2">Feed</h1>
       <div className="mt-screen lg:col-span-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
       {cur && <div className="relative mt-screen flex items-center gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look">
-        {/* Light 180ms slide + fade toward the arrow pressed, so a change of look is noticeable without feeling slow. */}
-        <div key={cur.id} className={cn("flex min-w-0 flex-1 items-center gap-screen animate-in fade-in duration-200 ease-out motion-reduce:animate-none", pinDir === "next" ? "slide-in-from-right-4" : "slide-in-from-left-4")}>
+        {/* Clear but quick change of look: 48px slide + fade from the side of the arrow pressed, 320ms ease-out-cubic. Clipped so it never spills past the card border. */}
+        <div className="flex min-w-0 flex-1 overflow-hidden">
+        <div key={cur.id} className={cn("flex min-w-0 flex-1 items-center gap-screen animate-in fade-in duration-[320ms] ease-[cubic-bezier(0.33,1,0.68,1)] motion-reduce:animate-none", pinDir === "next" ? "slide-in-from-right-12" : "slide-in-from-left-12")}>
         <img src={cur.image} alt={cur.question} className="aspect-[3/4] w-touch shrink-0 rounded-none bg-secondary object-cover" />
         <div className="flex min-w-0 flex-1 flex-col"><SectionLabel>Your look{mine.length > 1 ? ` · ${mine.indexOf(cur) + 1}/${mine.length}` : ""}</SectionLabel><p className="text-body-sm">Yes {cur.votesUp} · No {cur.votesDown}</p><TextLinkButton onClick={() => setPinnedSheet(true)}>View feedback</TextLinkButton></div>
+        </div>
         </div>
         {mine.length > 1 && <><button type="button" aria-label="Previous look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring left-0 -translate-x-1/2" onClick={() => { setPinDir("prev"); setPinIdx((pinIdx - 1 + mine.length) % mine.length); }}><ChevronLeft className="size-4" /></button><button type="button" aria-label="Next look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring right-0 translate-x-1/2" onClick={() => { setPinDir("next"); setPinIdx((pinIdx + 1) % mine.length); }}><ChevronRight className="size-4" /></button></>}
       </div>}
