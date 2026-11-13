@@ -5,13 +5,14 @@ import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
 import { LOOK_IMAGES } from "@/data/styleTypes";
 import { quizAvailable } from "@/data/diagnosis";
 import { usePairly } from "@/store/PairlyContext";
+import { Logo } from "@/design-system/kodi-design-system-ac5f73";
 
 export function Welcome() {
   const { go, stylePreference, preferenceLoaded, skipQuiz } = usePairly();
   const quiz = stylePreference ? quizAvailable(stylePreference) : true;
   return (
     <div className="flex flex-1 flex-col px-6 pb-8 pt-14">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Pairly</p>
+      <Logo size="hero" />
       {quiz && (
         <div className="mt-6 grid grid-cols-3 gap-2">
           <Photo src={LOOK_IMAGES.suit} alt="Tailored look" className="col-span-2 row-span-2 h-72 rounded-3xl" />

@@ -30,6 +30,7 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Import the attached KODI theme last among theme imports and consume its local components without editing vendor files; why: library updates stay safe and its tokens remain authoritative.
 - Main demo screens switch through PairlyContext on `/`; saved outfit details use `/saved/$id`, with the provider at the root so in-memory collections survive navigation.
 - Track Feed hint dismissal in shared React state; why: it appears only once per demo session across tab and detail navigation, without persistence.
 - Style generation uses server-only AI Gateway planning and reference-image edits; per-look results live in shared React state, never fall back to demos; the exact Jason chinos sample reserves its first slot for an owned photo and renders only the other two, while the Saved detail retains OutfitResultView.

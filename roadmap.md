@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Set up attached KODI theme, fonts, logo, shared buttons and navigation; preserve existing behavior
 - [x] Match original chinos/leather-jacket uploads to Set A/B with zero AI calls; both real uploads verified, 30 focused tests pass
 - [x] Unify live and existing generated moodboard avatars; preserve all protected uploads; live male/female render verified
 - [x] Add post-Reveal budget choice with unknown skip; keep demo sets budget-independent; real budget → Upload → three looks → Saved flow verified
