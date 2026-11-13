@@ -9,7 +9,7 @@ import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategor
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
   useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -86,9 +86,6 @@ export function Upload() {
         </div>
       )}
 
-      </div>
-      <div className="mt-auto pt-8 lg:mt-0">
-        <PillButton disabled={!uploadedItem || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
       </div>
     </div>
   );
