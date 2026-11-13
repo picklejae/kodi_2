@@ -116,8 +116,8 @@ export function Upload() {
       )}
 
       </div>
-      {/* Restored CTA (removed in 465ea7c without a replacement, so looks couldn't be generated). "Me" in the key color. */}
-      <div ref={ctaRef} className="mt-auto pt-3">
+      {/* Restored CTA (removed in 465ea7c without a replacement). Anchored just above the tab bar even when the page scrolls. "Me" in the key color. */}
+      <div ref={ctaRef} className="sticky bottom-tabbar z-20 -mb-8 mt-auto bg-background pb-2 pt-3">
         <PillButton disabled={!uploadedItem || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
       </div>
     </div>
