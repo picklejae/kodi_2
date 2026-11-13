@@ -75,7 +75,7 @@ export function AppShell() {
   );
   return (
     <>
-      <PhoneFrame phone={PHONE_SCREENS.includes(s)}>{body}</PhoneFrame>
+      <PhoneFrame phone={PHONE_SCREENS.includes(s) || tab === "saved"}>{body}</PhoneFrame>
       <DevJumper />
     </>
   );

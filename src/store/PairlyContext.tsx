@@ -19,7 +19,7 @@ import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
 import { findShoppingProducts } from "@/lib/shopping.functions";
 import { MAX_ATTEMPTS, SHOPPING_TTL, shoppingKey, type ShoppingInput, type ShoppingRecord } from "@/lib/shopping";
-import { STYLE_PRESETS, stylePresetKey, PRESET_LOADING_MS } from "@/data/stylePresets";
+import { STYLE_PRESETS, stylePresetKey } from "@/data/stylePresets";
 import { originalImageIdentity, styleCacheKey, generationBody, bypassStyleCache, readStyleCache, writeStyleCache } from "@/lib/styleCache";
 import type { ConceptItem } from "@/data/moodboards";
 import { DEMO_SAMPLES, demoSetLooks, demoSetForImage } from "@/data/demoSets";
@@ -208,7 +208,6 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         token = ++runId.current;
         generation.current = null; cacheSession.current = null; existingRequest.current = null;
         setState((s) => ({ ...s, planning: true, generationError: "", generatedLooks: [], selectedConcept: defaultConcept(s.exploreLevel) }));
-        await new Promise((resolve) => setTimeout(resolve, PRESET_LOADING_MS));
         if (runId.current !== token) return;
         setState((s) => ({ ...s, uploadedItem: { ...item, category: sample.category, name: sample.name, attributes: sample.attributes }, generatedLooks: demoSetLooks(fixedSet), planning: false, generationError: "", selectedConcept: defaultConcept(s.exploreLevel) }));
         return;
@@ -234,7 +233,6 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       const preset = skipCache ? undefined : STYLE_PRESETS[stylePresetKey(imageIdentity, preference, profile.styleType)];
       if (preset) {
         showLoading();
-        await new Promise((resolve) => setTimeout(resolve, PRESET_LOADING_MS));
         if (runId.current !== token) return;
         const looks = looksFromPlan(preset.result.plan, item.name ?? item.category, item.image, preference).map((look, index) => ({ ...look, image: preset.images[index] ?? "", status: "success" as const }));
         restore(preset.result.plan, looks);

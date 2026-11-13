@@ -12,14 +12,15 @@ export function removeOutfit(items: SavedOutfit[], id: string) {
   return items.filter((item) => item.id !== id);
 }
 
-/** Default hotspot anchors by product category, in percent of the image. Tune here. */
+/** Hotspot anchors in percent of the image, fitted to the fixed 3:4 full-body mannequin render
+ *  (savedoutfit_pin_issue.png): chest, coat panel, left leg, left shoe, belt line. */
 export const HOTSPOT_POSITIONS = {
-  top: { x: 50, y: 32 },
-  outerwear: { x: 50, y: 32 },
-  bottom: { x: 50, y: 62 },
-  shoes: { x: 50, y: 92 },
-  bag: { x: 72, y: 50 },
-  accessory: { x: 72, y: 50 },
+  top: { x: 50, y: 21 },
+  outerwear: { x: 37, y: 28 },
+  bottom: { x: 45, y: 72 },
+  shoes: { x: 41, y: 91 },
+  bag: { x: 63, y: 48 },
+  accessory: { x: 50, y: 35 },
 } as const;
 export type HotspotCategory = keyof typeof HOTSPOT_POSITIONS;
 const ROLE_CATEGORY: Record<ConceptItem["role"], HotspotCategory | null> = {

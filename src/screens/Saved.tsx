@@ -4,6 +4,7 @@ import { Pencil, Minus } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
+import { PHONE_FRAME_ID } from "@/components/pairly/PhoneFrame";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -74,20 +75,20 @@ export function Saved() {
                   removing === item.id && "scale-90 opacity-0",
                 )}
               >
-                <PillButton
-                  variant="ghost"
+                <button
+                  type="button"
                   aria-label={item.productName}
                   onClick={() => {
                     if (!recentEdit) setSelected(item);
                   }}
-                  className={cn("block h-auto w-full rounded-xl p-0", recentEdit && "opacity-60")}
+                  className={cn("block w-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring", recentEdit && "opacity-60")}
                 >
                   <Photo
                     src={item.imageUrl}
                     alt={item.productName}
-                    className="aspect-square rounded-xl"
+                    className="aspect-square w-full rounded-xl"
                   />
-                </PillButton>
+                </button>
                 {recentEdit && (
                   <DeleteIcon
                     name={item.productName}
@@ -109,7 +110,7 @@ export function Saved() {
         {!outfitCount ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No saved outfits yet</p>
         ) : (
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-3">
             {savedOutfits.map((outfit) => ({
                 id: outfit.id,
                 name: outfit.ownedName,
@@ -129,17 +130,17 @@ export function Saved() {
                   removing === item.id && "scale-90 opacity-0",
                 )}
               >
-                <PillButton
-                  variant="ghost"
+                <button
+                  type="button"
                   onClick={() => openOutfit(item.id)}
                   aria-label={`Open outfit with ${item.name}`}
                   className={cn(
-                    "block aspect-[3/4] h-auto overflow-hidden rounded-2xl p-0",
+                    "block aspect-[3/4] w-full overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     savedEdit && "opacity-60",
                   )}
                 >
                   {item.content}
-                </PillButton>
+                </button>
                 {savedEdit && (
                   <DeleteIcon
                     name={`outfit with ${item.name}`}
@@ -158,11 +159,11 @@ export function Saved() {
         }}
         shouldScaleBackground={false}
       >
-        <DrawerPrimitive.Portal>
+        <DrawerPrimitive.Portal container={typeof document === "undefined" ? undefined : document.getElementById(PHONE_FRAME_ID)}>
           <DrawerPrimitive.Overlay className="recent-sheet-backdrop fixed inset-0 z-40" />
           <DrawerPrimitive.Content
             aria-describedby={undefined}
-            className="recent-sheet fixed bottom-0 left-1/2 z-50 h-auto max-h-[50dvh] w-full max-w-sheet -translate-x-1/2 rounded-t-[20px] bg-background px-4 pt-6 outline-none"
+            className="recent-sheet fixed bottom-0 left-1/2 z-50 h-auto max-h-[437px] w-full max-w-sheet -translate-x-1/2 rounded-t-[20px] bg-background px-4 pt-6 outline-none"
           >
             <div className="absolute left-1/2 top-2 h-[5px] w-9 -translate-x-1/2 rounded-full bg-muted-foreground/40" />
             {selected && (
