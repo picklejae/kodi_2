@@ -1,9 +1,8 @@
 // Static prototype: no server, so "AI" answers come from results that were already generated once.
 // planStyle picks one of three saved sets; renderStyleLook returns that set's saved image.
 // Womenswear: real women's outfit photos along the Safe / One step up / Bold ladder (see womenSet).
-// Menswear samples map by category (shirt → Oxford, pants → chinos set A, jacket/coat → leather set B);
-// uploads (always tagged "jacket" by the app) are spread across the three sets by image fingerprint.
-import { DEMO_SAMPLES, demoSetLooks } from "@/data/demoSets";
+// Menswear: only the Oxford/shirt sample has a saved set here; Jason's Set A/B load earlier by exact photo hash.
+import { demoSetLooks } from "@/data/demoSets";
 import { WOMEN_LOOKS, pexels } from "@/data/womenLooks";
 import { axisShifts, closestAxis } from "@/lib/styleGeneration";
 import type { StyleTypeCode } from "@/data/styleTypes";
@@ -45,15 +44,12 @@ function fingerprint(text: string): number {
   for (let i = 0; i < text.length; i += 97) h = (h * 31 + text.charCodeAt(i)) >>> 0;
   return h;
 }
-function pickSet(data: { category: string; name: string; reference: string }): CachedSet {
-  const sampleNames = Object.values(DEMO_SAMPLES).map((s) => s.name);
-  const isSample = /oxford|blazer|coat|denim|chinos/i.test(data.name) || sampleNames.includes(data.name);
-  if (isSample) {
-    if (data.category === "shirt" || data.category === "knit") return SETS[0];
-    if (data.category === "pants") return SETS[1];
-    return SETS[2];
-  }
-  return SETS[fingerprint(data.reference) % SETS.length];
+// Jason's two pieces never reach this stub: the app routes them to their fixed avatar sets by
+// exact photo hash before planning. For menswear only the Oxford sample has saved looks; every other
+// piece (other samples, any upload) must NOT borrow Jason's Set A/B avatars, so it reports none.
+function pickSet(data: { category: string; name: string }): CachedSet | undefined {
+  if (/oxford/i.test(data.name) || data.category === "shirt") return SETS[0];
+  return undefined;
 }
 
 // Womenswear: no saved mannequin renders exist, so use real women's outfit photos along the style ladder
@@ -96,9 +92,10 @@ function womenSet(data: { styleType: StyleTypeCode; axisScores: number[]; refere
 const dynamicSets = new Map<string, CachedSet>();
 
 export async function planStyle({ data }: { data: { category: string; name: string; reference: string; preference?: string; styleType: StyleTypeCode; axisScores: number[] } }) {
-  let set: CachedSet;
+  let set: CachedSet | undefined;
   if (data.preference === "womenswear") { set = womenSet(data); dynamicSets.set(set.id, set); }
   else set = pickSet(data);
+  if (!set) return { ok: false as const, error: "This prototype only has saved looks for the Oxford shirt and Jason's demo pieces. Other pieces are styled live in the full app." };
   return { ok: true as const, plan: { presentation: set.presentation, looks: set.looks.map(({ image: _image, ...look }, index) => ({ ...look, styling: `proto:${set.id}:${index}` })) } };
 }
 export async function renderStyleLook({ data }: { data: { styling: string } }) {

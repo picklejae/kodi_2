@@ -166,36 +166,16 @@ describe("Style loading", () => {
     await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(2));
     expect(mocks.plan.mock.calls[1]?.[0].data.styleType).toBe("RNPS");
   });
-  it("keeps Jason’s real first look and generates only the other two", async () => {
+  it("routes Jason’s chinos sample to his fixed Set A avatars without any AI calls", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ ...JASON_SAMPLE, source: "sample" }));
-    expect(result.current.generatedLooks?.[0]?.name).toBe("From your closet");
     act(() => result.current.findMatches());
-    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(result.current.generatedLooks?.[0]?.demoSet).toBe("set-a"), { timeout: 4000 });
     expect(result.current.generatedLooks).toHaveLength(3);
-    expect(result.current.generatedLooks?.[0]?.items.map((i) => i.name)).toEqual(["Navy waxed jacket", "Blue check shirt", "Beige wide chinos", "Black lace-up boots"]);
-    expect(result.current.generatedLooks?.[0]?.items.every((i) => i.owned && i.price === null && i.shopUrl === null)).toBe(true);
-    expect(result.current.generatedLooks?.[0]?.status).toBe("success");
-    const own = result.current.generatedLooks?.[0], item = own?.items[0];
-    if (!own || !item) throw new Error("Missing closet look");
-    act(() => result.current.searchShopping(own, item));
-    expect(mocks.shopping).not.toHaveBeenCalled();
-    act(() => result.current.findMatches());
-    expect(mocks.plan).toHaveBeenCalledTimes(1);
-  });
-  it("preserves Jason’s photo when planning fails and supports retry", async () => {
-    mocks.plan.mockResolvedValueOnce({ ok: false, error: "Planning unavailable" });
-    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
-    act(() => result.current.setStylePreference("menswear"));
-    act(() => result.current.setUploadedItem({ ...JASON_SAMPLE, source: "sample" }));
-    const photo = result.current.generatedLooks?.[0]?.image;
-    act(() => result.current.findMatches());
-    await waitFor(() => expect(result.current.generationError).toBe("Planning unavailable"));
-    expect(result.current.generatedLooks?.map((l) => l.status)).toEqual(["success", "failed", "failed"]);
-    expect(result.current.generatedLooks?.[0]?.image).toBe(photo);
-    act(() => result.current.retryLook(1));
-    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(2));
+    expect(result.current.generatedLooks?.every((look) => look.demoSet === "set-a" && look.status === "success")).toBe(true);
+    expect(mocks.plan).not.toHaveBeenCalled();
+    expect(mocks.render).not.toHaveBeenCalled();
   });
   it("a regular upload with the same name still generates all three", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });

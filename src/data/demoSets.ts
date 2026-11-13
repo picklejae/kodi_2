@@ -16,8 +16,11 @@ export const DEMO_UPLOAD_HASHES: Record<DemoSetId, string> = {
   "set-a": "0f183ab5581ef666aafd63f0d670ab7fa067e5bf6eeca6b206b87ab4ae845cc3",
   "set-b": "ca36cbeda09bbfeeec1cd216c5b92f1beda4be033c1f0c0d4105f0fe34049255",
 };
+/** Built-in sample ids that stand for Jason's own pieces (e.g. the chinos in Saved recents). */
+export const DEMO_SAMPLE_IDS: Record<string, DemoSetId> = { "jason-chinos": "set-a", "set-a": "set-a", "set-b": "set-b" };
+/** Only Jason's exact pieces map to his fixed avatar sets; every other sample or upload gets its own looks. */
 export function demoSetForImage(identity: string): DemoSetId | undefined {
-  return (["set-a", "set-b"] as const).find((id) => DEMO_UPLOAD_HASHES[id] === identity);
+  return (["set-a", "set-b"] as const).find((id) => DEMO_UPLOAD_HASHES[id] === identity) ?? DEMO_SAMPLE_IDS[identity];
 }
 export const DEMO_SAMPLES: Record<DemoSetId, SampleItem> = {
   "set-a": { id: "set-a", name: "Beige chinos", image: chinos.url, category: "pants", attributes: ["Beige", "Cotton", "Wide"] },
