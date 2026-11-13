@@ -23,7 +23,7 @@ export function Diagnosis() {
         <div className="h-full bg-primary transition-all" style={{ width: `${((i + 1) / ROUNDS.length) * 100}%` }} />
       </div>
       <h2 className="mt-5 font-serif text-3xl">Does this feel like you?</h2>
-      <div className="relative mx-auto mt-5 h-[373px] w-full max-w-card">
+      <div className="relative mx-auto mt-5 aspect-[640/913] h-[373px]">
         {ROUNDS.slice(i, i + 2).reverse().map((card, index, cards) => (
           <SwipePhotoCard key={card.id} image={card.image} alt={`Outfit ${card.id}`} top={index === cards.length - 1}
             onSwipe={(yes) => answer(yes ? "yes" : "no")} positiveStamp={<Heart className="h-7 w-7" />} negativeStamp={<X className="h-7 w-7" />} />
