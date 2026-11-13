@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Replace Style results with three coordinated model-worn demo concepts and complete outfit items
+- [x] Verify Camel coat input, selectors, preserved preferences, desktop layout and unchanged tabs
 - [x] Rename navigation to Style, Feed, Closet and Me, including headers, detail route and DEV names
 - [x] Add and verify a first-visit, tap-dismiss Feed swipe hint
 - [x] Make Recents a content-height iOS-style sheet capped at 50dvh

@@ -32,7 +32,8 @@ use the editor.
 ## Project rules
 - Main demo screens switch through PairlyContext on `/`; closet outfit details use `/closet/$id`, with the provider at the root so in-memory collections survive navigation.
 - Track Feed hint dismissal in shared React state; why: it appears only once per demo session across tab and detail navigation, without persistence.
-- Share OutfitResultView between recommendations and saved details; why: board, product rows and future layout updates must stay consistent.
+- Style results use independent moodboard demo records; Closet retains OutfitResultView so the new concept-first flow does not alter saved details.
+- Keep selected Style concept in shared React state and expand only Style results on desktop; why: look selection survives tab navigation without widening other screens.
 - Saved collections and uploads remain in React state with literal mock seeds; why: this demo intentionally resets on refresh without a backend.
 - Mock data lives in `src/data/*`, pure logic in `src/lib/*` with vitest tests beside it; why: keeps rules testable without UI.
 - Share swipe gestures through SwipePhotoCard across quiz and Social; why: keeps drag, tilt, stamps, and cancellation consistent.

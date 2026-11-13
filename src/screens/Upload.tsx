@@ -102,7 +102,7 @@ export function Upload() {
       )}
 
       <div className="mt-auto pt-8">
-        <PillButton disabled={!uploadedItem || analyzing} onClick={findMatches}>Find 3 matches</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing} onClick={findMatches}>Create outfit moodboards</PillButton>
       </div>
     </div>
   );

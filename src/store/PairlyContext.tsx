@@ -38,6 +38,7 @@ interface PairlyState {
   occasion: Occasion | null;
   note: string;
   shopClicks: number;
+  selectedConcept: number;
   picks: Picks | null;
   savedItems: string[];
   savedLooks: SavedLook[];
@@ -48,7 +49,7 @@ interface PairlyState {
   feedHintDismissed: boolean;
 }
 
-const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
+const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
 
 interface PairlyCtx extends PairlyState {
   recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
@@ -63,6 +64,7 @@ interface PairlyCtx extends PairlyState {
   setUploadedItem: (i: UploadedItem | null) => void;
   setOccasion: (o: Occasion | null) => void;
   setNote: (note: string) => void;
+  setSelectedConcept: (index: number) => void;
   countShopClick: () => void;
   findMatches: () => void;
   toggleSave: (id: string) => boolean;
@@ -113,9 +115,10 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       setState((s) => (s.answers.length ? { ...s, answers: s.answers.slice(0, -1) } : { ...s, screen: "welcome" })),
     retake: () => setState((s) => ({ ...s, answers: [], quizSkipped: false, screen: "diagnosis" })),
     reset: () => setState(initial),
-    setUploadedItem: (uploadedItem) => setState((s) => ({ ...s, uploadedItem })),
+    setUploadedItem: (uploadedItem) => setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0 })),
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),
     setNote: (note) => setState((s) => ({ ...s, note })),
+    setSelectedConcept: (selectedConcept) => setState((s) => ({ ...s, selectedConcept })),
     countShopClick: () => setState((s) => ({ ...s, shopClicks: s.shopClicks + 1 })),
     findMatches: () =>
       setState((s) => s.uploadedItem ? {
