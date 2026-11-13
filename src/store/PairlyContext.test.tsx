@@ -133,7 +133,7 @@ describe("quiz state", () => {
     expect(result.current.quizSkipped).toBe(true);
     expect(result.current.exploreLevel).toBe("low");
     expect(result.current.axisScores).toEqual([0.5, 0.5, 0.5, 0.5]);
-    expect(result.current.screen).toBe("reveal");
+    expect(result.current.screen).toBe("upload"); // Skip Quiz now goes straight to Style (ec6a16c)
   });
   it("retake keeps the owned item and completing 12 swipes stores exploration", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });

@@ -4,14 +4,15 @@ import { usePairly } from "@/store/PairlyContext";
 import { PRESETS, devButtonVisible, parsePresetParams } from "@/lib/devPresets";
 import { SAMPLES } from "@/data/samples";
 import { SCREEN_PATHS, type ScreenPath } from "@/lib/screenPaths";
-import { DEFAULT_CODE } from "@/data/styleTypes";
+import { DEFAULT_CODE, STYLE_TYPES, type StyleTypeCode } from "@/data/styleTypes";
 
 const KEY = "pairly.devHidden";
 
 export function DevJumper() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loadPreset, shopClicks } = usePairly();
+  const { loadPreset, shopClicks, stylePreference, setStylePreference } = usePairly();
+  const [allTypes, setAllTypes] = useState(false);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -64,6 +65,21 @@ export function DevJumper() {
           {(Object.entries(SCREEN_PATHS) as [ScreenPath, string][]).map(([path, label]) => (
             <button key={path} className={`block w-full rounded px-2 py-1.5 text-left hover:bg-muted ${location.pathname === path ? "font-bold" : ""}`} onClick={() => { navigate({ to: path }); setOpen(false); }}>{label}</button>
           ))}
+          <hr className="my-1 border-border" />
+          {/* Every Style Passport (quiz result) for review: pick Men/Women, then a type. */}
+          <button className="block w-full rounded px-2 py-1.5 text-left hover:bg-muted" aria-expanded={allTypes} onClick={() => setAllTypes((v) => !v)}>Style Passport · all 16 {allTypes ? "▾" : "▸"}</button>
+          {allTypes && <div className="px-1 pb-1">
+            <div className="mb-1 grid grid-cols-2 gap-1">
+              {(["menswear", "womenswear"] as const).map((p) => <button key={p} className={`rounded border px-2 py-1 ${stylePreference === p ? "border-foreground font-bold" : "border-border"}`} onClick={() => setStylePreference(p)}>{p === "menswear" ? "Men" : "Women"}</button>)}
+            </div>
+            <div className="max-h-60 overflow-y-auto">
+              {(Object.keys(STYLE_TYPES) as StyleTypeCode[]).map((code) => (
+                <button key={code} className="block w-full rounded px-2 py-1 text-left hover:bg-muted" onClick={() => { const sample = SAMPLES[0]; if (sample) loadPreset({ preset: "reveal", type: code, sample }); setOpen(false); }}>
+                  <span className="font-mono text-muted-foreground">{code}</span> {STYLE_TYPES[code].name}
+                </button>
+              ))}
+            </div>
+          </div>}
           <hr className="my-1 border-border" />
           <p className="px-2 py-1.5 text-muted-foreground">Shop taps: {shopClicks}</p>
           <button

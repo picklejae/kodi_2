@@ -28,7 +28,7 @@ export function Me() {
     setBody({ ...body, heightCm: ((ft ?? 0) * 12 + (inch ?? 0)) * CM_PER_IN });
   };
   return (
-    <div className="px-screen pb-8 pt-12 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+    <div className="px-screen pb-8 pt-12">
       <div>
       <h1 className="text-title font-bold">Me</h1>
 

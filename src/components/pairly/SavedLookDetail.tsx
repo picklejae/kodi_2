@@ -20,7 +20,7 @@ export function SavedLookDetail({ id }: { id?: string }) {
     navigate({ to: "/menu2-saved" });
   };
   return (
-    <PhoneFrame phone>
+    <PhoneFrame>
       <div className="px-6 pb-32 pt-12">
         <div className="flex items-center gap-3">
           <PillButton variant="ghost" aria-label="Back to Saved" onClick={back} className="h-9 w-9 px-0">

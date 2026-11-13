@@ -32,7 +32,7 @@ export function Results() {
       <PillButton variant="ghost" onClick={regenerate} disabled={planning || looks.some((look) => look.status === "loading")} className="mt-2 h-8 w-auto self-start px-0 text-xs font-normal underline underline-offset-4">Regenerate</PillButton>
       <p className="mt-4 text-[10px] text-muted-foreground">{active.demoSet ? "Demo outfit" : looks[0]?.id === "jason-closet" ? "Your closet photo + two AI styling concepts" : "AI styling concepts · garment details and fit may vary"}</p>
       {looks.some((look) => look.status === "idle") && <PillButton className="mt-3" onClick={findMatches}>Create New Looks</PillButton>}
-      <div className="lg:grid lg:grid-cols-[14fr_11fr] lg:items-start lg:gap-screen">
+      <div>
       <div className="mt-screen" aria-label="Outfit moodboards">
         {looks.map((look, index) => <div key={look.id} className={cn(active.id !== look.id && "hidden")}><div className="relative">
           <PillButton variant="ghost" aria-label={`Select ${look.name} outfit`} aria-pressed={active.id === look.id} onClick={() => setSelectedConcept(index)} className={cn("relative block aspect-[3/4] h-auto overflow-hidden rounded-2xl p-0 ring-2 ring-offset-2 ring-offset-background active:scale-100", active.id === look.id ? "ring-primary" : "ring-transparent")}>

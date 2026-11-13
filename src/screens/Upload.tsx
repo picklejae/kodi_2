@@ -7,9 +7,10 @@ import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
 import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
+import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, retake, quizSkipped, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
   useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -28,11 +29,11 @@ export function Upload() {
     uploadedItem && setUploadedItem({ ...uploadedItem, category: c, attributes: GENERIC_ATTRIBUTES[c] });
 
   return (
-    <div className="flex flex-1 flex-col px-screen pb-8 pt-12 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+    <div className="flex flex-1 flex-col px-screen pb-8 pt-12">
       <div>
       <div className="flex items-center gap-2">
-        <button onClick={() => go("reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
-        <StyleTypeChip />
+        <button onClick={() => go(quizSkipped ? "welcome" : "reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
+        {quizSkipped ? <TextLinkButton onClick={retake}>Find Your Style</TextLinkButton> : <StyleTypeChip />}
       </div>
       <h1 className="mt-6 text-title font-bold">Style</h1>
       <p className="mt-2 text-sm text-muted-foreground">Snap one piece you already own.</p>
@@ -86,9 +87,6 @@ export function Upload() {
         </div>
       )}
 
-      </div>
-      <div className="mt-auto pt-8 lg:mt-0">
-        <PillButton disabled={!uploadedItem || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
       </div>
     </div>
   );
