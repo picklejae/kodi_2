@@ -42,7 +42,7 @@ function SavedOutfitDetail() {
         <div className="flex items-center gap-3">
           <PillButton
             variant="ghost"
-            aria-label="Back to Looks"
+            aria-label="Back to Saved"
             onClick={back}
             className="h-9 w-9 px-0"
           >
@@ -62,7 +62,7 @@ function SavedOutfitDetail() {
           <>
             <p className="text-sm text-muted-foreground">This outfit is no longer saved.</p>
             <PillButton className="mt-5" onClick={back}>
-              Back to Looks
+              Back to Saved
             </PillButton>
           </>
         )}
