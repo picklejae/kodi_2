@@ -1,0 +1,52 @@
+# Prototype site: builds the static KODI prototype from the proto branch and deploys it to GitHub Pages.
+# Lovable never uses this (it only syncs main). Pages → Source must be "GitHub Actions".
+name: proto-pages
+on:
+  push:
+    branches: [proto]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: proto-pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: proto
+          fetch-depth: 0
+      - name: Merge latest main into proto
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          if ! git merge-base --is-ancestor origin/main HEAD; then
+            git merge --no-edit -m "Merge main into proto (auto)" origin/main
+            git push origin HEAD:proto
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Build static prototype
+        run: npm run build:pages
+        env:
+          PAGES_BASE: /kodi_2/
+      - run: touch dist-pages/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

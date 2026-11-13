@@ -1,10 +1,10 @@
 # proto ↔ Lovable diff log
 
 Repo: **picklejae/kodi_2** (moved here 11/13 from marco318/pairly). `main` = what Lovable has (Lovable syncs only `main`). `proto` = Claude's local prototype, published at
-https://marco318.github.io/pairly-notes/kodi/ for the team. Lovable never sees this branch.
+https://picklejae.github.io/kodi_2/ (GitHub Actions: `.github/workflows/proto-pages.yml`, runs on every push to proto and merges main first) and the older mirror https://marco318.github.io/pairly-notes/kodi/. Lovable never sees this branch.
 
 - See every difference: `git diff main..proto -- src`
-- Prototype-only plumbing (never port to Lovable): `pages/`, `vite.pages.config.ts`, `build:pages` script, `.gitignore` lines
+- Prototype-only plumbing (never port to Lovable): `.github/workflows/proto-pages.yml`, `pages/`, `vite.pages.config.ts`, `build:pages` script, `.gitignore` lines
 - Build: `npm run build:pages` → `dist-pages/` → copy into `pairly-notes/kodi/`
 - When an item lands in Lovable: mark it ✅ with the Lovable commit, then merge `main` into `proto`
 
