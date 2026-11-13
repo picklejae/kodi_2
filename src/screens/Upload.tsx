@@ -7,6 +7,7 @@ import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
 import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 import { Button, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
+import { PillButton } from "@/components/pairly/PillButton";
 
 export function Upload() {
   const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, retake, quizSkipped, findMatches, planning, generatedLooks, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
