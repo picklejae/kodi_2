@@ -46,17 +46,17 @@ export const ROUNDS: DiagnosisCard[] = [
 // Original AI-generated womenswear lookbook photos (faces cropped), same studio style as menswear.
 // Tags are demo annotations; all 16 Style Types are reachable.
 export const WOMEN_ROUNDS: DiagnosisCard[] = [
-  { id: 1, image: women01, tags: "RNPF" }, // black oversized blazer, ivory knit, grey trousers
+  { id: 1, image: women01, tags: "TNPF" }, // cropped black blazer, navy satin slip dress (11/13: replaced a menswear-looking photo)
   { id: 2, image: women02, tags: "RCPF" }, // dusty-pink puff-sleeve linen midi dress
   { id: 3, image: women03, tags: "RCDS" }, // light-blue linen sundress, crochet cardigan
-  { id: 4, image: women04, tags: "TNDS" }, // indigo denim chore jacket, raw straight jeans, boots
+  { id: 4, image: women04, tags: "TCPF" }, // olive long vest, wide trousers, satin blouse (11/13: replaced a menswear-looking photo)
   { id: 5, image: women05, tags: "TCPF" }, // lilac blazer and flared midi skirt suit
-  { id: 6, image: women06, tags: "TNPS" }, // cream and navy track jacket, track pants
+  { id: 6, image: women06, tags: "RNPS" }, // navy breton stripe, white linen wide trousers (11/13: replaced a menswear-looking photo)
   { id: 7, image: women07, tags: "RCDF" }, // rust floral tiered maxi dress, suede boots
-  { id: 8, image: women08, tags: "RNDS" }, // black bomber, white tee, charcoal wide cargos
+  { id: 8, image: women08, tags: "RCDF" }, // rust blouse, floral tiered maxi skirt (11/13: replaced a menswear-looking photo)
   { id: 9, image: women09, tags: "TCDF" }, // butter-yellow cardigan, plaid pleated skirt, loafers
   { id: 10, image: women10, tags: "TCPF" }, // emerald satin slip dress
-  { id: 11, image: women11, tags: "TCDS" }, // green shell jacket, charcoal knit, black trousers
+  { id: 11, image: women11, tags: "TCDF" }, // burgundy cardigan, plaid pleated skirt, loafers (11/13: replaced a menswear-looking photo)
   { id: 12, image: women12, tags: "RNPS" }, // denim jacket, white tee, ecru wide jeans
 ];
 
