@@ -49,4 +49,4 @@ use the editor.
 - Keep legacy SAMPLES order for unchanged DEV defaults; use UPLOAD_SAMPLES for the Jason-first chooser, and store uploaded Jason media as local CDN asset pointers; why: preserves presets without committing binary uploads.
 - Pass garment first and the fixed avatar reference second to image edits; isolate presentation-version caches so old human-model renders cannot restore into new runs.
 - Keep unknown budget explicit in shared state; apply ranges only to shopping, not outfit rendering or static demo sets, so budget changes never replace fixed outfits.
-- DEV Set results use static uploaded image pointers and literal descriptive piece data, never inference; why: booth shortcuts bypass onboarding and preserve original uploads.
+- DEV Set results and exact original-byte hash matches use static uploaded image pointers and literal descriptive piece data, never inference; Regenerate/nocache still bypass upload matches; why: demo photos load fixed outfits without filename-based false matches.

@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Match original chinos/leather-jacket uploads to Set A/B with zero AI calls; verify both uploads
 - [x] Unify live and existing generated moodboard avatars; preserve all protected uploads; live male/female render verified
 - [x] Add post-Reveal budget choice with unknown skip; keep demo sets budget-independent; real budget → Upload → three looks → Saved flow verified
 - [x] Add Set A/B DEV results and verify tests and live rendering; 93 tests pass, current app checks clean
