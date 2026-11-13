@@ -1,4 +1,5 @@
-import { ChevronLeft, ImageIcon, RefreshCw, Loader2 } from "lucide-react";
+import { ChevronLeft, Heart, ImageIcon, RefreshCw, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Chip } from "@/components/pairly/Chip";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
@@ -8,7 +9,7 @@ import { usePairly } from "@/store/PairlyContext";
 import { ShoppingSection } from "@/components/pairly/ShoppingSection";
 
 export function Results() {
-  const { uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches } = usePairly();
+  const { uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, saveLook, savedOutfits } = usePairly();
   if (!uploadedItem) return <div className="flex flex-1 items-center justify-center px-6"><PillButton onClick={() => go("upload")}>Pick a piece first</PillButton></div>;
   const looks = generatedLooks ?? [];
   const active = looks[selectedConcept] ?? looks[0];
@@ -41,7 +42,11 @@ export function Results() {
       <div id="selected-concept" role="tabpanel" aria-labelledby={`concept-${active.id}`} className="mt-7">
         <h2 className="font-serif text-3xl">{active.name}</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed">{active.explanation}</p>
-        <div className="mt-5 flex flex-wrap gap-2"><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">More casual · Demo</PillButton><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">Lower budget · Demo</PillButton></div>
+        <div className="mt-5 flex flex-wrap gap-2"><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">More casual · Demo</PillButton><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">Lower budget · Demo</PillButton>
+        {active.status === "success" && active.image && active.id !== "jason-closet" && (() => {
+          const alreadySaved = savedOutfits.some((outfit) => outfit.id === `${active.id}:${active.image?.length}`);
+          return <PillButton variant="outline" aria-pressed={alreadySaved} onClick={() => { if (saveLook(active)) toast("Saved to your Looks"); }} className="h-9 w-auto gap-1 px-3 text-xs"><Heart className={alreadySaved ? "h-3 w-3 fill-foreground" : "h-3 w-3"} />{alreadySaved ? "Saved" : "Save look"}</PillButton>;
+        })()}</div>
         {active.id === "jason-closet" ? <section className="mt-7"><h3 className="font-serif text-2xl">In your closet</h3><div className="mt-3 divide-y divide-border">{active.items.map((item) => <div key={item.name} className="flex flex-wrap items-center justify-between gap-2 py-3"><p className="text-sm">{item.name}{item.role === "Your piece" ? " (your piece)" : ""}</p><Chip className="text-[10px]">In your closet</Chip></div>)}</div></section> : <ShoppingSection look={active} />}
       </div>
     </div>

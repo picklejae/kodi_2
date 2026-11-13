@@ -1,32 +1,14 @@
-import { Sparkles, User, GalleryVerticalEnd } from "lucide-react";
+import { Sparkles, User, GalleryVerticalEnd, Heart } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import { useNavigate, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { usePairly, type Tab } from "@/store/PairlyContext";
 import { PillButton } from "@/components/pairly/PillButton";
 
-function WardrobeIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="4" y="3" width="16" height="17" rx="2" />
-      <path d="M12 3v17M9 10v3M15 10v3M6 20v1M18 20v1" />
-    </svg>
-  );
-}
-
 const TABS: { id: Tab; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
   { id: "style", label: "Style", Icon: Sparkles },
+  { id: "saved", label: "Saved", Icon: Heart },
   { id: "feed", label: "Feed", Icon: GalleryVerticalEnd },
-  { id: "closet", label: "Closet", Icon: WardrobeIcon },
   { id: "me", label: "Me", Icon: User },
 ];
 
@@ -55,7 +37,7 @@ export function BottomTabBar() {
         >
           <Icon
             strokeWidth={2}
-            className={cn("h-5 w-5", id !== "closet" && activeTab === id && "fill-foreground/10")}
+            className={cn("h-5 w-5", activeTab === id && "fill-foreground/10")}
           />
           {label}
         </PillButton>

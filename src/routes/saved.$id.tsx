@@ -7,15 +7,15 @@ import { OutfitResultView } from "@/components/pairly/OutfitResultView";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
 import { DevJumper } from "@/components/pairly/DevJumper";
 import { usePairly } from "@/store/PairlyContext";
-export const Route = createFileRoute("/closet/$id")({
+export const Route = createFileRoute("/saved/$id")({
   head: () => ({
     meta: [
-      { title: "Closet outfit · Pairly" },
+      { title: "Saved outfit · Pairly" },
       {
         name: "description",
         content: "Revisit your saved outfit and shop the pieces paired with your own.",
       },
-      { property: "og:title", content: "Closet outfit · Pairly" },
+      { property: "og:title", content: "Saved outfit · Pairly" },
       {
         property: "og:description",
         content: "Revisit your saved outfit and shop the pieces paired with your own.",
@@ -28,13 +28,12 @@ export const Route = createFileRoute("/closet/$id")({
 });
 function SavedOutfitDetail() {
   const { id } = Route.useParams();
-  const { savedOutfits, savedLooks, setTab, go, screen } = usePairly();
+  const { savedOutfits, setTab, go, screen } = usePairly();
   const navigate = useNavigate();
   const outfit = savedOutfits.find((o) => o.id === id);
-  const snapshot = savedLooks.find((o) => o.id === id);
   const back = () => {
     if (screen === "welcome") go("upload");
-    setTab("closet");
+    setTab("saved");
     navigate({ to: "/" });
   };
   return (
@@ -43,7 +42,7 @@ function SavedOutfitDetail() {
         <div className="flex items-center gap-3">
           <PillButton
             variant="ghost"
-            aria-label="Back to Closet"
+            aria-label="Back to Saved"
             onClick={back}
             className="h-9 w-9 px-0"
           >
@@ -51,26 +50,19 @@ function SavedOutfitDetail() {
           </PillButton>
           <StyleTypeChip />
         </div>
-        <h1 className="mb-6 mt-6 font-serif text-4xl">Closet outfit</h1>
+        <h1 className="mb-6 mt-6 font-serif text-4xl">Saved outfit</h1>
         {outfit ? (
           <OutfitResultView
-            pick={outfit.look}
-            itemImage={outfit.ownedImage}
+            lookName={outfit.lookName}
+            explanation={outfit.explanation}
             imageUrl={outfit.imageUrl}
             products={outfit.products}
-            showTierTabs={false}
-          />
-        ) : snapshot ? (
-          <OutfitResultView
-            pick={snapshot.look}
-            itemImage={snapshot.ownedImage}
-            showTierTabs={false}
           />
         ) : (
           <>
             <p className="text-sm text-muted-foreground">This outfit is no longer saved.</p>
             <PillButton className="mt-5" onClick={back}>
-              Back to Closet
+              Back to Saved
             </PillButton>
           </>
         )}

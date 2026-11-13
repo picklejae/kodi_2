@@ -10,43 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ClosetIdRouteImport } from './routes/closet.$id'
+import { Route as SavedIdRouteImport } from './routes/saved.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClosetIdRoute = ClosetIdRouteImport.update({
-  id: '/closet/$id',
-  path: '/closet/$id',
+const SavedIdRoute = SavedIdRouteImport.update({
+  id: '/saved/$id',
+  path: '/saved/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/closet/$id': typeof ClosetIdRoute
+  '/saved/$id': typeof SavedIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/closet/$id': typeof ClosetIdRoute
+  '/saved/$id': typeof SavedIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/closet/$id': typeof ClosetIdRoute
+  '/saved/$id': typeof SavedIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/closet/$id'
+  fullPaths: '/' | '/saved/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/closet/$id'
-  id: '__root__' | '/' | '/closet/$id'
+  to: '/' | '/saved/$id'
+  id: '__root__' | '/' | '/saved/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ClosetIdRoute: typeof ClosetIdRoute
+  SavedIdRoute: typeof SavedIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +58,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/closet/$id': {
-      id: '/closet/$id'
-      path: '/closet/$id'
-      fullPath: '/closet/$id'
-      preLoaderRoute: typeof ClosetIdRouteImport
+    '/saved/$id': {
+      id: '/saved/$id'
+      path: '/saved/$id'
+      fullPath: '/saved/$id'
+      preLoaderRoute: typeof SavedIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ClosetIdRoute: ClosetIdRoute,
+  SavedIdRoute: SavedIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

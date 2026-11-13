@@ -1,4 +1,8 @@
 # Roadmap
+- [x] Rename Closet tab/route back to Saved with Heart icon; tab order Style, Saved, Feed, Me
+- [x] Saved Looks show curated AI outfits saved from Style (newest first), seeded with three camel-coat examples; flat-lay boards removed
+- [x] One consistent full-body composition in the Style image prompt; category-based hotspot config with 12% duplicate offset
+- [x] Me settings: Body (cm/kg ↔ ft·in/lb) and Budget ($0–$500 dual slider) in shared state, wired into image generation and shopping filters
 - [x] Correct the Style failure-state optional-array type error and update collection regression tests for Jason’s seeds
 - [ ] Jason demo user: use the earlier photos for Upload, selected-sample Results, Closet and Me; verify owned markers, two AI looks, error survival and unchanged presets
 - [ ] Studio onboarding photos: paused after interrupted edits; waiting for the photo task to resume

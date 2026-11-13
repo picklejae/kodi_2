@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import type { GeneratedLook } from "@/lib/styleGeneration";
 import { PairlyProvider, usePairly } from "./PairlyContext";
 
 describe("quiz state", () => {
@@ -9,7 +10,7 @@ describe("quiz state", () => {
     expect(result.current.feedHintDismissed).toBe(false);
     act(() => result.current.setTab("feed"));
     act(() => result.current.dismissFeedHint());
-    act(() => result.current.setTab("closet"));
+    act(() => result.current.setTab("saved"));
     act(() => result.current.setTab("feed"));
     expect(result.current.feedHintDismissed).toBe(true);
     act(() => result.current.reset());
@@ -22,27 +23,50 @@ describe("quiz state", () => {
     expect(result.current.recentItems[0]?.imageUrl).toBe("new-photo");
     expect(result.current.recentItems).toHaveLength(8);
     act(() => result.current.deleteRecent("jason-chinos"));
-    expect(result.current.savedOutfits.some((outfit) => outfit.ownedItemId === "jason-chinos")).toBe(true);
+    expect(result.current.savedOutfits).toHaveLength(3);
     act(() => result.current.deleteSavedOutfit("outfit-1"));
-    expect(result.current.savedOutfits).toHaveLength(7);
+    expect(result.current.savedOutfits).toHaveLength(2);
     act(() => result.current.reset());
     expect(result.current.recentItems).toHaveLength(7);
-    expect(result.current.savedOutfits).toHaveLength(8);
+    expect(result.current.savedOutfits).toHaveLength(3);
   });
-  it("saving a pick retains its whole look and owned image after another upload", () => {
+  it("saves a generated look to the front of Looks only once", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
-    act(() => result.current.setUploadedItem({ image: "first-piece", category: "jacket", attributes: [], source: "upload" }));
-    act(() => result.current.findMatches());
-    const item = result.current.picks?.safe.items[0];
-    if (!item) throw new Error("Missing pick");
-    act(() => result.current.toggleSave(item.id));
-    expect(result.current.savedLooks.some((entry) => entry.ownedImage === "first-piece" && entry.look.items.some((i) => i.id === item.id))).toBe(true);
-    act(() => result.current.setUploadedItem({ image: "second-piece", category: "pants", attributes: [], source: "upload" }));
-    act(() => result.current.findMatches());
-    expect(result.current.savedLooks[0]?.ownedImage).toBe("first-piece");
-    act(() => result.current.toggleSave(item.id));
-    expect(result.current.savedLooks).toHaveLength(0);
+    const look: GeneratedLook = {
+      id: "ai-0", preference: "menswear", department: "men", name: "Tailored", explanation: "Charcoal sharpens the camel.", styling: "styling", status: "success",
+      image: "data:image/jpeg;base64,aaaa",
+      items: [
+        { role: "Your piece", name: "Camel coat", owned: true, brand: null, price: null, shopUrl: null },
+        { role: "Shoes", name: "Black loafers", owned: false, brand: null, price: null, shopUrl: null },
+      ],
+    };
+    let saved = false;
+    act(() => { saved = result.current.saveLook(look); });
+    expect(saved).toBe(true);
+    expect(result.current.savedOutfits).toHaveLength(4);
+    expect(result.current.savedOutfits[0]?.lookName).toBe("Tailored");
+    expect(result.current.savedOutfits[0]?.ownedName).toBe("Camel coat");
+    expect(result.current.savedOutfits[0]?.products).toHaveLength(2);
+    act(() => { saved = result.current.saveLook(look); });
+    expect(saved).toBe(false);
+    expect(result.current.savedOutfits).toHaveLength(4);
+    const { image: _image, ...withoutImage } = look;
+    act(() => { saved = result.current.saveLook({ ...withoutImage, status: "loading" }); });
+    expect(saved).toBe(false);
+  });
+  it("stores body stats, units and budget range until reset", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setBody({ heightCm: 178, weightKg: 72 }));
+    act(() => result.current.setUnits("imperial"));
+    act(() => result.current.setBudget({ min: 50, max: 200 }));
+    expect(result.current.body).toEqual({ heightCm: 178, weightKg: 72 });
+    expect(result.current.units).toBe("imperial");
+    expect(result.current.budget).toEqual({ min: 50, max: 200 });
+    act(() => result.current.reset());
+    expect(result.current.body).toEqual({ heightCm: null, weightKg: null });
+    expect(result.current.units).toBe("metric");
+    expect(result.current.budget).toEqual({ min: 0, max: 500 });
   });
   it("posting retains both old and new boards with their pick metadata", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
@@ -59,7 +83,6 @@ describe("quiz state", () => {
     expect(mine.map((p) => p.image)).toEqual(["board-two", "board-one"]);
     expect(mine.every((p) => p.look?.items.length === 2 && p.ownedImage === "owned")).toBe(true);
     act(() => result.current.reset());
-    expect(result.current.savedLooks).toHaveLength(0);
     expect(result.current.posts.some((p) => p.isUserPost)).toBe(false);
   });
   it("carries the optional note to Results and counts every shop tap until reset", () => {

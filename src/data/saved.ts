@@ -1,13 +1,15 @@
 import type { ItemCategory } from "./samples";
-import type { CatalogItem } from "./catalog";
-import type { Pick } from "@/lib/matching";
+import type { ConceptItem } from "./moodboards";
 import r1 from "@/assets/recent-item-1.jpg";
 import r2 from "@/assets/recent-item-2.jpg";
 import r3 from "@/assets/recent-item-3.jpg";
 import r4 from "@/assets/recent-item-4.jpg";
 import r5 from "@/assets/recent-item-5.jpg";
 import r6 from "@/assets/recent-item-6.jpg";
-import { JASON_FITS, JASON_SAMPLE, JASON_EXPLANATION } from "./jason";
+import tailored from "@/assets/moodboards/camel-tailored.jpg";
+import contrast from "@/assets/moodboards/camel-soft-contrast.jpg";
+import evening from "@/assets/moodboards/camel-evening.jpg";
+import { JASON_SAMPLE } from "./jason";
 export interface RecentItem {
   id: string;
   imageUrl: string;
@@ -16,25 +18,14 @@ export interface RecentItem {
   category: ItemCategory;
   attributes?: string[];
 }
-export interface SavedProduct {
-  id: string;
-  name: string;
-  brand: string;
-  price: string;
-  thumbnailUrl: string;
-  shopUrl: string;
-  x: number;
-  y: number;
-  isOwned: boolean;
-}
+/** A curated outfit the user saved from Style: the AI model-worn image plus its products. */
 export interface SavedOutfit {
   id: string;
   imageUrl: string;
-  ownedItemId: string;
-  ownedImage: string;
+  lookName: string;
+  explanation: string;
   ownedName: string;
-  products: SavedProduct[];
-  look: Pick;
+  products: ConceptItem[];
 }
 const names = [
   "Brown Sweater",
@@ -53,10 +44,22 @@ const originalRecents: RecentItem[] = [r1, r2, r3, r4, r5, r6].map((imageUrl, i)
   category: categories[i] ?? "shirt",
 }));
 export const RECENT_ITEMS: RecentItem[] = [{ id: "jason-chinos", imageUrl: JASON_SAMPLE.image, productName: JASON_SAMPLE.name, uploadedAt: "2026-11-13T04:27:00Z", category: "pants", attributes: JASON_SAMPLE.attributes }, ...originalRecents];
-export const SAVED_OUTFITS: SavedOutfit[] = JASON_FITS.map((fit, i) => {
- const products: SavedProduct[] = fit.pieces.map(([name, x, y], j) => ({ id: `jason-${i + 1}-${j}`, name, x, y, brand: "My closet", price: "", shopUrl: "", thumbnailUrl: fit.image, isOwned: true }));
- const items = products.map((p): CatalogItem => ({ id: p.id, name: p.name, brand: p.brand, price: 0, image: p.thumbnailUrl, category: "accessories", tags: "TNPF", boldness: "safe", buyUrl: "" }));
- const first = items[0], second = items[1];
- if (!first || !second) throw new Error("Missing Jason outfit pieces");
- return { id: `outfit-${i + 1}`, imageUrl: fit.image, ownedItemId: i === 0 ? "jason-chinos" : `jason-fit-${i + 1}`, ownedImage: i === 0 ? JASON_SAMPLE.image : fit.image, ownedName: i === 0 ? JASON_SAMPLE.name : products[0]?.name ?? "My outfit", products, look: { items: [first, second], boldness: "safe", reason: i === 0 ? JASON_EXPLANATION : "An outfit from your own closet." } };
-});
+function seed(id: string, imageUrl: string, lookName: string, explanation: string, pieces: [ConceptItem["role"], string][]): SavedOutfit {
+  return {
+    id,
+    imageUrl,
+    lookName,
+    explanation,
+    ownedName: "Camel coat",
+    products: [
+      { role: "Your piece", name: "Camel coat", owned: true, brand: null, price: null, shopUrl: null },
+      ...pieces.map(([role, name]): ConceptItem => ({ role, name, owned: false, brand: null, price: null, shopUrl: null })),
+    ],
+  };
+}
+// Demo seeds: example saved outfits produced by the same AI curation feature.
+export const SAVED_OUTFITS: SavedOutfit[] = [
+  seed("outfit-1", tailored, "Tailored", "An ivory knit softens the warm outer layer, while charcoal trousers and black loafers give the silhouette a clean finish.", [["Inner layer", "Ivory fine-knit crewneck"], ["Bottoms", "Charcoal straight-leg trousers"], ["Shoes", "Black leather loafers"], ["Accessories", "Slim black belt"]]),
+  seed("outfit-2", contrast, "Soft Contrast", "Pale grey texture and off-white trousers create a gentle contrast with the camel wool; white sneakers keep the finish relaxed.", [["Inner layer", "Pale grey textured sweater"], ["Bottoms", "Off-white relaxed trousers"], ["Shoes", "White low-profile sneakers"], ["Accessories", "Soft grey scarf"]]),
+  seed("outfit-3", evening, "Evening", "A fitted black turtleneck balances the open coat, while wide-leg black trousers and boots extend the silhouette.", [["Inner layer", "Fitted black turtleneck"], ["Bottoms", "Black wide-leg trousers"], ["Shoes", "Black Chelsea boots"], ["Accessories", "Slim black belt"]]),
+];

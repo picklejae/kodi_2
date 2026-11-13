@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { Trash2, Minus } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { Photo } from "@/components/pairly/Photo";
-import { OutfitBoard } from "@/components/pairly/OutfitBoard";
 import { PillButton } from "@/components/pairly/PillButton";
 import {
   AlertDialog,
@@ -21,7 +20,6 @@ export function Saved() {
   const {
     recentItems,
     savedOutfits,
-    savedLooks,
     deleteRecent,
     deleteSavedOutfit,
     setUploadedItem,
@@ -33,7 +31,7 @@ export function Saved() {
   const [selected, setSelected] = useState<RecentItem | null>(null);
   const [pending, setPending] = useState<{ section: "recent" | "saved"; id: string } | null>(null);
   const [removing, setRemoving] = useState<string | null>(null);
-  const outfitCount = savedOutfits.length + savedLooks.length;
+  const outfitCount = savedOutfits.length;
   useEffect(() => {
     if (!recentItems.length) setRecentEdit(false);
     if (!outfitCount) setSavedEdit(false);
@@ -50,11 +48,11 @@ export function Saved() {
     }, 180);
   };
   const openOutfit = (id: string) => {
-    if (!savedEdit) navigate({ to: "/closet/$id", params: { id } });
+    if (!savedEdit) navigate({ to: "/saved/$id", params: { id } });
   };
   return (
     <div className="px-6 pb-8 pt-12">
-      <h1 className="mb-6 font-serif text-4xl">Closet</h1>
+      <h1 className="mb-6 font-serif text-4xl">Saved</h1>
       <section aria-label="Recents">
         <SectionHeader
           title="Recents"
@@ -101,9 +99,9 @@ export function Saved() {
           </div>
         )}
       </section>
-      <section className="mt-8" aria-label="Saved outfits">
+      <section className="mt-8" aria-label="Looks">
         <SectionHeader
-          title="Saved"
+          title="Looks"
           empty={!outfitCount}
           editing={savedEdit}
           onToggle={() => setSavedEdit(!savedEdit)}
@@ -112,28 +110,17 @@ export function Saved() {
           <p className="py-8 text-center text-sm text-muted-foreground">No saved outfits yet</p>
         ) : (
           <div className="mt-4 grid grid-cols-2 gap-3">
-            {[
-              ...savedLooks.map((entry) => ({
-                id: entry.id,
-                name: entry.ownedName,
-                content: (
-                  <div className="flex h-full items-center bg-secondary">
-                    <OutfitBoard itemImage={entry.ownedImage} items={entry.look.items} />
-                  </div>
-                ),
-              })),
-              ...savedOutfits.map((outfit) => ({
+            {savedOutfits.map((outfit) => ({
                 id: outfit.id,
                 name: outfit.ownedName,
                 content: (
                   <Photo
                     src={outfit.imageUrl}
                     alt={`Outfit with ${outfit.ownedName}`}
-                    className="h-full w-full"
+                    className="h-full w-full [&_img]:object-top"
                   />
                 ),
-              })),
-            ].map((item) => (
+              })).map((item) => (
               <div
                 key={item.id}
                 className={cn(

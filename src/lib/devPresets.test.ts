@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { devButtonVisible, parsePresetParams } from "./devPresets";
 
 describe("parsePresetParams", () => {
-  it("opens Closet from new and legacy URL presets", () => {
-    expect(parsePresetParams("?screen=closet")?.preset).toBe("closet");
-    expect(parsePresetParams("?screen=saved")?.preset).toBe("closet");
+  it("opens Saved from new and legacy URL presets", () => {
+    expect(parsePresetParams("?screen=saved")?.preset).toBe("saved");
+    expect(parsePresetParams("?screen=closet")?.preset).toBe("saved");
   });
   it("opens Feed from new and legacy URL presets", () => {
     expect(parsePresetParams("?screen=feed")?.preset).toBe("feed");

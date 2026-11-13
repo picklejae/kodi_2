@@ -1,38 +1,175 @@
-import { useNavigate } from "@tanstack/react-router";
 import { Chip } from "@/components/pairly/Chip";
 import { PillButton } from "@/components/pairly/PillButton";
+import { Slider } from "@/components/ui/slider";
 import { DEFAULT_CODE, STYLE_TYPES } from "@/data/styleTypes";
-import { usePairly } from "@/store/PairlyContext";
+import { BUDGET_LIMIT, usePairly, type UnitSystem } from "@/store/PairlyContext";
 import { StyleScales } from "@/components/pairly/StyleScales";
-import { OutfitBoard } from "@/components/pairly/OutfitBoard";
-import { Photo } from "@/components/pairly/Photo";
 import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
+import { cn } from "@/lib/utils";
+
+const CM_PER_IN = 2.54;
+const LB_PER_KG = 2.20462;
+
+function toImperial(heightCm: number | null, weightKg: number | null) {
+  const totalIn = heightCm !== null ? heightCm / CM_PER_IN : null;
+  return {
+    ft: totalIn !== null ? Math.floor(totalIn / 12) : null,
+    inch: totalIn !== null ? Math.round(totalIn % 12) : null,
+    lb: weightKg !== null ? Math.round(weightKg * LB_PER_KG) : null,
+  };
+}
 
 export function Me() {
-  const { styleType, axisScores, retake, savedLooks, savedOutfits, posts } = usePairly();
-  const navigate = useNavigate();
+  const { styleType, axisScores, retake, body, units, budget, setBody, setUnits, setBudget } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
+  const imperial = toImperial(body.heightCm, body.weightKg);
+  const setHeightImperial = (ft: number | null, inch: number | null) => {
+    if (ft === null && inch === null) return setBody({ ...body, heightCm: null });
+    setBody({ ...body, heightCm: ((ft ?? 0) * 12 + (inch ?? 0)) * CM_PER_IN });
+  };
   return (
-    <div className="px-6 pt-12">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</p>
-      <h1 className="mt-3 font-serif text-4xl">{t.name}</h1>
-      <StyleScales type={t.code} scores={axisScores} />
-      <p className="mt-3 text-sm text-muted-foreground">{t.description}</p>
-      <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
-      <PillButton variant="outline" className="mt-8" onClick={retake}>Retake</PillButton>
-      <section className="mt-8"><h2 className="font-serif text-2xl">What are you looking for?</h2><p className="mt-1 text-sm text-muted-foreground">Changing this clears current moodboards.</p><div className="mt-3"><PreferenceChoice compact /></div></section>
-      <section className="mt-8 pb-8">
-        <h2 className="font-serif text-2xl">My looks</h2>
-        {!savedOutfits.length && !savedLooks.length && !posts.some((p) => p.isUserPost) && <p className="mt-3 text-sm text-muted-foreground">No looks yet.</p>}
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {savedOutfits.map((outfit) => <article key={outfit.id} aria-label="Closet look"><PillButton variant="ghost" aria-label={`Open ${outfit.ownedName} look`} onClick={() => navigate({ to: "/closet/$id", params: { id: outfit.id } })} className="block aspect-[3/4] h-auto overflow-hidden rounded-lg p-0"><Photo src={outfit.imageUrl} alt={outfit.ownedName} className="h-full w-full" /></PillButton></article>)}
-          {posts.filter((p) => p.isUserPost).map((p) => <article key={p.id} aria-label="Posted look">
-            {p.look && p.ownedImage ? <OutfitBoard itemImage={p.ownedImage} items={p.look.items} /> : <Photo src={p.image} alt={p.question} className="aspect-[9/8] rounded-lg" />}
-            <p className="mt-2 text-xs text-muted-foreground">Posted</p><p className="mt-1 text-sm">{p.question}</p>
-          </article>)}
-          {savedLooks.map((entry) => <article key={entry.id} aria-label="Saved look"><OutfitBoard itemImage={entry.ownedImage} items={entry.look.items} /><p className="mt-2 text-xs text-muted-foreground">Saved · {entry.ownedName}</p><p className="mt-1 text-sm">{entry.look.items.map((item) => item.name).join(" + ")}</p></article>)}
+    <div className="px-6 pb-8 pt-12">
+      <h1 className="font-serif text-4xl">Me</h1>
+
+      <section className="mt-8" aria-label="Body">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Body</h2>
+        <div className="mt-3 rounded-2xl bg-card px-4 shadow-soft">
+          <div className="flex items-center justify-between gap-3 border-b border-border py-3">
+            <span className="text-sm">Units</span>
+            <div className="flex gap-1 rounded-full border border-border bg-background p-1">
+              {(["metric", "imperial"] as UnitSystem[]).map((option) => (
+                <PillButton
+                  key={option}
+                  variant={units === option ? "primary" : "ghost"}
+                  aria-pressed={units === option}
+                  onClick={() => setUnits(option)}
+                  className="h-8 px-3 text-xs"
+                >
+                  {option === "metric" ? "cm · kg" : "ft·in · lb"}
+                </PillButton>
+              ))}
+            </div>
+          </div>
+          {units === "metric" ? (
+            <>
+              <NumberRow
+                label="Height"
+                unit="cm"
+                value={body.heightCm !== null ? String(Math.round(body.heightCm)) : ""}
+                onChange={(v) => setBody({ ...body, heightCm: v })}
+              />
+              <NumberRow
+                label="Weight"
+                unit="kg"
+                value={body.weightKg !== null ? String(Math.round(body.weightKg)) : ""}
+                onChange={(v) => setBody({ ...body, weightKg: v })}
+                last
+              />
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-3 border-b border-border py-3">
+                <span className="text-sm">Height</span>
+                <div className="flex items-center gap-2">
+                  <NumberInput
+                    aria-label="Height feet"
+                    value={imperial.ft !== null ? String(imperial.ft) : ""}
+                    onChange={(v) => setHeightImperial(v, imperial.ft === null && v === null ? null : imperial.inch)}
+                  />
+                  <span className="text-xs text-muted-foreground">ft</span>
+                  <NumberInput
+                    aria-label="Height inches"
+                    value={imperial.inch !== null ? String(imperial.inch) : ""}
+                    onChange={(v) => setHeightImperial(imperial.ft, v)}
+                  />
+                  <span className="text-xs text-muted-foreground">in</span>
+                </div>
+              </div>
+              <NumberRow
+                label="Weight"
+                unit="lb"
+                value={imperial.lb !== null ? String(imperial.lb) : ""}
+                onChange={(v) => setBody({ ...body, weightKg: v !== null ? v / LB_PER_KG : null })}
+                last
+              />
+            </>
+          )}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">Used to match the generated person's build to yours.</p>
+      </section>
+
+      <section className="mt-8" aria-label="Budget">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Budget</h2>
+        <div className="mt-3 rounded-2xl bg-card px-4 py-4 shadow-soft">
+          <div className="flex items-center justify-between">
+            <span className="text-sm">Price range</span>
+            <span className="text-sm font-semibold">${budget.min} – ${budget.max}</span>
+          </div>
+          <Slider
+            className="mt-4"
+            value={[budget.min, budget.max]}
+            min={0}
+            max={BUDGET_LIMIT}
+            step={10}
+            minStepsBetweenThumbs={1}
+            aria-label="Budget range"
+            onValueChange={([min, max]) => setBudget({ min: min ?? 0, max: max ?? BUDGET_LIMIT })}
+          />
+          <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
+            <span>$0</span>
+            <span>${BUDGET_LIMIT}</span>
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">Recommended products stay inside this range.</p>
+      </section>
+
+      <section className="mt-8" aria-label="Clothing preference">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">What are you looking for?</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Changing this clears current moodboards.</p>
+        <div className="mt-3"><PreferenceChoice compact /></div>
+      </section>
+
+      <section className="mt-8" aria-label="Your Style Type">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</h2>
+        <div className="mt-3 rounded-2xl bg-card p-4 shadow-soft">
+          <p className="font-serif text-2xl">{t.name}</p>
+          <StyleScales type={t.code} scores={axisScores} />
+          <p className="mt-3 text-sm text-muted-foreground">{t.description}</p>
+          <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
+          <PillButton variant="outline" className="mt-5" onClick={retake}>Retake</PillButton>
         </div>
       </section>
     </div>
+  );
+}
+
+function NumberRow({ label, unit, value, onChange, last = false }: { label: string; unit: string; value: string; onChange: (v: number | null) => void; last?: boolean }) {
+  return (
+    <div className={cn("flex items-center justify-between gap-3 py-3", !last && "border-b border-border")}>
+      <span className="text-sm">{label}</span>
+      <div className="flex items-center gap-2">
+        <NumberInput aria-label={`${label} in ${unit}`} value={value} onChange={onChange} />
+        <span className="text-xs text-muted-foreground">{unit}</span>
+      </div>
+    </div>
+  );
+}
+
+function NumberInput({ value, onChange, "aria-label": ariaLabel }: { value: string; onChange: (v: number | null) => void; "aria-label": string }) {
+  return (
+    <input
+      type="number"
+      inputMode="numeric"
+      min={0}
+      aria-label={ariaLabel}
+      value={value}
+      onChange={(e) => {
+        const raw = e.target.value;
+        if (raw === "") return onChange(null);
+        const parsed = Number(raw);
+        if (Number.isFinite(parsed) && parsed >= 0) onChange(parsed);
+      }}
+      className="h-9 w-20 rounded-lg border border-border bg-background px-2 text-right text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+    />
   );
 }
