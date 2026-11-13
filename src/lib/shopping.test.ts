@@ -38,7 +38,7 @@ describe("shopping rules", () => {
     expect(parseProduct(input, productUrl, { metadata: { "og:title": "Ivory Shirt" } })).toBeNull();
   });
   it("keys results by outfit, preference, budget and country", () => {
-    const look = looksFromPlan({ presentation: "studio", looks: [{ name: "A", explanation: "A", styling: "Ivory shirt", items: [{ role: "Inner layer", name: input.description, highlight: true }, { role: "Shoes", name: "Black flats", highlight: true }] }] }, "Jeans", "owned", "womenswear")[0];
+    const look = looksFromPlan({ presentation: "studio", looks: [{ tier: "safe", shift: "", name: "A", explanation: "A", styling: "Ivory shirt", items: [{ role: "Inner layer", name: input.description, highlight: true }, { role: "Shoes", name: "Black flats", highlight: true }] }] }, "Jeans", "owned", "womenswear")[0];
     if (!look) throw new Error("Missing test look");
     const item = look.items[1];
     if (!item) throw new Error("Missing test item");
