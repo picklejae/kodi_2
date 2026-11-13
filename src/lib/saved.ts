@@ -28,7 +28,8 @@ const ROLE_CATEGORY: Record<ConceptItem["role"], HotspotCategory | null> = {
   "Inner layer": "top",
   "Bottoms": "bottom",
   "Shoes": "shoes",
-  "Accessories": "accessory",
+  // No pins for accessories or bags: they are too small to place reliably on the render.
+  "Accessories": null,
 };
 export interface HotspotPlacement {
   product: ConceptItem;

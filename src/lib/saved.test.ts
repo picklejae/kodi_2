@@ -44,7 +44,7 @@ describe("hotspotPlacements", () => {
     expect(byRole["Inner layer"]).toMatchObject(HOTSPOT_POSITIONS.top);
     expect(byRole["Bottoms"]).toMatchObject(HOTSPOT_POSITIONS.bottom);
     expect(byRole["Shoes"]).toMatchObject(HOTSPOT_POSITIONS.shoes);
-    expect(byRole["Accessories"]).toMatchObject(HOTSPOT_POSITIONS.accessory);
+    expect(byRole["Accessories"]).toBeUndefined();
   });
   it("offsets a second product in the same category by 12%", () => {
     const products: ConceptItem[] = [
