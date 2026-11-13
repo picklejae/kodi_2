@@ -138,7 +138,6 @@ export function Me() {
 
       <section className="mt-8" aria-label="Clothing preference">
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">What are you looking for?</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Changing this clears current moodboards.</p>
         <div className="mt-3"><PreferenceChoice compact /></div>
       </section>
       </div>
