@@ -46,13 +46,14 @@ describe("quiz state", () => {
     act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.recordUpload("new-photo", "Blue shirt", "shirt"));
     expect(result.current.recentItems[0]?.imageUrl).toBe("new-photo");
-    expect(result.current.recentItems).toHaveLength(12); // 7 men's + 4 women's demo uploads + this one
-    act(() => result.current.deleteRecent("jason-chinos"));
+    expect(result.current.recentItems).toHaveLength(1); // starts empty; only this upload
+    act(() => result.current.deleteRecent(result.current.recentItems[0]?.id ?? ""));
+    expect(result.current.recentItems).toHaveLength(0);
     expect(result.current.savedOutfits).toHaveLength(6); // 3 men's + 3 women's examples
     act(() => result.current.deleteSavedOutfit("outfit-1"));
     expect(result.current.savedOutfits).toHaveLength(5);
     act(() => result.current.reset());
-    expect(result.current.recentItems).toHaveLength(11);
+    expect(result.current.recentItems).toHaveLength(0);
     expect(result.current.savedOutfits).toHaveLength(6);
   });
   it("saves a generated look to the front of Looks only once", () => {

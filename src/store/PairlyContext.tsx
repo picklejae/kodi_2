@@ -77,7 +77,8 @@ interface PairlyState {
   highlightedPost: string | null;
 }
 
-const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, body: { heightCm: null, weightKg: null }, units: "imperial", budget: { min: 0, max: BUDGET_LIMIT }, budgetKnown: false, activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false, highlightedPost: null };
+// Recent uploads start empty: only photos the user uploads in this session appear (Style tab shows empty bubbles until then).
+const initial: PairlyState = { recentItems: [], savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, body: { heightCm: null, weightKg: null }, units: "imperial", budget: { min: 0, max: BUDGET_LIMIT }, budgetKnown: false, activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false, highlightedPost: null };
 
 interface PairlyCtx extends PairlyState {
   recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
