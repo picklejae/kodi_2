@@ -34,7 +34,7 @@ describe("quiz state", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
     const look: GeneratedLook = {
-      id: "ai-0", preference: "menswear", department: "men", name: "Tailored", explanation: "Charcoal sharpens the camel.", styling: "styling", status: "success",
+      id: "ai-0", tier: "safe", shift: "", preference: "menswear", department: "men", name: "Tailored", explanation: "Charcoal sharpens the camel.", styling: "styling", status: "success",
       image: "data:image/jpeg;base64,aaaa",
       items: [
         { role: "Your piece", name: "Camel coat", owned: true, brand: null, price: null, shopUrl: null },

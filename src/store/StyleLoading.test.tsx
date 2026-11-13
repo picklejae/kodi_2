@@ -1,6 +1,9 @@
 import { JASON_SAMPLE } from "@/data/jason";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor, screen } from "@testing-library/react";
+import { Results } from "@/screens/Results";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_CODE } from "@/data/styleTypes";
+import { ROUNDS } from "@/data/diagnosis";
 import { PairlyProvider, usePairly } from "./PairlyContext";
 
 const mocks = vi.hoisted(() => ({ plan: vi.fn(), render: vi.fn(), photo: vi.fn(), shopping: vi.fn() }));
@@ -13,9 +16,68 @@ function deferred() {
   const promise = new Promise<{ ok: boolean; image?: string; error?: string }>((r) => { resolve = r; });
   return { promise, resolve };
 }
-const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
+const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ tier: ["safe", "step", "bold"][i], shift: i === 0 ? "" : i === 1 ? "Tailored → Relaxed" : "Tailored → Relaxed, Neutral → Color", name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
 beforeEach(() => { localStorage.clear(); vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it("Results tabs follow Safe, One step up, Bold tier order", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: ({ children }) => <PairlyProvider>{children}<Results /></PairlyProvider> });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(screen.getAllByRole("tab")).toHaveLength(3));
+    const tabs = screen.getAllByRole("tab");
+    expect(tabs[0]?.textContent).toBe("SafeLook 0");
+    expect(tabs[1]?.textContent).toBe("One step upLook 1");
+    expect(tabs[2]?.textContent).toBe("BoldLook 2");
+  });
+  it("passes the completed Style Type and axis scores into planStyle", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPS" ? "yes" : "no"));
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(1));
+    expect(mocks.plan.mock.calls[0]?.[0].data.styleType).toBe("RNPS");
+    expect(mocks.plan.mock.calls[0]?.[0].data.axisScores).toEqual([1, 0, 0, 1]);
+  });
+  it("a skipped quiz sends DEFAULT_CODE and neutral scores", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.skipQuiz());
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(1));
+    expect(mocks.plan.mock.calls[0]?.[0].data.styleType).toBe(DEFAULT_CODE);
+    expect(mocks.plan.mock.calls[0]?.[0].data.axisScores).toEqual([0.5, 0.5, 0.5, 0.5]);
+  });
+  it("high exploration selects One step up even when Safe finishes first", async () => {
+    const jobs = [deferred(), deferred(), deferred()];
+    jobs.forEach((job) => mocks.render.mockReturnValueOnce(job.promise));
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    for (const _card of ROUNDS) act(() => result.current.answer("yes"));
+    expect(result.current.exploreLevel).toBe("high");
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
+    expect(result.current.generatedLooks?.[result.current.selectedConcept]?.tier).toBe("step");
+    await act(async () => jobs[0]?.resolve({ ok: true, image: "safe" }));
+    expect(result.current.selectedConcept).toBe(1);
+    await act(async () => { jobs[1]?.resolve({ ok: true, image: "step" }); jobs[2]?.resolve({ ok: true, image: "bold" }); });
+  });
+  it("does not reuse old looks after a different quiz type or scores", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.skipQuiz());
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(result.current.generatedLooks?.every((look) => look.status === "success")).toBe(true));
+    act(() => result.current.retake());
+    for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPS" ? "yes" : "no"));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(2));
+    expect(mocks.plan.mock.calls[1]?.[0].data.styleType).toBe("RNPS");
+  });
   it("keeps Jason’s real first look and generates only the other two", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
@@ -90,7 +152,7 @@ describe("Style loading", () => {
     expect(mocks.plan).toHaveBeenCalledTimes(1); expect(mocks.render).toHaveBeenCalledTimes(3);
     expect(result.current.generatedLooks?.[0]?.image).toBe("new-image");
   });
-  it("reveals the first completed look while others generate, reuses unchanged inputs, and retries only a failure", async () => {
+  it("keeps Safe selected while other looks generate, reuses unchanged inputs, and retries only a failure", async () => {
     const jobs = [deferred(), deferred(), deferred()];
     jobs.forEach((job) => mocks.render.mockReturnValueOnce(job.promise));
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
@@ -100,7 +162,7 @@ describe("Style loading", () => {
     await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
     expect(mocks.plan).toHaveBeenCalledTimes(1);
     await act(async () => jobs[1]?.resolve({ ok: true, image: "image-two" }));
-    expect(result.current.selectedConcept).toBe(1);
+    expect(result.current.selectedConcept).toBe(0);
     expect(result.current.generatedLooks?.map((l) => l.status)).toEqual(["loading", "success", "loading"]);
     act(() => { result.current.setSelectedConcept(0); result.current.go("upload"); });
     act(() => result.current.findMatches());

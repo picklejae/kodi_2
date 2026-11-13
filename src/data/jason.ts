@@ -25,7 +25,7 @@ export function isJasonSample(item: { source?: string; name?: string; category: 
  return item.source === "sample" && item.name === JASON_SAMPLE.name && item.category === "pants" && item.image === JASON_SAMPLE.image;
 }
 export function jasonClosetLook(preference: StylePreference): GeneratedLook {
- return { id: "jason-closet", preference, department: preference === "menswear" ? "men" : "women", name: "From your closet", image: fit1.url, explanation: JASON_EXPLANATION, styling: "Jason's existing heritage outfit", status: "success", items: [
+ return { id: "jason-closet", tier: "safe", shift: "", preference, department: preference === "menswear" ? "men" : "women", name: "From your closet", image: fit1.url, explanation: JASON_EXPLANATION, styling: "Jason's existing heritage outfit", status: "success", items: [
   { role: "Inner layer", name: "Navy waxed jacket", owned: true, brand: "My closet", price: null, shopUrl: null },
   { role: "Inner layer", name: "Blue check shirt", owned: true, brand: "My closet", price: null, shopUrl: null },
   { role: "Your piece", name: "Beige wide chinos", image: chinos.url, owned: true, brand: "My closet", price: null, shopUrl: null },
@@ -33,5 +33,5 @@ export function jasonClosetLook(preference: StylePreference): GeneratedLook {
  ] };
 }
 export function jasonPendingLooks(preference: StylePreference): GeneratedLook[] {
- return [jasonClosetLook(preference), ...[1, 2].map((index): GeneratedLook => ({ id: `ai-${index}`, preference, department: preference === "menswear" ? "men" : "women", name: `New look ${index}`, explanation: "", styling: "", status: "idle", items: [] }))];
+ return [jasonClosetLook(preference), ...[1, 2].map((index): GeneratedLook => ({ id: `ai-${index}`, tier: index === 1 ? "step" : "bold", shift: "", preference, department: preference === "menswear" ? "men" : "women", name: `New look ${index}`, explanation: "", styling: "", status: "idle", items: [] }))];
 }

@@ -3,7 +3,7 @@ import { isJasonSample, jasonPendingLooks, jasonClosetLook } from "@/data/jason"
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { planStyle, renderStyleLook } from "@/lib/styleGeneration.functions";
-import { looksFromPlan, photoReference, type GeneratedLook } from "@/lib/styleGeneration";
+import { looksFromPlan, photoReference, styleProfile, defaultConcept, type GeneratedLook } from "@/lib/styleGeneration";
 import { ROUNDS } from "@/data/diagnosis";
 import type { ItemCategory, Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
@@ -134,7 +134,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     try {
       const result = await renderFn({ data: { ...request, styling: look.styling } });
       if (runId.current !== token) return;
-      setState((s) => ({ ...s, selectedConcept: result.ok && !selectionTouched.current && !s.generatedLooks?.some((entry) => entry.status === "success") ? index : s.selectedConcept, generatedLooks: s.generatedLooks?.map((entry, i) => i !== index ? entry : result.ok ? { ...entry, status: "success", image: result.image, error: "" } : { ...entry, status: "failed", error: result.error }) ?? [] }));
+      setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i !== index ? entry : result.ok ? { ...entry, status: "success", image: result.image, error: "" } : { ...entry, status: "failed", error: result.error }) ?? [] }));
     } catch {
       if (runId.current === token) setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? { ...entry, status: "failed", error: "Connection interrupted. This attempt may have started; retry only for a new attempt." } : entry) ?? [] }));
     } finally { inFlight.current.delete(index); }
@@ -143,7 +143,8 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     if (!state.uploadedItem || !state.stylePreference) return;
     const preference = state.stylePreference;
     const fromCloset = isJasonSample(state.uploadedItem);
-    const key = JSON.stringify([preference, state.uploadedItem.image, state.uploadedItem.category, state.uploadedItem.name, state.occasion, state.note.slice(0, 600)]);
+    const profile = styleProfile(state.styleType, state.axisScores, state.quizSkipped);
+    const key = JSON.stringify([profile.styleType, profile.axisScores, preference, state.uploadedItem.image, state.uploadedItem.category, state.uploadedItem.name, state.occasion, state.note.slice(0, 600)]);
     if (existingRequest.current === key && !state.generationError && (state.planning || state.generatedLooks?.length)) {
       setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
       return;
@@ -153,12 +154,12 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     selectionTouched.current = false;
     running.current = true;
     const token = ++runId.current;
-    setState((s) => ({ ...s, screen: "results", activeTab: "style", selectedConcept: 0, generatedLooks: fromCloset ? jasonPendingLooks(preference).map((look, index) => index === 0 ? look : { ...look, status: "loading" }) : [], planning: true, generationError: "", picks: s.uploadedItem ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion) : s.picks }));
+    setState((s) => ({ ...s, screen: "results", activeTab: "style", selectedConcept: defaultConcept(state.exploreLevel), generatedLooks: fromCloset ? jasonPendingLooks(preference).map((look, index) => index === 0 ? look : { ...look, status: "loading" }) : [], planning: true, generationError: "", picks: s.uploadedItem ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion) : s.picks }));
     try {
       const reference = await photoReference(state.uploadedItem.image);
       const { heightCm, weightKg } = state.body;
       const request = { preference, reference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600), body: heightCm && weightKg ? `approximately ${Math.round(heightCm)} cm tall and ${Math.round(weightKg)} kg` : "" };
-      const result = await planFn({ data: { ...request, category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category } });
+      const result = await planFn({ data: { ...request, ...profile, category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category } });
       if (runId.current !== token) return;
       if (!result.ok) throw new Error(result.error);
       const planned = looksFromPlan(result.plan, state.uploadedItem.name ?? state.uploadedItem.category, state.uploadedItem.image, preference);

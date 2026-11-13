@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Personalize Style as Safe → One step up → Bold using Style Type and axis scores; live camel-coat generation verified, Jason slot and two-render limit covered by regression tests
 - [x] Rename Closet tab/route back to Saved with Heart icon; tab order Style, Saved, Feed, Me
 - [x] Saved Looks show curated AI outfits saved from Style (newest first), seeded with three camel-coat examples; flat-lay boards removed
 - [x] One consistent full-body composition in the Style image prompt; category-based hotspot config with 12% duplicate offset
