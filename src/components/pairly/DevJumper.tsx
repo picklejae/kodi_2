@@ -31,16 +31,20 @@ export function DevJumper() {
   }, []);
 
   if (!visible) return null;
+  // Docked in the page gutter so it never sits over screen content: a narrow
+  // vertical tab on the left edge on phone, the top-left corner from tablet up.
   return (
-    <div className="fixed left-2 top-2 z-[100] hidden text-xs md:block">
+    <div className="fixed left-0 top-1/2 z-[100] -translate-y-1/2 text-xs md:left-2 md:top-2 md:translate-y-0">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="rounded-md bg-foreground/80 px-2 py-1 font-mono font-bold text-background opacity-60 hover:opacity-100"
+        aria-label="DEV menu"
+        aria-expanded={open}
+        className="flex h-touch w-5 items-center justify-center rounded-r-md bg-foreground/80 font-mono font-bold text-background opacity-60 [writing-mode:vertical-rl] hover:opacity-100 md:h-auto md:w-auto md:rounded-md md:px-2 md:py-1 md:[writing-mode:horizontal-tb]"
       >
         DEV
       </button>
       {open && (
-        <div className="mt-1 w-48 rounded-lg border border-border bg-background p-1 shadow-lg">
+        <div className="absolute left-full top-1/2 ml-1 w-48 -translate-y-1/2 rounded-lg border border-border bg-background p-1 shadow-lg md:left-0 md:top-full md:ml-0 md:mt-1 md:translate-y-0">
           {PRESETS.map((p) => (
             <button
               key={p.id}
