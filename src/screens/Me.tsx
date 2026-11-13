@@ -47,6 +47,7 @@ export function Me() {
       <div>
       <section className="mt-8" aria-label="Fit Profile">
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Fit Profile</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Used to match the generated person's build to yours.</p>
         <div className="mt-3 rounded-2xl bg-card px-4 shadow-soft">
           <div className="flex items-center justify-between gap-3 border-b border-border py-3">
             <span className="text-sm">Units</span>
@@ -109,7 +110,6 @@ export function Me() {
             </>
           )}
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Used to match the generated person's build to yours.</p>
       </section>
 
       <section className="mt-8" aria-label="Budget">
