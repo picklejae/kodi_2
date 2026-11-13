@@ -300,7 +300,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         return { ...s, answers };
       }),
     skipQuiz: () => setState((s) => ({
-      ...s, styleType: DEFAULT_CODE, axisScores: [0.5, 0.5, 0.5, 0.5], exploreLevel: "low", quizSkipped: true, screen: "reveal",
+      ...s, styleType: DEFAULT_CODE, axisScores: [0.5, 0.5, 0.5, 0.5], exploreLevel: "low", quizSkipped: true, screen: "upload", activeTab: "style",
       picks: s.uploadedItem && s.picks
         ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, DEFAULT_CODE, s.occasion)
         : s.picks,
