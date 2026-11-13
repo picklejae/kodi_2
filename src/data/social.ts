@@ -1,6 +1,6 @@
 import type { Occasion } from "./samples";
 import { LOOK_IMAGES as L, type StyleTypeCode } from "./styleTypes";
-import { ALT_ME_PHOTOS, type PhotoCredit } from "./altMeFeed";
+import { FEED_REFERENCES, type PhotoCredit } from "./feedReferences";
 import type { ExploreLevel } from "@/lib/styleType";
 import type { Pick as Look } from "@/lib/matching";
 
@@ -26,7 +26,7 @@ export interface SocialPost {
   look?: Look; ownedImage?: string; createdAt?: string; daysAgo?: number;
   /** Which feed this post belongs to; posts without it are menswear. */
   department?: "menswear" | "womenswear";
-  /** Third-party photo credit (ALT ME gallery): shown on the card instead of a username. */
+  /** Third-party photo credit (feed reference board): shown on the card instead of a username. */
   credit?: PhotoCredit;
 }
 export interface Trend { id: string; title: string; postCount: number; image: string; description: string; votesUp: number; votesDown: number; topFeedback: string[]; voteGroups: VoteGroup[]; feedback: Feedback[] }
@@ -53,13 +53,13 @@ const rows: R[] = [
   ["@max.v", u("1506794778202-cad84cf45f1d"), "TNPF", "date", "Shirt tucked or untucked?", 120, 16, ["Great fit", "Too formal", "Try darker shoes"]],
 ];
 const MEMBER_POSTS: SocialPost[] = rows.map(([author, image, styleType, occasion, question, votesUp, votesDown, topFeedback], i) => ({ id: `p${i + 1}`, author, image, styleType, occasion, question, votesUp, votesDown, topFeedback, exploreLevel: styleType.includes("C") ? "high" : "low", voteGroups: mockVoteGroups(votesUp, votesDown), feedback: mockFeedback(topFeedback) }));
-// ALT ME gallery photos: credited, no invented votes or comments (they start at zero).
-const ALT_ME_POSTS: SocialPost[] = ALT_ME_PHOTOS.map((photo) => ({
-  id: photo.id, author: `Photo: ${photo.credit.creator}`, image: photo.image, styleType: photo.styleType, occasion: null,
+// Feed reference photos: credited to their source site, no invented votes or comments (they start at zero).
+const REFERENCE_POSTS: SocialPost[] = FEED_REFERENCES.map((photo) => ({
+  id: photo.id, author: `via ${photo.credit.creator}`, image: photo.image, styleType: photo.styleType, occasion: null,
   question: photo.title, votesUp: 0, votesDown: 0, topFeedback: [], exploreLevel: photo.styleType.includes("C") ? "high" : "low",
   voteGroups: [], feedback: [], department: photo.department, credit: photo.credit,
 }));
-export const POSTS: SocialPost[] = [...ALT_ME_POSTS, ...MEMBER_POSTS];
+export const POSTS: SocialPost[] = [...REFERENCE_POSTS, ...MEMBER_POSTS];
 
 const trendRows = [
   { id: "t1", title: "Quiet layering", postCount: 248, image: L.coat, description: "Knit under coat, all in close neutrals.", votesUp: 412, votesDown: 38, topFeedback: ["Great fit", "Add a layer", "Too formal"] },

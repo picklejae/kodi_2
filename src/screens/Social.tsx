@@ -7,7 +7,7 @@ import { BottomSheet, Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryBut
 import { FEEDBACK_CHIPS, type SocialPost } from "@/data/social";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { filterPosts, type SocialFilter } from "@/lib/social";
-import type { PhotoCredit } from "@/data/altMeFeed";
+import type { PhotoCredit } from "@/data/feedReferences";
 import { myPosts, timeAgo } from "@/lib/feedFlow";
 import { VoteSplitBar } from "@/components/pairly/VoteSplitBar";
 import { SwipePhotoCard } from "@/components/pairly/SwipePhotoCard";
@@ -102,13 +102,12 @@ function Comments({ post }: { post: SocialPost }) {
   return <div className="mt-screen flex flex-col gap-screen" aria-label="Comments">{post.feedback.map((feedback, index) => <div key={`${feedback.author}:${index}`}><div className="flex flex-wrap items-center gap-screen text-caption"><span>{feedback.author ?? "@member"}</span><span className="text-muted-foreground">{timeAgo(feedback)}</span></div><p className="text-body-sm">{feedback.text}</p></div>)}</div>;
 }
 
-/** Creator, source page and license for a third-party photo. */
+/** Source page (and license, when one is known) for a third-party photo. */
 function PhotoCreditLine({ credit }: { credit: PhotoCredit }) {
   return (
     <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
-      <a href={credit.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Source</a>
-      {" · "}
-      <a href={credit.licenseUrl} target="_blank" rel="license noopener noreferrer" className="underline underline-offset-2">{credit.license}</a>
+      <a href={credit.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Source ↗</a>
+      {credit.license && credit.licenseUrl && <>{" · "}<a href={credit.licenseUrl} target="_blank" rel="license noopener noreferrer" className="underline underline-offset-2">{credit.license}</a></>}
     </p>
   );
 }
