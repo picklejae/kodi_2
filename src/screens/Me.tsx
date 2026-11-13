@@ -31,6 +31,17 @@ export function Me() {
     <div className="px-6 pb-8 pt-12">
       <h1 className="font-serif text-4xl">Me</h1>
 
+      <section className="mt-8" aria-label="Your Style Type">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</h2>
+        <div className="mt-3 rounded-2xl bg-card p-4 shadow-soft">
+          <p className="font-serif text-2xl">{t.name}</p>
+          <StyleScales type={t.code} scores={axisScores} />
+          <p className="mt-3 text-sm text-muted-foreground">{t.description}</p>
+          <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
+          <PillButton variant="outline" className="mt-5" onClick={retake}>Retake</PillButton>
+        </div>
+      </section>
+
       <section className="mt-8" aria-label="Body">
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Body</h2>
         <div className="mt-3 rounded-2xl bg-card px-4 shadow-soft">
@@ -127,17 +138,6 @@ export function Me() {
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">What are you looking for?</h2>
         <p className="mt-2 text-sm text-muted-foreground">Changing this clears current moodboards.</p>
         <div className="mt-3"><PreferenceChoice compact /></div>
-      </section>
-
-      <section className="mt-8" aria-label="Your Style Type">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</h2>
-        <div className="mt-3 rounded-2xl bg-card p-4 shadow-soft">
-          <p className="font-serif text-2xl">{t.name}</p>
-          <StyleScales type={t.code} scores={axisScores} />
-          <p className="mt-3 text-sm text-muted-foreground">{t.description}</p>
-          <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
-          <PillButton variant="outline" className="mt-5" onClick={retake}>Retake</PillButton>
-        </div>
       </section>
     </div>
   );
