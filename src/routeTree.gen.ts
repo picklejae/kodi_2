@@ -10,11 +10,77 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as Menu1StyleRouteImport } from './routes/menu1-style'
+import { Route as Menu1Style1RouteImport } from './routes/menu1-style-1'
+import { Route as Menu2SavedRouteImport } from './routes/menu2-saved'
+import { Route as Menu3FeedRouteImport } from './routes/menu3-feed'
+import { Route as Menu4MeRouteImport } from './routes/menu4-me'
+import { Route as Onboarding1RouteImport } from './routes/onboarding-1'
+import { Route as Onboarding2RouteImport } from './routes/onboarding-2'
+import { Route as Onboarding3RouteImport } from './routes/onboarding-3'
+import { Route as Onboarding4RouteImport } from './routes/onboarding-4'
+import { Route as Menu2Saved1IndexRouteImport } from './routes/menu2-saved-1.index'
+import { Route as Menu2Saved1IdRouteImport } from './routes/menu2-saved-1.$id'
 import { Route as SavedIdRouteImport } from './routes/saved.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu1StyleRoute = Menu1StyleRouteImport.update({
+  id: '/menu1-style',
+  path: '/menu1-style',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu1Style1Route = Menu1Style1RouteImport.update({
+  id: '/menu1-style-1',
+  path: '/menu1-style-1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu2SavedRoute = Menu2SavedRouteImport.update({
+  id: '/menu2-saved',
+  path: '/menu2-saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu3FeedRoute = Menu3FeedRouteImport.update({
+  id: '/menu3-feed',
+  path: '/menu3-feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu4MeRoute = Menu4MeRouteImport.update({
+  id: '/menu4-me',
+  path: '/menu4-me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Onboarding1Route = Onboarding1RouteImport.update({
+  id: '/onboarding-1',
+  path: '/onboarding-1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Onboarding2Route = Onboarding2RouteImport.update({
+  id: '/onboarding-2',
+  path: '/onboarding-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Onboarding3Route = Onboarding3RouteImport.update({
+  id: '/onboarding-3',
+  path: '/onboarding-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Onboarding4Route = Onboarding4RouteImport.update({
+  id: '/onboarding-4',
+  path: '/onboarding-4',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu2Saved1IndexRoute = Menu2Saved1IndexRouteImport.update({
+  id: '/menu2-saved-1/',
+  path: '/menu2-saved-1/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Menu2Saved1IdRoute = Menu2Saved1IdRouteImport.update({
+  id: '/menu2-saved-1/$id',
+  path: '/menu2-saved-1/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SavedIdRoute = SavedIdRouteImport.update({
@@ -25,28 +91,112 @@ const SavedIdRoute = SavedIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/menu1-style': typeof Menu1StyleRoute
+  '/menu1-style-1': typeof Menu1Style1Route
+  '/menu2-saved': typeof Menu2SavedRoute
+  '/menu3-feed': typeof Menu3FeedRoute
+  '/menu4-me': typeof Menu4MeRoute
+  '/onboarding-1': typeof Onboarding1Route
+  '/onboarding-2': typeof Onboarding2Route
+  '/onboarding-3': typeof Onboarding3Route
+  '/onboarding-4': typeof Onboarding4Route
+  '/menu2-saved-1/$id': typeof Menu2Saved1IdRoute
   '/saved/$id': typeof SavedIdRoute
+  '/menu2-saved-1/': typeof Menu2Saved1IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/menu1-style': typeof Menu1StyleRoute
+  '/menu1-style-1': typeof Menu1Style1Route
+  '/menu2-saved': typeof Menu2SavedRoute
+  '/menu3-feed': typeof Menu3FeedRoute
+  '/menu4-me': typeof Menu4MeRoute
+  '/onboarding-1': typeof Onboarding1Route
+  '/onboarding-2': typeof Onboarding2Route
+  '/onboarding-3': typeof Onboarding3Route
+  '/onboarding-4': typeof Onboarding4Route
+  '/menu2-saved-1/$id': typeof Menu2Saved1IdRoute
   '/saved/$id': typeof SavedIdRoute
+  '/menu2-saved-1': typeof Menu2Saved1IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/menu1-style': typeof Menu1StyleRoute
+  '/menu1-style-1': typeof Menu1Style1Route
+  '/menu2-saved': typeof Menu2SavedRoute
+  '/menu3-feed': typeof Menu3FeedRoute
+  '/menu4-me': typeof Menu4MeRoute
+  '/onboarding-1': typeof Onboarding1Route
+  '/onboarding-2': typeof Onboarding2Route
+  '/onboarding-3': typeof Onboarding3Route
+  '/onboarding-4': typeof Onboarding4Route
+  '/menu2-saved-1/$id': typeof Menu2Saved1IdRoute
   '/saved/$id': typeof SavedIdRoute
+  '/menu2-saved-1/': typeof Menu2Saved1IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/saved/$id'
+  fullPaths:
+    | '/'
+    | '/menu1-style'
+    | '/menu1-style-1'
+    | '/menu2-saved'
+    | '/menu3-feed'
+    | '/menu4-me'
+    | '/onboarding-1'
+    | '/onboarding-2'
+    | '/onboarding-3'
+    | '/onboarding-4'
+    | '/menu2-saved-1/$id'
+    | '/saved/$id'
+    | '/menu2-saved-1/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/saved/$id'
-  id: '__root__' | '/' | '/saved/$id'
+  to:
+    | '/'
+    | '/menu1-style'
+    | '/menu1-style-1'
+    | '/menu2-saved'
+    | '/menu3-feed'
+    | '/menu4-me'
+    | '/onboarding-1'
+    | '/onboarding-2'
+    | '/onboarding-3'
+    | '/onboarding-4'
+    | '/menu2-saved-1/$id'
+    | '/saved/$id'
+    | '/menu2-saved-1'
+  id:
+    | '__root__'
+    | '/'
+    | '/menu1-style'
+    | '/menu1-style-1'
+    | '/menu2-saved'
+    | '/menu3-feed'
+    | '/menu4-me'
+    | '/onboarding-1'
+    | '/onboarding-2'
+    | '/onboarding-3'
+    | '/onboarding-4'
+    | '/menu2-saved-1/$id'
+    | '/saved/$id'
+    | '/menu2-saved-1/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  Menu1StyleRoute: typeof Menu1StyleRoute
+  Menu1Style1Route: typeof Menu1Style1Route
+  Menu2SavedRoute: typeof Menu2SavedRoute
+  Menu3FeedRoute: typeof Menu3FeedRoute
+  Menu4MeRoute: typeof Menu4MeRoute
+  Onboarding1Route: typeof Onboarding1Route
+  Onboarding2Route: typeof Onboarding2Route
+  Onboarding3Route: typeof Onboarding3Route
+  Onboarding4Route: typeof Onboarding4Route
+  Menu2Saved1IdRoute: typeof Menu2Saved1IdRoute
   SavedIdRoute: typeof SavedIdRoute
+  Menu2Saved1IndexRoute: typeof Menu2Saved1IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +206,83 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu1-style': {
+      id: '/menu1-style'
+      path: '/menu1-style'
+      fullPath: '/menu1-style'
+      preLoaderRoute: typeof Menu1StyleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu1-style-1': {
+      id: '/menu1-style-1'
+      path: '/menu1-style-1'
+      fullPath: '/menu1-style-1'
+      preLoaderRoute: typeof Menu1Style1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu2-saved': {
+      id: '/menu2-saved'
+      path: '/menu2-saved'
+      fullPath: '/menu2-saved'
+      preLoaderRoute: typeof Menu2SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu3-feed': {
+      id: '/menu3-feed'
+      path: '/menu3-feed'
+      fullPath: '/menu3-feed'
+      preLoaderRoute: typeof Menu3FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu4-me': {
+      id: '/menu4-me'
+      path: '/menu4-me'
+      fullPath: '/menu4-me'
+      preLoaderRoute: typeof Menu4MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding-1': {
+      id: '/onboarding-1'
+      path: '/onboarding-1'
+      fullPath: '/onboarding-1'
+      preLoaderRoute: typeof Onboarding1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding-2': {
+      id: '/onboarding-2'
+      path: '/onboarding-2'
+      fullPath: '/onboarding-2'
+      preLoaderRoute: typeof Onboarding2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding-3': {
+      id: '/onboarding-3'
+      path: '/onboarding-3'
+      fullPath: '/onboarding-3'
+      preLoaderRoute: typeof Onboarding3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding-4': {
+      id: '/onboarding-4'
+      path: '/onboarding-4'
+      fullPath: '/onboarding-4'
+      preLoaderRoute: typeof Onboarding4RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu2-saved-1/': {
+      id: '/menu2-saved-1/'
+      path: '/menu2-saved-1'
+      fullPath: '/menu2-saved-1/'
+      preLoaderRoute: typeof Menu2Saved1IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu2-saved-1/$id': {
+      id: '/menu2-saved-1/$id'
+      path: '/menu2-saved-1/$id'
+      fullPath: '/menu2-saved-1/$id'
+      preLoaderRoute: typeof Menu2Saved1IdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/saved/$id': {
@@ -70,7 +297,18 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  Menu1StyleRoute: Menu1StyleRoute,
+  Menu1Style1Route: Menu1Style1Route,
+  Menu2SavedRoute: Menu2SavedRoute,
+  Menu3FeedRoute: Menu3FeedRoute,
+  Menu4MeRoute: Menu4MeRoute,
+  Onboarding1Route: Onboarding1Route,
+  Onboarding2Route: Onboarding2Route,
+  Onboarding3Route: Onboarding3Route,
+  Onboarding4Route: Onboarding4Route,
+  Menu2Saved1IdRoute: Menu2Saved1IdRoute,
   SavedIdRoute: SavedIdRoute,
+  Menu2Saved1IndexRoute: Menu2Saved1IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

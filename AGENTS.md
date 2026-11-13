@@ -31,7 +31,7 @@ use the editor.
 
 ## Project rules
 - Import the attached KODI theme last among theme imports and consume its local components without editing vendor files; why: library updates stay safe and its tokens remain authoritative.
-- Main demo screens switch through PairlyContext on `/`; saved outfit details use `/saved/$id`, with the provider at the root so in-memory collections survive navigation.
+- Each screen has its own URL (`/onboarding-1..4`, `/menu1-style[-1]`, `/menu2-saved`, `/menu2-saved-1[/$id]`, `/menu3-feed`, `/menu4-me`); ScreenSync keeps URL and PairlyContext screen/tab in step via `src/lib/screenPaths.ts`, provider at the root; why: screens stay linkable while existing state actions keep driving navigation.
 - Track Feed hint dismissal in shared React state; why: it appears only once per demo session across tab and detail navigation, without persistence.
 - Style generation uses server-only AI Gateway planning and reference-image edits; per-look results live in shared React state, never fall back to demos; the exact Jason chinos sample reserves its first slot for an owned photo and renders only the other two, while the Saved detail retains OutfitResultView.
 - Reuse Style generation only for identical garment/category/occasion/mood/preference/Style Type/axis-score inputs; select Safe by default or One step up for high exploration and preserve explicit selections; why: the personalized ladder must never reuse another style profile or change as renders complete.

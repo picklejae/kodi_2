@@ -14,8 +14,14 @@ import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PairlyProvider } from "@/store/PairlyContext";
+import { ScreenSync } from "@/components/pairly/AppShell";
+import { Navigate } from "@tanstack/react-router";
 
 function NotFoundComponent() {
+  return <Navigate to="/onboarding-1" replace />;
+}
+
+export function UnusedNotFound() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -130,7 +136,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <PairlyProvider><Outlet /></PairlyProvider>
+      <PairlyProvider><ScreenSync /><Outlet /></PairlyProvider>
       <Toaster position="bottom-center" offset={96} mobileOffset={96} />
     </QueryClientProvider>
   );

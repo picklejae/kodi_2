@@ -48,7 +48,7 @@ export function Saved() {
     }, 180);
   };
   const openOutfit = (id: string) => {
-    if (!savedEdit) navigate({ to: "/saved/$id", params: { id } });
+    if (!savedEdit) navigate({ to: "/menu2-saved-1/$id", params: { id } });
   };
   return (
     <div className="px-6 pb-8 pt-12">

@@ -1,21 +1,7 @@
-import { useEffect } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { PhoneFrame } from "@/components/pairly/PhoneFrame";
-import { Diagnosis } from "@/screens/Diagnosis";
-import { Results } from "@/screens/Results";
-import { Reveal } from "@/screens/Reveal";
-import { Budget } from "@/screens/Budget";
-import { Upload } from "@/screens/Upload";
-import { Welcome } from "@/screens/Welcome";
-import { Social } from "@/screens/Social";
-import { Saved } from "@/screens/Saved";
-import { Me } from "@/screens/Me";
-import { BottomTabBar } from "@/components/pairly/BottomTabBar";
-import { CreatePostSheet } from "@/components/pairly/CreatePostSheet";
-import { DevJumper } from "@/components/pairly/DevJumper";
-import { usePairly } from "@/store/PairlyContext";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: () => { throw redirect({ to: "/onboarding-1", search: (prev: Record<string, unknown>) => prev }); },
   head: () => ({
     meta: [
       { title: "Pairly · Find your Style Type" },
@@ -26,35 +12,4 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
 });
-
-function Screens() {
-  const { screen, activeTab } = usePairly();
-  useEffect(() => { window.scrollTo(0, 0); }, [screen, activeTab]);
-  if (screen === "diagnosis") return <Diagnosis />;
-  if (screen === "reveal") return <Reveal />;
-  if (screen === "budget") return <Budget />;
-  if (screen === "welcome") return <Welcome />;
-  return (
-    <>
-      <div className="flex flex-1 flex-col pb-24">
-        {activeTab === "feed" ? <Social /> : activeTab === "saved" ? <Saved /> : activeTab === "me" ? <Me /> : screen === "results" ? <Results /> : <Upload />}
-      </div>
-      <BottomTabBar />
-      <CreatePostSheet />
-    </>
-  );
-}
-
-const PHONE_SCREENS = ["welcome", "diagnosis", "reveal", "budget"];
-
-function Index() {
-  const { screen } = usePairly();
-  return (
-    <>
-      <PhoneFrame phone={PHONE_SCREENS.includes(screen)}><Screens /></PhoneFrame>
-      <DevJumper />
-    </>
-  );
-}

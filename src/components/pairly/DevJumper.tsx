@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "@tanstack/react-router";
 import { usePairly } from "@/store/PairlyContext";
 import { PRESETS, devButtonVisible, parsePresetParams } from "@/lib/devPresets";
 import { SAMPLES } from "@/data/samples";
+import { SCREEN_PATHS, type ScreenPath } from "@/lib/screenPaths";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 
 const KEY = "pairly.devHidden";
@@ -52,12 +53,16 @@ export function DevJumper() {
               onClick={() => {
                 const sample = SAMPLES[0];
                 if (sample) loadPreset({ preset: p.id, type: DEFAULT_CODE, sample });
-                if (location.pathname !== "/") navigate({ to: "/" });
                 setOpen(false);
               }}
             >
               {p.label}
             </button>
+          ))}
+          <hr className="my-1 border-border" />
+          <p className="px-2 py-1 text-muted-foreground">Screen Jump</p>
+          {(Object.entries(SCREEN_PATHS) as [ScreenPath, string][]).map(([path, label]) => (
+            <button key={path} className={`block w-full rounded px-2 py-1.5 text-left hover:bg-muted ${location.pathname === path ? "font-bold" : ""}`} onClick={() => { navigate({ to: path }); setOpen(false); }}>{label}</button>
           ))}
           <hr className="my-1 border-border" />
           <p className="px-2 py-1.5 text-muted-foreground">Shop taps: {shopClicks}</p>
