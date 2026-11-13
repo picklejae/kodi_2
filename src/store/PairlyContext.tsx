@@ -20,7 +20,7 @@ import { MAX_ATTEMPTS, SHOPPING_TTL, shoppingKey, type ShoppingInput, type Shopp
 import { STYLE_PRESETS, stylePresetKey, PRESET_LOADING_MS } from "@/data/stylePresets";
 import { originalImageIdentity, styleCacheKey, generationBody, bypassStyleCache, readStyleCache, writeStyleCache } from "@/lib/styleCache";
 import type { ConceptItem } from "@/data/moodboards";
-import { DEMO_SAMPLES, demoSetLooks } from "@/data/demoSets";
+import { DEMO_SAMPLES, demoSetLooks, demoSetForImage } from "@/data/demoSets";
 
 export type StylePreference = "menswear" | "womenswear";
 export const PREFERENCE_KEY = "pairly.stylePreference";
@@ -199,6 +199,17 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       const imageIdentity = await identityPromise;
       imageIdentities.current.set(identityKey, imageIdentity);
       if (runId.current !== token) return;
+      const fixedSet = skipCache ? undefined : demoSetForImage(imageIdentity);
+      if (fixedSet) {
+        const sample = DEMO_SAMPLES[fixedSet];
+        token = ++runId.current;
+        generation.current = null; cacheSession.current = null; existingRequest.current = null;
+        setState((s) => ({ ...s, planning: true, generationError: "", generatedLooks: [], selectedConcept: defaultConcept(s.exploreLevel) }));
+        await new Promise((resolve) => setTimeout(resolve, PRESET_LOADING_MS));
+        if (runId.current !== token) return;
+        setState((s) => ({ ...s, uploadedItem: { ...item, category: sample.category, name: sample.name, attributes: sample.attributes }, generatedLooks: demoSetLooks(fixedSet), planning: false, generationError: "", selectedConcept: defaultConcept(s.exploreLevel) }));
+        return;
+      }
       const key = styleCacheKey({ imageIdentity, preference, ...profile, occasion: requestContext.occasion, mood: state.note.trim().slice(0, 600), body: requestContext.body, category: item.category, name: item.name ?? item.category });
       if (!skipCache && existingRequest.current === key && !state.generationError && state.generatedLooks?.length) return;
       existingRequest.current = key;

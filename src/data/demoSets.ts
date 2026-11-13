@@ -11,6 +11,14 @@ import type { SampleItem } from "./samples";
 import type { ConceptItem } from "./moodboards";
 
 export type DemoSetId = "set-a" | "set-b";
+/** SHA-256 of original uploaded bytes, before resizing; filenames are not identity. */
+export const DEMO_UPLOAD_HASHES: Record<DemoSetId, string> = {
+  "set-a": "0f183ab5581ef666aafd63f0d670ab7fa067e5bf6eeca6b206b87ab4ae845cc3",
+  "set-b": "ca36cbeda09bbfeeec1cd216c5b92f1beda4be033c1f0c0d4105f0fe34049255",
+};
+export function demoSetForImage(identity: string): DemoSetId | undefined {
+  return (["set-a", "set-b"] as const).find((id) => DEMO_UPLOAD_HASHES[id] === identity);
+}
 export const DEMO_SAMPLES: Record<DemoSetId, SampleItem> = {
   "set-a": { id: "set-a", name: "Beige chinos", image: chinos.url, category: "pants", attributes: ["Beige", "Cotton", "Wide"] },
   "set-b": { id: "set-b", name: "Brown leather jacket", image: jacket.url, category: "jacket", attributes: ["Brown", "Leather", "Zip-front"] },

@@ -9,6 +9,7 @@ import { IDBFactory } from "fake-indexeddb";
 import { readStyleCache } from "@/lib/styleCache";
 import { stylePresetKey, type StylePreset } from "@/data/stylePresets";
 import { TIERS, type StylePlan } from "@/lib/styleGeneration";
+import { DEMO_UPLOAD_HASHES, demoSetLooks } from "@/data/demoSets";
 
 const mocks = vi.hoisted(() => ({ plan: vi.fn(), render: vi.fn(), photo: vi.fn(), shopping: vi.fn(), identity: vi.fn(), presets: {} as Record<string, StylePreset> }));
 vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: unknown) => fn }));
@@ -25,6 +26,20 @@ function deferred() {
 const plan: StylePlan = { presentation: "Same studio", looks: TIERS.map((tier, i) => ({ tier, shift: i === 0 ? "" : i === 1 ? "Tailored → Relaxed" : "Tailored → Relaxed, Neutral → Color", name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
 beforeEach(() => { vi.stubGlobal("indexedDB", new IDBFactory()); window.history.replaceState(null, "", "/"); Object.keys(mocks.presets).forEach((key) => delete mocks.presets[key]); localStorage.clear(); vi.resetAllMocks(); mocks.identity.mockImplementation(async (image: string, sampleId?: string) => sampleId ?? image); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it.each(["set-a", "set-b"] as const)("loads the original uploaded %s piece into its three fixed options without AI", async (id) => {
+    mocks.identity.mockResolvedValue(DEMO_UPLOAD_HASHES[id]);
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    // The default upload category and absent filename must not prevent matching.
+    act(() => result.current.setUploadedItem({ image: "original-upload", category: "jacket", attributes: [], source: "upload" }));
+    act(() => result.current.setNote("Any occasion or mood"));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(result.current.generatedLooks?.map((look) => look.image)).toEqual(demoSetLooks(id).map((look) => look.image)), { timeout: 3500 });
+    expect(result.current.generatedLooks?.map((look) => look.status)).toEqual(["success", "success", "success"]);
+    expect(result.current.uploadedItem?.category).toBe(id === "set-a" ? "pants" : "jacket");
+    expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled(); expect(mocks.photo).not.toHaveBeenCalled();
+    expect(result.current.planning).toBe(false);
+  });
   it("restores only successful cached looks and retries a missing slot with one render call", async () => {
     mocks.render.mockResolvedValueOnce({ ok: true, image: "safe-image" }).mockResolvedValueOnce({ ok: false, error: "Failed" }).mockResolvedValueOnce({ ok: true, image: "bold-image" });
     const first = renderHook(() => usePairly(), { wrapper: PairlyProvider });
