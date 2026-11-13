@@ -21,7 +21,7 @@ export function Welcome() {
           </div>
         </div>
       )}
-      <h1 className="text-display">Own it. Now know what to wear it with.</h1>
+      <h1 className="text-display font-bold">Own it. Now know what to wear it with.</h1>
       <p className="text-body-sm text-muted-foreground">Swipe a few looks to find your style. Then get 3 ways to wear one piece you own.</p>
       {preferenceLoaded && (
         <div className="mt-auto flex flex-col gap-screen">
