@@ -5,6 +5,7 @@ import { usePairly } from "@/store/PairlyContext";
 import { StyleScales } from "@/components/pairly/StyleScales";
 import { OutfitBoard } from "@/components/pairly/OutfitBoard";
 import { Photo } from "@/components/pairly/Photo";
+import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
 
 export function Me() {
   const { styleType, axisScores, retake, savedLooks, posts } = usePairly();
@@ -17,6 +18,7 @@ export function Me() {
       <p className="mt-3 text-sm text-muted-foreground">{t.description}</p>
       <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
       <PillButton variant="outline" className="mt-8" onClick={retake}>Retake</PillButton>
+      <section className="mt-8"><h2 className="font-serif text-2xl">What are you looking for?</h2><p className="mt-1 text-sm text-muted-foreground">Changing this clears current moodboards.</p><div className="mt-3"><PreferenceChoice compact /></div></section>
       <section className="mt-8 pb-8">
         <h2 className="font-serif text-2xl">My looks</h2>
         {!savedLooks.length && !posts.some((p) => p.isUserPost) && <p className="mt-3 text-sm text-muted-foreground">No looks yet.</p>}

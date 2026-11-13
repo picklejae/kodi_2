@@ -7,7 +7,7 @@ describe("personalized look state", () => {
   expect(planSchema.safeParse({ presentation: "studio", looks: [look, look, look] }).success).toBe(true);
  });
  it("starts each look loading with the same actual owned reference, never a demo image", () => {
-  const looks = looksFromPlan({ presentation: "studio", looks: [look, look, look] }, "My coat", "owned-reference");
+  const looks = looksFromPlan({ presentation: "studio", looks: [look, look, look] }, "My coat", "owned-reference", "menswear");
   expect(looks).toHaveLength(3);
   for (const entry of looks) {
    expect(entry.status).toBe("loading");

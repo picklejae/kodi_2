@@ -17,3 +17,8 @@ export const ROUNDS: DiagnosisCard[] = [
   { id: 11, image: "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=600&q=70", tags: "RCPS" },
   { id: 12, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=70", tags: "RCDF" },
 ];
+
+/** Quiz photos are menswear only; womenswear has no suitable assets yet, so its quiz is skipped. */
+export function quizAvailable(preference: "menswear" | "womenswear"): boolean {
+  return preference === "menswear";
+}

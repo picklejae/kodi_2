@@ -12,12 +12,13 @@ function deferred() {
   return { promise, resolve };
 }
 const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
-beforeEach(() => { vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
+beforeEach(() => { localStorage.clear(); vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
   it("reveals the first completed look while others generate, reuses unchanged inputs, and retries only a failure", async () => {
     const jobs = [deferred(), deferred(), deferred()];
     jobs.forEach((job) => mocks.render.mockReturnValueOnce(job.promise));
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => { result.current.findMatches(); result.current.findMatches(); });
     await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
@@ -47,11 +48,39 @@ describe("Style loading", () => {
   it("does not override an explicit selection when another image finishes first", async () => {
     const job = deferred(); mocks.render.mockReturnValue(job.promise);
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
     await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
     act(() => result.current.setSelectedConcept(2));
     await act(async () => job.resolve({ ok: true, image: "image" }));
     expect(result.current.selectedConcept).toBe(2);
+  });
+  it("sends the clothing preference to planning and rendering and invalidates results when it changes", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    expect(mocks.plan).not.toHaveBeenCalled();
+    act(() => result.current.setStylePreference("womenswear"));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
+    expect(mocks.plan.mock.calls[0]?.[0].data.preference).toBe("womenswear");
+    expect(mocks.render.mock.calls.every((c) => c[0].data.preference === "womenswear")).toBe(true);
+    await waitFor(() => expect(result.current.generatedLooks?.[0]?.status).toBe("success"));
+    expect(result.current.generatedLooks?.[0]?.department).toBe("women");
+    act(() => result.current.setStylePreference("menswear"));
+    expect(result.current.generatedLooks).toEqual([]);
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(2));
+    expect(mocks.plan.mock.calls[1]?.[0].data.preference).toBe("menswear");
+  });
+  it("restores a saved preference after refresh and starts with none selected otherwise", async () => {
+    const first = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    await waitFor(() => expect(first.result.current.preferenceLoaded).toBe(true));
+    expect(first.result.current.stylePreference).toBeNull();
+    act(() => first.result.current.setStylePreference("womenswear"));
+    first.unmount();
+    const second = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    await waitFor(() => expect(second.result.current.stylePreference).toBe("womenswear"));
   });
 });

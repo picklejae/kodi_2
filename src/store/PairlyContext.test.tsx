@@ -5,6 +5,7 @@ import { PairlyProvider, usePairly } from "./PairlyContext";
 describe("quiz state", () => {
   it("shows the Feed hint once until demo reset, including across tab changes", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     expect(result.current.feedHintDismissed).toBe(false);
     act(() => result.current.setTab("feed"));
     act(() => result.current.dismissFeedHint());
@@ -16,6 +17,7 @@ describe("quiz state", () => {
   });
   it("records uploads and deletes photos independently of saved outfits", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.recordUpload("new-photo", "Blue shirt", "shirt"));
     expect(result.current.recentItems[0]?.imageUrl).toBe("new-photo");
     expect(result.current.recentItems).toHaveLength(7);
@@ -29,6 +31,7 @@ describe("quiz state", () => {
   });
   it("saving a pick retains its whole look and owned image after another upload", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ image: "first-piece", category: "jacket", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
     const item = result.current.picks?.safe.items[0];
@@ -43,6 +46,7 @@ describe("quiz state", () => {
   });
   it("posting retains both old and new boards with their pick metadata", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ image: "owned", category: "jacket", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
     const look = result.current.picks?.safe;
@@ -60,6 +64,7 @@ describe("quiz state", () => {
   });
   it("carries the optional note to Results and counts every shop tap until reset", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setNote("Dinner in the city, not too formal"));
     act(() => result.current.setUploadedItem({ image: "item", category: "shirt", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
@@ -73,6 +78,7 @@ describe("quiz state", () => {
   });
   it("skip quiz uses the classic fallback and resets exploration even after yes votes", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.answer("yes"));
     act(() => result.current.skipQuiz());
     expect(result.current.styleType).toBe("TNPF");
@@ -83,6 +89,7 @@ describe("quiz state", () => {
   });
   it("retake keeps the owned item and completing 12 swipes stores exploration", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ image: "item", category: "jacket", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
     act(() => result.current.retake());

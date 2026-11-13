@@ -1,5 +1,5 @@
 import type React from "react";
-import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { planStyle, renderStyleLook } from "@/lib/styleGeneration.functions";
 import { looksFromPlan, photoReference, type GeneratedLook } from "@/lib/styleGeneration";
@@ -15,6 +15,8 @@ import type { PresetRequest } from "@/lib/devPresets";
 import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "@/data/saved";
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
 
+export type StylePreference = "menswear" | "womenswear";
+export const PREFERENCE_KEY = "pairly.stylePreference";
 export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
 export type Tab = "style" | "feed" | "closet" | "me";
 export interface PostDraft { image: string | null; pickImages?: string[]; look?: Look; ownedImage?: string }
@@ -31,6 +33,8 @@ export interface UploadedItem {
 interface PairlyState {
   recentItems: RecentItem[];
   savedOutfits: SavedOutfit[];
+  stylePreference: StylePreference | null;
+  preferenceLoaded: boolean;
   screen: Screen;
   answers: Answer[];
   styleType: StyleTypeCode | null;
@@ -55,13 +59,14 @@ interface PairlyState {
   feedHintDismissed: boolean;
 }
 
-const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
+const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
 
 interface PairlyCtx extends PairlyState {
   recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
   deleteRecent: (id: string) => void;
   deleteSavedOutfit: (id: string) => void;
   go: (s: Screen) => void;
+  setStylePreference: (p: StylePreference) => void;
   answer: (a: Answer) => void;
   skipQuiz: () => void;
   back: () => void;
@@ -99,7 +104,12 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const inFlight = useRef(new Set<number>());
   const existingRequest = useRef<string | null>(null);
   const selectionTouched = useRef(false);
-  const generation = useRef<{ reference: string; presentation: string; occasion: string; mood: string } | null>(null);
+  useEffect(() => {
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(PREFERENCE_KEY); } catch { /* storage unavailable */ }
+    setState((s) => ({ ...s, preferenceLoaded: true, stylePreference: s.stylePreference ?? (saved === "menswear" || saved === "womenswear" ? saved : null) }));
+  }, []);
+  const generation = useRef<{ preference: StylePreference; reference: string; presentation: string; occasion: string; mood: string } | null>(null);
   const renderLook = async (index: number, look: GeneratedLook, token: number) => {
     const request = generation.current;
     if (!request || inFlight.current.has(index)) return;
@@ -114,8 +124,9 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     } finally { inFlight.current.delete(index); }
   };
   const createMoodboards = async () => {
-    if (!state.uploadedItem) return;
-    const key = JSON.stringify([state.uploadedItem.image, state.uploadedItem.category, state.uploadedItem.name, state.occasion, state.note.slice(0, 600)]);
+    if (!state.uploadedItem || !state.stylePreference) return;
+    const preference = state.stylePreference;
+    const key = JSON.stringify([preference, state.uploadedItem.image, state.uploadedItem.category, state.uploadedItem.name, state.occasion, state.note.slice(0, 600)]);
     if (existingRequest.current === key && (state.planning || state.generatedLooks?.length)) {
       setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
       return;
@@ -128,11 +139,11 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, screen: "results", activeTab: "style", selectedConcept: 0, generatedLooks: [], planning: true, generationError: "", picks: s.uploadedItem ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion) : s.picks }));
     try {
       const reference = await photoReference(state.uploadedItem.image);
-      const request = { reference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600) };
+      const request = { preference, reference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600) };
       const result = await planFn({ data: { ...request, category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category } });
       if (runId.current !== token) return;
       if (!result.ok) throw new Error(result.error);
-      const looks = looksFromPlan(result.plan, state.uploadedItem.name ?? state.uploadedItem.category, state.uploadedItem.image);
+      const looks = looksFromPlan(result.plan, state.uploadedItem.name ?? state.uploadedItem.category, state.uploadedItem.image, preference);
       generation.current = { ...request, presentation: result.plan.presentation };
       setState((s) => ({ ...s, generatedLooks: looks, planning: false }));
       await Promise.all(looks.map((look, index) => renderLook(index, look, token)));
@@ -169,7 +180,14 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     back: () =>
       setState((s) => (s.answers.length ? { ...s, answers: s.answers.slice(0, -1) } : { ...s, screen: "welcome" })),
     retake: () => setState((s) => ({ ...s, answers: [], quizSkipped: false, screen: "diagnosis" })),
-    reset: () => { runId.current++; existingRequest.current = null; setState(initial); },
+    setStylePreference: (stylePreference) => {
+      try { localStorage.setItem(PREFERENCE_KEY, stylePreference); } catch { /* storage unavailable */ }
+      if (stylePreference === state.stylePreference) return;
+      // A different preference makes old moodboards stale; never show them as new matches.
+      runId.current++; existingRequest.current = null; generation.current = null;
+      setState((s) => ({ ...s, stylePreference, generatedLooks: [], planning: false, generationError: "", selectedConcept: 0 }));
+    },
+    reset: () => { runId.current++; existingRequest.current = null; try { localStorage.removeItem(PREFERENCE_KEY); } catch { /* storage unavailable */ } setState({ ...initial, preferenceLoaded: true }); },
     setUploadedItem: (uploadedItem) => { if (state.uploadedItem?.image !== uploadedItem?.image) { runId.current++; existingRequest.current = null; } setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0, generatedLooks: s.uploadedItem?.image === uploadedItem?.image ? s.generatedLooks ?? [] : [], planning: s.uploadedItem?.image === uploadedItem?.image ? s.planning ?? false : false, generationError: "" })); },
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),
     setNote: (note) => setState((s) => ({ ...s, note })),
@@ -211,10 +229,11 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       feedback: p.votesUp + up > 3 ? mockFeedback(["Great fit", "Add a layer", "Try darker shoes"]) : p.feedback } : p) })),
     loadPreset: ({ preset, type, sample }) => {
       const item: UploadedItem = { image: sample.image, category: sample.category, attributes: sample.attributes, source: "sample", name: sample.name };
-      const base: PairlyState = { ...initial, feedHintDismissed: state.feedHintDismissed, styleType: preset === "welcome" || preset === "diagnosis" ? null : type };
-      if (preset === "welcome" || preset === "diagnosis" || preset === "reveal" || preset === "upload") return setState({ ...base, screen: preset });
+      // Functional update keeps a preference restored from storage in the same tick.
+      const base = (s: PairlyState): PairlyState => ({ ...initial, stylePreference: s.stylePreference, preferenceLoaded: s.preferenceLoaded, feedHintDismissed: s.feedHintDismissed, styleType: preset === "welcome" || preset === "diagnosis" ? null : type });
+      if (preset === "welcome" || preset === "diagnosis" || preset === "reveal" || preset === "upload") return setState((s) => ({ ...base(s), screen: preset }));
       const picks = generatePicks(CATALOG, item.category, item.name ?? item.category, type, null);
-      setState({ ...base, uploadedItem: item, picks, screen: "results", activeTab: preset === "feed" ? "feed" : preset === "closet" ? "closet" : "style" });
+      setState((s) => ({ ...base(s), uploadedItem: item, picks, screen: "results", activeTab: preset === "feed" ? "feed" : preset === "closet" ? "closet" : "style" }));
     },
   }), [state]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

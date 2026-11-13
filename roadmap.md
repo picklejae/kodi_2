@@ -24,3 +24,5 @@
 - [x] Verify look rules, ordering, notes, shopping, and posting at phone size
 - [x] Add Social badges, cohort filters and summaries, latest pinned post, and Me look history
 - [x] Verify filters, summaries, saved and posted look history, and demo presets
+- [x] Clothing preference choice (Welcome, Style, Me), persisted, passed to generation
+- [ ] Live shopping: blocked on cost review before linking the existing Firecrawl connection
