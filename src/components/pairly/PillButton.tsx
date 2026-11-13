@@ -1,17 +1,13 @@
 import type { ButtonHTMLAttributes } from "react";
-import { cn } from "@/lib/utils";
+import { Button, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 
 export function PillButton({ variant = "primary", className, ...p }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "outline" | "ghost" }) {
-  return (
-    <button
-      {...p}
-      className={cn(
-        "inline-flex h-12 w-full items-center justify-center rounded-full px-6 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-40",
-        variant === "primary" && "bg-primary text-primary-foreground",
-        variant === "outline" && "border border-foreground/80 bg-transparent text-foreground",
-        variant === "ghost" && "text-muted-foreground",
-        className,
-      )}
-    />
-  );
+  // Legacy callers may place controls, but never re-skin the attached component.
+  const placement = className?.split(/\s+/).flatMap((value) => {
+    if (/^(self-|flex-1$|hidden$|lg:hidden$)/.test(value)) return [value];
+    const margin = value.match(/^(m[trblxy]?)-/);
+    return margin ? [`${margin[1]}-screen`] : [];
+  }).join(" ");
+  if (variant === "ghost") return <TextLinkButton {...p} className={placement} />;
+  return <Button {...p} variant={variant === "outline" ? "secondary" : "primary"} fullWidth={!className?.includes("w-auto")} className={placement} />;
 }
