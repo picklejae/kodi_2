@@ -1,5 +1,6 @@
 import { JASON_SAMPLE } from "@/data/jason";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor, screen } from "@testing-library/react";
+import { Results } from "@/screens/Results";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { ROUNDS } from "@/data/diagnosis";
@@ -18,6 +19,17 @@ function deferred() {
 const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ tier: ["safe", "step", "bold"][i], shift: i === 0 ? "" : i === 1 ? "Tailored → Relaxed" : "Tailored → Relaxed, Neutral → Color", name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
 beforeEach(() => { localStorage.clear(); vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it("Results tabs follow Safe, One step up, Bold tier order", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: ({ children }) => <PairlyProvider>{children}<Results /></PairlyProvider> });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(screen.getAllByRole("tab")).toHaveLength(3));
+    const tabs = screen.getAllByRole("tab");
+    expect(tabs[0]?.textContent).toBe("SafeLook 0");
+    expect(tabs[1]?.textContent).toBe("One step upLook 1");
+    expect(tabs[2]?.textContent).toBe("BoldLook 2");
+  });
   it("passes the completed Style Type and axis scores into planStyle", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
