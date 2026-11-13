@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, MessageCircle, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { BottomSheet, Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryButton, TextField, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
