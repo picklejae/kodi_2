@@ -50,7 +50,8 @@ describe("hotspotPlacements", () => {
       { role: "Shoes", name: "Loafers", owned: false, brand: null, price: null, shopUrl: null },
     ];
     const [first, second] = hotspotPlacements(products);
-    expect(first).toMatchObject({ x: 50, y: 92 });
-    expect(second).toMatchObject({ x: 62, y: 92 });
+    const { x, y } = HOTSPOT_POSITIONS.shoes;
+    expect(first).toMatchObject({ x, y });
+    expect(second).toMatchObject({ x: x + 12, y });
   });
 });
