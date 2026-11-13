@@ -25,7 +25,6 @@
 }
 .recent-carousel { scrollbar-width: none; }
 .recent-carousel::-webkit-scrollbar { display: none; }
-.hotspot { background: var(--overlay); color: var(--inverse-foreground); }
 .recent-sheet-backdrop { background: var(--overlay); }
 .recent-sheet { padding-bottom: var(--spacing-screen); transition-timing-function: var(--ease-kodi); }
 .recent-sheet::after { display: none; }
