@@ -2,7 +2,8 @@ import type { GeneratedLook, StylePlan, StylePreference } from "./styleGeneratio
 import type { StyleTypeCode } from "@/data/styleTypes";
 
 export const STYLE_CACHE_LIMIT = 20;
-export const STYLE_CACHE_DB = "pairly-style-results";
+// Separate the new presentation from cached human-model renders.
+export const STYLE_CACHE_DB = "pairly-style-results-faceless-v1";
 const STORE = "results";
 export interface CachedStyleResult {
   key: string;

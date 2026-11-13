@@ -35,7 +35,7 @@ export type StylePlan = z.infer<typeof planSchema>;
 export type StylePreference = "menswear" | "womenswear";
 /** Shopping department for future product queries; mirrors the clothing preference. */
 export const DEPARTMENT: Record<StylePreference, string> = { menswear: "men", womenswear: "women" };
-export type GeneratedLook = MoodboardLook & { tier: typeof TIERS[number]; shift: string; preference: StylePreference; department: string; status: "idle" | "loading" | "success" | "failed"; error?: string; styling: string };
+export type GeneratedLook = MoodboardLook & { demoSet?: "set-a" | "set-b"; tier: typeof TIERS[number]; shift: string; preference: StylePreference; department: string; status: "idle" | "loading" | "success" | "failed"; error?: string; styling: string };
 export function looksFromPlan(plan: StylePlan, name: string, image: string, preference: StylePreference): GeneratedLook[] {
   return plan.looks.map((look, index) => ({ id: `ai-${index}`, tier: look.tier, shift: look.shift, preference, department: DEPARTMENT[preference], name: look.name, explanation: look.explanation, styling: look.styling, status: "loading", items: [{ role: "Your piece", name, image, owned: true, brand: null, price: null, shopUrl: null }, ...look.items.map((item) => ({ ...item, owned: false, brand: null, price: null, shopUrl: null }))] }));
 }

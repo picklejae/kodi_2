@@ -31,7 +31,7 @@ export function Results() {
         {looks.map((look, index) => <PillButton key={look.id} role="tab" id={`concept-${look.id}`} aria-controls="selected-concept" aria-selected={active.id === look.id} variant={active.id === look.id ? "primary" : "ghost"} onClick={() => setSelectedConcept(index)} className="h-16 min-w-0 flex-1 gap-1 px-1 text-xs">{(look.status === "loading" || look.status === "idle") && <Loader2 aria-label="Generating" className="h-3 w-3 shrink-0 animate-spin" />}{look.status === "failed" && <ImageIcon aria-label="Generation failed" className="h-3 w-3 shrink-0" />}<span className="min-w-0"><span className="block font-semibold">{TIER_LABELS[look.tier]}</span><span className="mt-1 block truncate text-[10px] font-normal" title={look.name}>{look.name}</span></span></PillButton>)}
       </div>
       <PillButton variant="ghost" onClick={regenerate} disabled={planning || looks.some((look) => look.status === "loading")} className="mt-2 h-8 w-auto self-start px-0 text-xs font-normal underline underline-offset-4">Regenerate</PillButton>
-      <p className="mt-4 text-[10px] text-muted-foreground">{looks[0]?.id === "jason-closet" ? "Your closet photo + two AI styling concepts" : "AI styling concepts · garment details and fit may vary"}</p>
+      <p className="mt-4 text-[10px] text-muted-foreground">{active.demoSet ? "Demo outfit" : looks[0]?.id === "jason-closet" ? "Your closet photo + two AI styling concepts" : "AI styling concepts · garment details and fit may vary"}</p>
       {looks.some((look) => look.status === "idle") && <PillButton className="mt-3" onClick={findMatches}>Create two new looks</PillButton>}
       <div className="mt-3 grid gap-4 lg:grid-cols-3" aria-label="Outfit moodboards">
         {looks.map((look, index) => <div key={look.id} className={cn(active.id !== look.id && "hidden lg:block")}>
@@ -46,7 +46,7 @@ export function Results() {
       <div id="selected-concept" role="tabpanel" aria-labelledby={`concept-${active.id}`} className="mt-7">
         <h2 className="font-serif text-3xl">{active.name}</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed">{active.explanation}</p>
-        <p className="mt-2 text-xs text-muted-foreground">{active.tier === "safe" ? `Within your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}` : `${active.tier === "step" ? "One step" : "A bold move"} from your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}${active.shift ? `: ${active.shift}` : ""}`}</p>
+        {!active.demoSet && <p className="mt-2 text-xs text-muted-foreground">{active.tier === "safe" ? `Within your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}` : `${active.tier === "step" ? "One step" : "A bold move"} from your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}${active.shift ? `: ${active.shift}` : ""}`}</p>}
         <div className="mt-5 flex flex-wrap gap-2"><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">More casual · Demo</PillButton><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">Lower budget · Demo</PillButton>
         {active.status === "success" && active.image && active.id !== "jason-closet" && (() => {
           const alreadySaved = savedOutfits.some((outfit) => outfit.id === `${active.id}:${active.image?.length}`);
