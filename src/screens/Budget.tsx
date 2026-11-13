@@ -13,7 +13,7 @@ export function Budget() {
   const weight = body.weightKg === null ? "" : String(Math.round(metric ? body.weightKg : body.weightKg * LB_PER_KG));
   return <div className="flex flex-1 flex-col gap-screen px-screen pb-screen pt-topbar">
     <SectionLabel as="p">Your budget</SectionLabel>
-    <h1 className="text-title font-bold">Tell me about yourself</h1>
+    <h1 className="text-title font-bold">About yourself</h1>
     <div className="grid grid-cols-2 gap-screen">
       <TextField label={metric ? "Height (cm)" : "Height (in)"} inputMode="numeric" value={height} onChange={(e) => { const v = num(e.target.value); setBody({ ...body, heightCm: v === null ? null : metric ? v : v * CM_PER_IN }); }} />
       <TextField label={metric ? "Weight (kg)" : "Weight (lb)"} inputMode="numeric" value={weight} onChange={(e) => { const v = num(e.target.value); setBody({ ...body, weightKg: v === null ? null : metric ? v : v / LB_PER_KG }); }} />
