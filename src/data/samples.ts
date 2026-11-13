@@ -1,5 +1,5 @@
 import { JASON_SAMPLE } from "./jason";
-export type ItemCategory = "jacket" | "coat" | "pants" | "shirt" | "knit" | "shoes";
+export type ItemCategory = "jacket" | "coat" | "pants" | "skirt" | "shirt" | "knit" | "shoes";
 export const CATEGORIES: ItemCategory[] = ["jacket", "coat", "pants", "shirt"];
 
 export interface SampleItem { id: string; name: string; image: string; category: ItemCategory; attributes: string[] }
@@ -13,13 +13,14 @@ export const SAMPLES: SampleItem[] = [
   { id: "oxford", name: "Oxford shirt", image: img("1596755094514-f87e34085b2c"), category: "shirt", attributes: ["White", "Cotton", "Button-down"] },
 ];
 
-// Womenswear samples: single garments on a hanger or flat (Pexels, free license).
-const px = (id: string) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&fit=crop&w=600&h=600`;
+// Womenswear samples: Zara product shots on a plain background (team reference board, 11/13).
+// Images load from the publishers' CDNs; product pages: zara.com satin-midi-skirt p02157252,
+// zw-collection belted trench p00518241, women's high-waist jeans, women's knit cardigans.
 export const WOMEN_SAMPLES: SampleItem[] = [
-  { id: "w-blazer", name: "Cream blazer", image: px("36553720"), category: "jacket", attributes: ["Cream", "Wool blend", "Tailored"] },
-  { id: "w-jeans", name: "Light-wash jeans", image: px("1082528"), category: "pants", attributes: ["Light blue", "Denim", "Straight"] },
-  { id: "w-tee", name: "White tee", image: px("18257675"), category: "shirt", attributes: ["White", "Cotton", "Relaxed"] },
-  { id: "w-knit", name: "Cable-knit sweater", image: px("13889763"), category: "knit", attributes: ["Cream", "Knit", "Cable"] },
+  { id: "w-skirt", name: "Satin midi skirt", image: "https://content25.lecturas.com/medio/2024/11/01/falda-midi-satinada_46719dbb_241101232250_1920x2880.webp", category: "skirt", attributes: ["Beige", "Satin", "Midi"] },
+  { id: "w-trench", name: "Trench coat", image: "https://www.marie-claire.es/wp-content/uploads/sites/2/2023/02/06/63e0da411aa41.jpeg", category: "coat", attributes: ["Beige", "Cotton", "Belted"] },
+  { id: "w-jeans", name: "Jeans", image: "https://static.zara.net/assets/public/193b/11e3/86054305a94f/01a36957d564/04083022427-f1/04083022427-f1.jpg?f=auto&ts=1769164422756&w=570", category: "pants", attributes: ["Light blue", "Denim", "High waist"] },
+  { id: "w-cardigan", name: "Cardigan", image: "https://n.cdn.cdek.shopping/images/shopping/32e1ad63d76b4fbdbd1cbbe9c5bf535c.jpg?v=1", category: "knit", attributes: ["Ecru", "Knit", "Gold buttons"] },
 ];
 export function samplesFor(preference: "menswear" | "womenswear" | null): SampleItem[] {
   return preference === "womenswear" ? WOMEN_SAMPLES : SAMPLES;
@@ -32,6 +33,7 @@ export const GENERIC_ATTRIBUTES: Record<ItemCategory, string[]> = {
   jacket: ["Dark", "Structured", "Tailored"],
   coat: ["Neutral", "Wool", "Long"],
   pants: ["Neutral", "Cotton", "Straight"],
+  skirt: ["Neutral", "Fluid", "Midi"],
   shirt: ["Light", "Cotton", "Classic"],
   knit: ["Soft", "Knitted", "Relaxed"],
   shoes: ["Leather", "Classic"],

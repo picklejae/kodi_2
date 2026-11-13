@@ -6,6 +6,7 @@ on:
     branches: [proto]
   workflow_dispatch:
 permissions:
+  actions: read
   contents: write
   pages: write
   id-token: write
@@ -49,5 +50,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # While Pages is still set to "Deploy from a branch", GitHub also publishes the raw proto branch
+      # (README) on every push. Wait for that job so this deploy lands last. Remove once Source = GitHub Actions.
+      - name: Wait for GitHub's branch deploy to finish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 20
+          for i in $(seq 1 30); do
+            n=$(gh run list -R "${{ github.repository }}" -w "pages build and deployment" -L 5 --json status --jq '[.[] | select(.status != "completed")] | length')
+            [ "$n" = "0" ] && break
+            sleep 10
+          done
       - id: deployment
         uses: actions/deploy-pages@v4
