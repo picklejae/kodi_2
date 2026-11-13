@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Camera } from "lucide-react";
 import { Button } from "@/design-system/kodi-design-system-ac5f73";
 import { toast } from "sonner";
-import { BottomSheet } from "./BottomSheet";
+import { Sheet } from "./Sheet";
 import { Photo } from "./Photo";
 import { PillButton } from "./PillButton";
 import { SelectChip } from "./SelectChip";
@@ -28,7 +28,8 @@ export function CreatePostSheet() {
   const post = () => { if (!image) return; createPost({ image, ...(draft?.pickImages ? { pickImages: draft.pickImages } : {}), question: question.trim() || "How does this look?", occasion }); toast("Posted"); };
 
   return (
-    <BottomSheet open={!!draft} onClose={() => openDraft(null)} title="Get feedback">
+    <Sheet open={!!draft} onClose={() => openDraft(null)} title="Get feedback">
+      <h2 className="text-heading">Get feedback</h2>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       <input ref={camRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       {draft?.look && draft.ownedImage ? (
@@ -64,6 +65,6 @@ export function CreatePostSheet() {
         {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
       </div>
       <PillButton className="mt-6" disabled={!image} onClick={post}>Post</PillButton>
-    </BottomSheet>
+    </Sheet>
   );
 }
