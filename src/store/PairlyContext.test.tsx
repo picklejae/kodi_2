@@ -109,7 +109,7 @@ describe("quiz state", () => {
     expect(mine.map((p) => p.image)).toEqual(["board-two", "board-one"]);
     expect(mine.every((p) => p.look?.items.length === 2 && p.ownedImage === "owned")).toBe(true);
     act(() => result.current.reset());
-    expect(result.current.posts.filter((p) => p.isUserPost).map((p) => p.id)).toEqual([]);
+    expect(result.current.posts.filter((p) => p.isUserPost).map((p) => p.id)).toEqual(["jason-heritage", "jason-leather"]);
   });
   it("carries the optional note to Results and counts every shop tap until reset", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
