@@ -103,7 +103,14 @@ export async function renderStyleLook({ data }: { data: { styling: string } }) {
   const image = (dynamicSets.get(id) ?? SETS.find((set) => set.id === id))?.looks[Number(index)]?.image;
   return image ? { ok: true as const, image } : { ok: false as const, error: "No saved look for this piece in the prototype." };
 }
-export async function findShoppingProducts() {
-  return { ok: false as const, error: "Shopping is off in the prototype." };
+// Prototype: no Firecrawl, so a pin links to a Google Shopping search for the piece instead of a store page.
+export async function findShoppingProducts({ data }: { data: { role: string; description: string; preference?: string } }) {
+  const query = `${data.preference === "womenswear" ? "women's" : "men's"} ${data.description}`;
+  const now = new Date().toISOString();
+  return {
+    status: "success" as const,
+    products: [{ name: data.description, brand: null, retailer: "Google Shopping", image: null, price: null, currency: null, url: `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(query)}`, retrievedAt: now, role: data.role, explanation: "Search link (prototype)", score: 0 }],
+    usage: { credits: 0, calls: 0, complete: true }, blocked: [], retrievedAt: now,
+  };
 }
 export function presentationFor(p: "menswear" | "womenswear") { return p; }

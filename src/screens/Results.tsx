@@ -6,6 +6,7 @@ import { PillButton } from "@/components/pairly/PillButton";
 import { OCCASIONS } from "@/data/samples";
 import { TIER_LABELS } from "@/lib/styleGeneration";
 import { DEFAULT_CODE, STYLE_TYPES } from "@/data/styleTypes";
+import { HotspotLayer } from "@/components/pairly/OutfitResultView";
 import { cn } from "@/lib/utils";
 import { usePairly } from "@/store/PairlyContext";
 
@@ -38,6 +39,8 @@ export function Results() {
           <PillButton variant="ghost" aria-label={`Select ${look.name} outfit`} aria-pressed={active.id === look.id} onClick={() => setSelectedConcept(index)} className={cn("relative block aspect-[3/4] h-auto overflow-hidden rounded-2xl p-0 ring-2 ring-offset-2 ring-offset-background active:scale-100", active.id === look.id ? "ring-primary" : "ring-transparent")}>
             {look.status === "success" && look.image ? <img src={look.image} alt={`${look.name}: model-worn outfit built around your piece, head to shoes`} width={768} height={1024} className="h-full w-full object-contain" /> : <div role="status" className="flex h-full flex-col items-center justify-center gap-4 bg-secondary px-8 text-center">{(look.status === "loading" || look.status === "idle") ? <Loader2 className="h-8 w-8 animate-spin" /> : <ImageIcon className="h-8 w-8" />}<span className="font-serif text-2xl">{look.name}</span><span className="text-xs font-normal">{look.status === "idle" ? "Ready to create this look" : look.status === "loading" ? "Styling your garment…" : look.error || "Image not generated"}</span></div>}
           </PillButton>
+          {/* Same shopping pins as Saved: tap + to find the piece in stores (Firecrawl). */}
+          {look.status === "success" && look.image && active.id === look.id && <HotspotLayer products={look.items.filter((item) => !item.owned)} />}
           {look.status === "success" && look.image && (() => { const sid = `${look.id}:${look.image?.length}`; const saved = savedOutfits.some((outfit) => outfit.id === sid); return <button type="button" aria-label={saved ? `Unsave ${look.name} look` : `Save ${look.name} look`} aria-pressed={saved} onClick={() => { if (saved) deleteSavedOutfit(sid); else if (saveLook(look)) toast("Saved"); }} className="absolute right-0 top-0 flex min-h-touch min-w-touch items-center justify-center text-foreground transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><Heart className={cn("h-5 w-5", saved && "fill-current")} /></button>; })()}
           </div>
           <p className="mt-3 text-[10px] text-muted-foreground">{look.id === "jason-closet" ? "From your closet · Your photo" : look.status === "success" ? "AI styling concept" : look.status === "loading" ? "Generating this look" : look.status === "idle" ? "Ready to generate" : "Generation failed · no demo fallback"}</p>
