@@ -26,6 +26,7 @@ export function Social() {
   const stack = (filter === "similar" ? filterPosts(others, type, filter) : [...others].sort((a, b) => b.votesUp + b.votesDown - (a.votesUp + a.votesDown))).filter((post) => !userVotes[post.id]);
   const mine = myPosts(posts);
   const [pinIdx, setPinIdx] = useState(0);
+  const [pinDir, setPinDir] = useState<"next" | "prev">("next");
   useEffect(() => setPinIdx(0), [mine.length]);
   const cur = mine[Math.min(pinIdx, Math.max(0, mine.length - 1))];
   const detail = posts.find((post) => post.id === detailId);
@@ -48,9 +49,12 @@ export function Social() {
       <h1 className="text-title font-bold lg:col-span-2">Feed</h1>
       <div className="mt-screen lg:col-span-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
       {cur && <div className="relative mt-screen flex items-center gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look">
+        {/* Light 180ms slide + fade toward the arrow pressed, so a change of look is noticeable without feeling slow. */}
+        <div key={cur.id} className={cn("flex min-w-0 flex-1 items-center gap-screen animate-in fade-in duration-200 ease-out motion-reduce:animate-none", pinDir === "next" ? "slide-in-from-right-4" : "slide-in-from-left-4")}>
         <img src={cur.image} alt={cur.question} className="aspect-[3/4] w-touch shrink-0 rounded-none bg-secondary object-cover" />
-        <div className="flex min-w-0 flex-1 flex-col"><SectionLabel>Your look</SectionLabel><p className="text-body-sm">Yes {cur.votesUp} · No {cur.votesDown}</p><TextLinkButton onClick={() => setPinnedSheet(true)}>View feedback</TextLinkButton></div>
-        {mine.length > 1 && <><button type="button" aria-label="Previous look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring left-0 -translate-x-1/2" onClick={() => setPinIdx((pinIdx - 1 + mine.length) % mine.length)}><ChevronLeft className="size-4" /></button><button type="button" aria-label="Next look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring right-0 translate-x-1/2" onClick={() => setPinIdx((pinIdx + 1) % mine.length)}><ChevronRight className="size-4" /></button></>}
+        <div className="flex min-w-0 flex-1 flex-col"><SectionLabel>Your look{mine.length > 1 ? ` · ${mine.indexOf(cur) + 1}/${mine.length}` : ""}</SectionLabel><p className="text-body-sm">Yes {cur.votesUp} · No {cur.votesDown}</p><TextLinkButton onClick={() => setPinnedSheet(true)}>View feedback</TextLinkButton></div>
+        </div>
+        {mine.length > 1 && <><button type="button" aria-label="Previous look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring left-0 -translate-x-1/2" onClick={() => { setPinDir("prev"); setPinIdx((pinIdx - 1 + mine.length) % mine.length); }}><ChevronLeft className="size-4" /></button><button type="button" aria-label="Next look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring right-0 translate-x-1/2" onClick={() => { setPinDir("next"); setPinIdx((pinIdx + 1) % mine.length); }}><ChevronRight className="size-4" /></button></>}
       </div>}
       {!cur && <div className="mt-screen flex items-center justify-between gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look"><p className="text-body-sm">Post your look to get votes</p><TextLinkButton onClick={() => openDraft({ image: null })}>Post a look</TextLinkButton></div>}
       <div className="mt-screen flex w-full gap-screen border-b border-border lg:col-start-2" role="group" aria-label="Feed filter">
