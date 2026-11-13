@@ -242,7 +242,7 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <h2 className="font-serif text-3xl">{title}</h2>
+      <h2 className="font-serif text-[28px] leading-9">{title}</h2>
       {!empty && (
         <PillButton
           variant="ghost"

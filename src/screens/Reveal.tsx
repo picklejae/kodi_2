@@ -20,11 +20,11 @@ export function Reveal() {
       <StyleScales type={t.code} scores={axisScores} reveal revealDelay={520} />
       </div>
       <div className="flex flex-1 flex-col">
-      <p className="reveal-rise mt-6 text-[15px] leading-snug" style={{ ["--d" as string]: "980ms" }}>{line}</p>
+      <p className="reveal-rise mt-[60px] text-[15px] leading-snug" style={{ ["--d" as string]: "980ms" }}>{line}</p>
       <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k, i) => <span key={k} className="reveal-rise" style={{ ["--d" as string]: `${1080 + i * 60}ms` }}><Chip>{k}</Chip></span>)}</div>
-      <h2 className="reveal-rise mt-6 font-serif text-xl" style={{ ["--d" as string]: "1200ms" }}>People like you wear</h2>
+      <h2 className="reveal-rise mt-9 font-serif text-xl" style={{ ["--d" as string]: "1200ms" }}>People like you wear</h2>
       <div className="mt-3 grid grid-cols-4 gap-2">
-        {pieces.map((piece, i) => <div key={piece.id} className="reveal-rise" style={{ ["--d" as string]: `${1280 + i * 70}ms` }}><Photo src={piece.image} alt={piece.name} className="aspect-[3/4] rounded-lg" /><p className="mt-2 text-[11px] leading-snug">{piece.name}</p></div>)}
+        {pieces.map((piece, i) => <div key={piece.id} className="reveal-rise" style={{ ["--d" as string]: `${1280 + i * 70}ms` }}><Photo src={piece.image} alt={piece.name} className="aspect-[3/4] rounded-lg" /><p className="mt-2 text-[13px] leading-snug">{piece.name}</p></div>)}
       </div>
       <div className="sticky bottom-0 mt-auto bg-background pb-screen pt-screen">
         <div className="reveal-rise" style={{ ["--d" as string]: "1600ms" }}><PillButton onClick={() => go("budget")}>Start Exploring</PillButton></div>

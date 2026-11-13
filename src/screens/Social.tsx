@@ -84,11 +84,11 @@ export function Social() {
         {detail && <div className="flex flex-col gap-screen"><h2 className="text-heading">{detail.question}</h2><PhotoCard src={detail.image} alt={detail.question} /><div className="flex flex-wrap items-center gap-screen text-caption"><span>{detail.author}</span><span>{timeAgo(detail)}</span></div><VoteSplitBar up={detail.votesUp} down={detail.votesDown} /><Comments post={detail} /><SecondaryButton onClick={() => { setCommentId(detail.id); setDetailId(null); setComment(""); }}><MessageCircle />Add comment</SecondaryButton></div>}
       </BottomSheet>
       <BottomSheet open={pinnedSheet && !!cur} onClose={() => setPinnedSheet(false)} title="Feedback on your look">
-        {cur && <div className="flex flex-col gap-screen"><h2 className="text-heading">Feedback on your look</h2><PhotoCard src={cur.image} alt={cur.question} ratio="look" /><VoteSplitBar up={cur.votesUp} down={cur.votesDown} />
+        {cur && <div className="flex flex-col gap-screen"><h2 className="text-heading">Feedback on your look</h2><div className="mx-auto w-3/4"><PhotoCard src={cur.image} alt={cur.question} ratio="look" /></div><VoteSplitBar up={cur.votesUp} down={cur.votesDown} />
           <Comments post={cur} /></div>}
       </BottomSheet>
       <BottomSheet open={!feedHintDismissed} onClose={dismissFeedHint} title="Swipe outfits">
-        <div className="flex flex-col items-center gap-screen text-center"><div className="flex gap-screen" aria-hidden="true"><ChevronLeft /><ChevronRight /></div><p className="whitespace-nowrap text-body font-semibold">Swipe right if you love it, left to skip</p><div className="flex w-full flex-col items-center gap-2"><PrimaryButton onClick={dismissFeedHint}>Explore Outfits</PrimaryButton><TextLinkButton onClick={hideFeedHintForever}>Don't show again</TextLinkButton></div></div>
+        <div className="flex flex-col items-center gap-screen text-center"><p className="whitespace-nowrap text-body font-semibold">Swipe right if you love it, left to skip</p><div className="flex w-full flex-col items-center gap-2"><PrimaryButton onClick={dismissFeedHint}>Explore Outfits</PrimaryButton><TextLinkButton onClick={hideFeedHintForever}>Don't show again</TextLinkButton></div></div>
       </BottomSheet>
     </div>
   );

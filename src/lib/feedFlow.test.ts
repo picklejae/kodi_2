@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { jasonPosts } from "@/data/jasonPosts";
 import { JASON_FITS } from "@/data/jason";
 import { demoSetLooks } from "@/data/demoSets";
-import { appendComment, feedbackPost, myPosts, savedLook } from "./feedFlow";
+import { appendComment, feedbackPost, myPosts, savedLook, revealSeededPost } from "./feedFlow";
 
 describe("Looks to Feed", () => {
   it("seeds heritage at 2 days with 38 positive and 5 negative votes and four comments", () => {
@@ -59,5 +59,14 @@ describe("bumpPost", () => {
     posts = bumpPost(posts, "u1", 2);
     expect(posts[0]?.votesUp).toBe(6);
     expect(posts[0]?.feedback.map((f) => f.text)).toEqual(["Great fit", "Add a layer", "Try darker shoes"]);
+  });
+  it("reveals Jason's real-photo post only when a look from his set is saved", () => {
+    const a = demoSetLooks("set-a")[2], b = demoSetLooks("set-b")[0];
+    if (!a || !b) throw new Error("Missing demo looks");
+    expect(revealSeededPost([], a).map((p) => p.id)).toEqual(["jason-heritage"]);
+    expect(revealSeededPost(revealSeededPost([], a), a).map((p) => p.id)).toEqual(["jason-heritage"]);
+    expect(revealSeededPost([], b).map((p) => p.id)).toEqual(["jason-leather"]);
+    const { demoSet: _set, ...plain } = a;
+    expect(revealSeededPost([], { ...plain, id: "ai-1" })).toEqual([]);
   });
 });
