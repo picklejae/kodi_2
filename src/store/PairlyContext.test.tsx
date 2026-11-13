@@ -153,4 +153,39 @@ describe("quiz state", () => {
     expect(result.current.exploreLevel).toBe("low");
     expect(result.current.uploadedItem).toBeNull();
   });
+  it("keeps Jason's two real-photo posts in Feed from the start, after reset and in every preset", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    const jasonIds = ["jason-heritage", "jason-leather"];
+    expect(result.current.posts.filter((p) => p.isUserPost).map((p) => p.id)).toEqual(jasonIds);
+    const heritage = result.current.posts.find((p) => p.id === "jason-heritage");
+    expect(heritage?.votesUp).toBe(38);
+    expect(heritage?.votesDown).toBe(5);
+    expect(heritage?.feedback.map((f) => f.author)).toEqual(["@minjun", "@daniel.k", "@theo", "@sam_w"]);
+    const leather = result.current.posts.find((p) => p.id === "jason-leather");
+    expect(leather?.votesUp).toBe(45);
+    expect(leather?.feedback).toHaveLength(3);
+    act(() => result.current.reset());
+    expect(result.current.posts.filter((p) => p.isUserPost).map((p) => p.id)).toEqual(jasonIds);
+    for (const screen of ["welcome", "diagnosis", "reveal", "upload", "results", "feed", "feed-later", "saved", "set-a", "set-b"]) {
+      const preset = parsePresetParams(`?screen=${screen}`);
+      if (!preset) throw new Error(`Missing ${screen} preset`);
+      act(() => result.current.loadPreset(preset));
+      expect(result.current.posts.filter((p) => p.isUserPost).map((p) => p.id)).toEqual(jasonIds);
+    }
+    // Saving or posting one of Jason's looks never adds a second copy.
+    const setA = parsePresetParams("?screen=set-a");
+    if (!setA) throw new Error("Missing set-a preset");
+    act(() => result.current.loadPreset(setA));
+    const before = result.current.posts.length;
+    const look = result.current.generatedLooks?.[0];
+    if (!look) throw new Error("Missing set-a look");
+    act(() => { result.current.saveLook(look); });
+    expect(result.current.posts).toHaveLength(before);
+    const outfit = result.current.savedOutfits[0];
+    if (!outfit) throw new Error("Missing saved outfit");
+    act(() => { result.current.postSavedLook(outfit); });
+    expect(result.current.posts).toHaveLength(before);
+    expect(result.current.posts.filter((p) => p.id === "jason-heritage")).toHaveLength(1);
+    expect(result.current.highlightedPost).toBe("jason-heritage");
+  });
 });
