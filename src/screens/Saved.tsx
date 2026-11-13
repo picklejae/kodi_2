@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Trash2, Minus, MoreHorizontal } from "lucide-react";
+import { Pencil, Minus, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { Photo } from "@/components/pairly/Photo";
@@ -55,7 +55,7 @@ export function Saved() {
   return (
     <div className="px-6 pb-8 pt-12">
       <h1 className="mb-6 text-title font-bold">Saved</h1>
-      <section aria-label="Recents">
+      <section aria-label="Recent Uploads">
         <SectionHeader
           title="Recent Uploads"
           empty={!recentItems.length}
