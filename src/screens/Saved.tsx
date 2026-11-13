@@ -104,7 +104,7 @@ export function Saved() {
       </section>
       <section className="mt-8" aria-label="Looks">
         <SectionHeader
-          title="Looks"
+          title="Saved"
           empty={!outfitCount}
           editing={savedEdit}
           onToggle={() => setSavedEdit(!savedEdit)}
