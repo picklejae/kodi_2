@@ -3,7 +3,8 @@ import { scrollPhoneTop } from "@/components/pairly/PhoneFrame";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, MessageCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { BottomSheet, Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryButton, TextField, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
+import { Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryButton, TextField, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
+import { Sheet } from "@/components/pairly/Sheet";
 import { FEEDBACK_CHIPS, type SocialPost } from "@/data/social";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { filterPosts, type SocialFilter } from "@/lib/social";
@@ -79,23 +80,23 @@ export function Social() {
         {FEEDBACK_CHIPS.slice(0, 3).map((chip) => <Chip key={chip} onClick={() => { addFeedback(lastVoted, chip); setLastVoted(null); toast("Thanks for the feedback"); }}>{chip}</Chip>)}
         <TextLinkButton onClick={() => setLastVoted(null)}>Skip</TextLinkButton>
       </div>}
-      <BottomSheet open={!!commentId} onClose={() => setCommentId(null)} title="Comment on outfit">
+      <Sheet open={!!commentId} onClose={() => setCommentId(null)} title="Comment on outfit">
         <form className="flex flex-col gap-screen" onSubmit={(event) => { event.preventDefault(); postComment(); }}>
           <h2 className="text-heading">Comment on outfit</h2>
           <TextField autoFocus label="What would make this outfit better?" placeholder="What would make this outfit better?" value={comment} onChange={(event) => setComment(event.target.value)} />
           <PrimaryButton className="capitalize" type="submit" disabled={!comment.trim()}>Post</PrimaryButton>
         </form>
-      </BottomSheet>
-      <BottomSheet open={!!detail} onClose={() => setDetailId(null)} title={detail?.question ?? "Post details"}>
+      </Sheet>
+      <Sheet open={!!detail} onClose={() => setDetailId(null)} title={detail?.question ?? "Post details"}>
         {detail && <div className="flex flex-col gap-screen"><h2 className="text-heading">{detail.question}</h2><Photo src={detail.image} alt={detail.question} fit="contain" className="aspect-[3/4] w-full bg-secondary" /><div className="flex flex-wrap items-center gap-screen text-caption"><span>{detail.author}</span><span>{timeAgo(detail)}</span></div>{detail.credit && <PhotoCreditLine credit={detail.credit} />}<VoteSplitBar up={detail.votesUp} down={detail.votesDown} /><Comments post={detail} /><SecondaryButton onClick={() => { setCommentId(detail.id); setDetailId(null); setComment(""); }}><MessageCircle />Add comment</SecondaryButton></div>}
-      </BottomSheet>
-      <BottomSheet open={pinnedSheet && !!cur} onClose={() => setPinnedSheet(false)} title="Feedback on your look">
+      </Sheet>
+      <Sheet open={pinnedSheet && !!cur} onClose={() => setPinnedSheet(false)} title="Feedback on your look">
         {cur && <div className="flex flex-col gap-screen"><h2 className="text-heading">Feedback on your look</h2><div className="mx-auto w-3/4"><Photo src={cur.image} alt={cur.question} fit="contain" className="aspect-[3/4] w-full bg-secondary" /></div><VoteSplitBar up={cur.votesUp} down={cur.votesDown} />
           <Comments post={cur} /></div>}
-      </BottomSheet>
-      <BottomSheet open={!feedHintDismissed} onClose={dismissFeedHint} title="Swipe outfits">
+      </Sheet>
+      <Sheet open={!feedHintDismissed} onClose={dismissFeedHint} title="Swipe outfits">
         <div className="flex flex-col items-center gap-screen text-center"><p className="whitespace-nowrap text-body font-semibold">Swipe right if you love it, left to skip</p><div className="flex w-full flex-col items-center gap-2"><PrimaryButton onClick={dismissFeedHint}>Explore Outfits</PrimaryButton><TextLinkButton onClick={hideFeedHintForever}>Don't show again</TextLinkButton></div></div>
-      </BottomSheet>
+      </Sheet>
     </div>
   );
 }
