@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Pencil, Minus, MoreHorizontal } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Pencil, Minus } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
@@ -17,7 +16,6 @@ import { usePairly } from "@/store/PairlyContext";
 import type { RecentItem } from "@/data/saved";
 import { GENERIC_ATTRIBUTES } from "@/data/samples";
 import { cn } from "@/lib/utils";
-import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 export function Saved() {
   const {
     recentItems,
@@ -101,7 +99,13 @@ export function Saved() {
           </div>
         )}
       </section>
-      <section className="mt-8" aria-label="Looks">
+      <section className="mt-8" aria-label="Saved Outfits">
+        <SectionHeader
+          title="Saved Outfits"
+          empty={!outfitCount}
+          editing={savedEdit}
+          onToggle={() => setSavedEdit(!savedEdit)}
+        />
         {!outfitCount ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No saved outfits yet</p>
         ) : (
@@ -136,12 +140,12 @@ export function Saved() {
                 >
                   {item.content}
                 </PillButton>
-                <div className="absolute right-0 top-0">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild><TextLinkButton aria-label={`More options for outfit with ${item.name}`} className="min-h-touch min-w-touch justify-center"><MoreHorizontal /></TextLinkButton></DropdownMenuTrigger>
-                    <DropdownMenuContent align="end"><DropdownMenuItem onSelect={() => setPending({ section: "saved", id: item.id })}>Delete look</DropdownMenuItem></DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                {savedEdit && (
+                  <DeleteIcon
+                    name={`outfit with ${item.name}`}
+                    onClick={() => setPending({ section: "saved", id: item.id })}
+                  />
+                )}
               </div>
             ))}
           </div>
