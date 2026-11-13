@@ -297,7 +297,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
           const picks = s.uploadedItem && s.picks
             ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, styleType, s.occasion)
             : s.picks;
-          return { ...s, ...diagnosis, answers, quizSkipped: false, picks, screen: "reveal" };
+          return { ...s, ...diagnosis, posts: s.posts.map((post) => post.id === "jason-heritage" || post.id === "jason-leather" ? { ...post, styleType } : post), answers, quizSkipped: false, picks, screen: "reveal" };
         }
         return { ...s, answers };
       }),
@@ -346,10 +346,13 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         voteGroups: [...p.voteGroups, { styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, yes: v === "up" ? 1 : 0, no: v === "down" ? 1 : 0 }] } : p),
     })),
     addFeedback: (id, text) => setState((s) => ({ ...s, posts: appendComment(s.posts, id, { text, author: "@jason", styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, createdAt: new Date().toISOString() }) })),
-    createPost: (p) => setState((s) => ({
-      ...s, draft: null, activeTab: "feed",
-      posts: [{ ...p, ...(s.draft?.look ? { look: s.draft.look } : {}), ...(s.draft?.ownedImage ? { ownedImage: s.draft.ownedImage } : {}), id: `u${crypto.randomUUID()}`, author: "@jason", createdAt: new Date().toISOString(), styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true }, ...s.posts],
-    })),
+    createPost: (p) => setState((s) => {
+      const id = `u${crypto.randomUUID()}`;
+      return {
+        ...s, draft: null, activeTab: "feed", highlightedPost: id,
+        posts: [{ ...p, ...(s.draft?.look ? { look: s.draft.look } : {}), ...(s.draft?.ownedImage ? { ownedImage: s.draft.ownedImage } : {}), id, author: "@jason", createdAt: new Date().toISOString(), styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true }, ...s.posts],
+      };
+    }),
     postSavedLook: (outfit) => setState((s) => {
       const post: SocialPost = { id: `u${crypto.randomUUID()}`, author: "@jason", image: outfit.feedbackImage ?? outfit.imageUrl, question: `${outfit.lookName}. Does it work?`, occasion: s.occasion, styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, createdAt: new Date().toISOString(), votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true };
       const result = feedbackPost(s.posts, outfit, post);
