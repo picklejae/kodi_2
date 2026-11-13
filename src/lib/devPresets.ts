@@ -1,13 +1,15 @@
 import { SAMPLES, type SampleItem } from "@/data/samples";
 import { DEFAULT_CODE, type StyleTypeCode } from "@/data/styleTypes";
 
-export type PresetId = "welcome" | "diagnosis" | "reveal" | "upload" | "results" | "feed" | "saved";
+export type PresetId = "welcome" | "diagnosis" | "reveal" | "upload" | "results" | "feed" | "saved" | "set-a" | "set-b";
 export const PRESETS: { id: PresetId; label: string }[] = [
   { id: "welcome", label: "Welcome" },
   { id: "diagnosis", label: "Diagnosis (round 1)" },
   { id: "reveal", label: "Reveal (TNPF)" },
   { id: "upload", label: "Style / Upload (TNPF)" },
   { id: "results", label: "Results (TNPF + blazer)" },
+  { id: "set-a", label: "Set A results" },
+  { id: "set-b", label: "Set B results" },
   { id: "feed", label: "Feed" },
   { id: "saved", label: "Saved" },
 ];

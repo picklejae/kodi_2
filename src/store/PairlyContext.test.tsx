@@ -2,8 +2,33 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { GeneratedLook } from "@/lib/styleGeneration";
 import { PairlyProvider, usePairly } from "./PairlyContext";
+import { parsePresetParams } from "@/lib/devPresets";
 
 describe("quiz state", () => {
+  it("budget skip stores unknown and proceeds to Upload", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.go("budget"));
+    act(() => result.current.completeBudget(null));
+    expect(result.current.budgetKnown).toBe(false);
+    expect(result.current.screen).toBe("upload");
+    act(() => result.current.completeBudget({ min: 50, max: 100 }));
+    expect(result.current.budgetKnown).toBe(true);
+    expect(result.current.budget).toEqual({ min: 50, max: 100 });
+  });
+  it("both Set shortcuts bypass budget and budget changes preserve fixed images and pieces", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    for (const set of ["set-a", "set-b"]) {
+      const preset = parsePresetParams(`?screen=${set}`);
+      if (!preset) throw new Error("Missing Set preset");
+      act(() => result.current.loadPreset(preset));
+      expect(result.current.screen).toBe("results");
+      expect(result.current.generatedLooks?.map((look) => look.tier)).toEqual(["safe", "step", "bold"]);
+      expect(result.current.generatedLooks?.every((look) => look.status === "success" && look.demoSet === set)).toBe(true);
+      const looks = result.current.generatedLooks;
+      act(() => result.current.setBudget({ min: 0, max: 49.99 }));
+      expect(result.current.generatedLooks).toEqual(looks);
+    }
+  });
   it("shows the Feed hint once until demo reset, including across tab changes", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));

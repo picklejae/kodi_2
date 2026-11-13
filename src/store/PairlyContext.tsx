@@ -20,10 +20,11 @@ import { MAX_ATTEMPTS, SHOPPING_TTL, shoppingKey, type ShoppingInput, type Shopp
 import { STYLE_PRESETS, stylePresetKey, PRESET_LOADING_MS } from "@/data/stylePresets";
 import { originalImageIdentity, styleCacheKey, generationBody, bypassStyleCache, readStyleCache, writeStyleCache } from "@/lib/styleCache";
 import type { ConceptItem } from "@/data/moodboards";
+import { DEMO_SAMPLES, demoSetLooks } from "@/data/demoSets";
 
 export type StylePreference = "menswear" | "womenswear";
 export const PREFERENCE_KEY = "pairly.stylePreference";
-export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
+export type Screen = "welcome" | "diagnosis" | "reveal" | "budget" | "upload" | "results";
 export type Tab = "style" | "saved" | "feed" | "me";
 export type UnitSystem = "metric" | "imperial";
 export interface BodyStats { heightCm: number | null; weightKg: number | null }
@@ -64,6 +65,7 @@ interface PairlyState {
   body: BodyStats;
   units: UnitSystem;
   budget: BudgetRange;
+  budgetKnown: boolean;
   activeTab: Tab;
   posts: SocialPost[];
   userVotes: Record<string, "up" | "down">;
@@ -71,7 +73,7 @@ interface PairlyState {
   feedHintDismissed: boolean;
 }
 
-const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, body: { heightCm: null, weightKg: null }, units: "metric", budget: { min: 0, max: BUDGET_LIMIT }, activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
+const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, body: { heightCm: null, weightKg: null }, units: "metric", budget: { min: 0, max: BUDGET_LIMIT }, budgetKnown: false, activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
 
 interface PairlyCtx extends PairlyState {
   recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
@@ -97,6 +99,7 @@ interface PairlyCtx extends PairlyState {
   setBody: (b: BodyStats) => void;
   setUnits: (u: UnitSystem) => void;
   setBudget: (b: BudgetRange) => void;
+  completeBudget: (b: BudgetRange | null) => void;
   setTab: (t: Tab) => void;
   dismissFeedHint: () => void;
   openDraft: (d: PostDraft | null) => void;
@@ -325,7 +328,8 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     },
     setBody: (body) => setState((s) => ({ ...s, body })),
     setUnits: (units) => setState((s) => ({ ...s, units })),
-    setBudget: (budget) => setState((s) => ({ ...s, budget })),
+    setBudget: (budget) => setState((s) => ({ ...s, budget, budgetKnown: true })),
+    completeBudget: (budget) => setState((s) => ({ ...s, budget: budget ?? { min: 0, max: BUDGET_LIMIT }, budgetKnown: budget !== null, screen: "upload", activeTab: "style" })),
     setTab: (activeTab) => setState((s) => ({ ...s, activeTab })),
     dismissFeedHint: () => setState((s) => ({ ...s, feedHintDismissed: true })),
     openDraft: (draft) => setState((s) => ({ ...s, draft })),
@@ -343,6 +347,11 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       voteGroups: [...p.voteGroups, { styleType: p.styleType, exploreLevel: "low", yes: Math.ceil(up / 2), no: 0 }, { styleType: "RCDS", exploreLevel: "high", yes: Math.floor(up / 2), no: down }],
       feedback: p.votesUp + up > 3 ? mockFeedback(["Great fit", "Add a layer", "Try darker shoes"]) : p.feedback } : p) })),
     loadPreset: ({ preset, type, sample }) => {
+      runId.current++; existingRequest.current = null; generation.current = null; cacheSession.current = null;
+      if (preset === "set-a" || preset === "set-b") {
+        const demo = DEMO_SAMPLES[preset];
+        return setState((s) => ({ ...initial, preferenceLoaded: true, stylePreference: "menswear", feedHintDismissed: s.feedHintDismissed, styleType: type, uploadedItem: { ...demo, source: "sample", sampleId: demo.id }, generatedLooks: demoSetLooks(preset), screen: "results", activeTab: "style" }));
+      }
       const item: UploadedItem = { image: sample.image, category: sample.category, attributes: sample.attributes, source: "sample", name: sample.name };
       // Functional update keeps a preference restored from storage in the same tick.
       const base = (s: PairlyState): PairlyState => ({ ...initial, stylePreference: s.stylePreference, preferenceLoaded: s.preferenceLoaded, feedHintDismissed: s.feedHintDismissed, styleType: preset === "welcome" || preset === "diagnosis" ? null : type });

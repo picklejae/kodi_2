@@ -1,4 +1,7 @@
 # Roadmap
+- [x] Unify live and existing generated moodboard avatars; preserve all protected uploads; live male/female render verified
+- [x] Add post-Reveal budget choice with unknown skip; keep demo sets budget-independent; real budget → Upload → three looks → Saved flow verified
+- [x] Add Set A/B DEV results and verify tests and live rendering; 93 tests pass, current app checks clean
 - [x] Style speed: original-byte/sample cache keys, bounded IndexedDB results, empty bundled presets, Regenerate and nocache bypass; live refresh restored three images with zero AI calls
 - [x] Personalize Style as Safe → One step up → Bold using Style Type and axis scores; live camel-coat generation verified, Jason slot and two-render limit covered by regression tests
 - [x] Rename Closet tab/route back to Saved with Heart icon; tab order Style, Saved, Feed, Me

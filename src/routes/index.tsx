@@ -4,6 +4,7 @@ import { PhoneFrame } from "@/components/pairly/PhoneFrame";
 import { Diagnosis } from "@/screens/Diagnosis";
 import { Results } from "@/screens/Results";
 import { Reveal } from "@/screens/Reveal";
+import { Budget } from "@/screens/Budget";
 import { Upload } from "@/screens/Upload";
 import { Welcome } from "@/screens/Welcome";
 import { Social } from "@/screens/Social";
@@ -35,6 +36,7 @@ function Screens() {
   useEffect(() => { window.scrollTo(0, 0); }, [screen, activeTab, myPosts]);
   if (screen === "diagnosis") return <Diagnosis />;
   if (screen === "reveal") return <Reveal />;
+  if (screen === "budget") return <Budget />;
   if (screen === "welcome") return <Welcome />;
   return (
     <>

@@ -20,7 +20,7 @@ function toImperial(heightCm: number | null, weightKg: number | null) {
 }
 
 export function Me() {
-  const { styleType, axisScores, retake, body, units, budget, setBody, setUnits, setBudget } = usePairly();
+  const { styleType, axisScores, retake, body, units, budget, budgetKnown, setBody, setUnits, setBudget } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   const imperial = toImperial(body.heightCm, body.weightKg);
   const setHeightImperial = (ft: number | null, inch: number | null) => {
@@ -114,7 +114,7 @@ export function Me() {
         <div className="mt-3 rounded-2xl bg-card px-4 py-4 shadow-soft">
           <div className="flex items-center justify-between">
             <span className="text-sm">Price range</span>
-            <span className="text-sm font-semibold">${budget.min} – ${budget.max}</span>
+            <span className="text-sm font-semibold">{budgetKnown ? `$${budget.min} – $${budget.max}` : "Not sure yet"}</span>
           </div>
           <Slider
             className="mt-4"

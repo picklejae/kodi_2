@@ -2,7 +2,8 @@ import { useState } from "react";
 import { ExternalLink, ImageIcon, Loader2, RefreshCw } from "lucide-react";
 import { PillButton } from "./PillButton";
 import { Photo } from "./Photo";
-import { BUDGET_LIMIT, usePairly } from "@/store/PairlyContext";
+import { usePairly } from "@/store/PairlyContext";
+import { priceInBudget, shoppingBudget } from "@/lib/budget";
 import { initialShoppingItems, MAX_ATTEMPTS, shoppingKey, type RealProduct } from "@/lib/shopping";
 import type { ConceptItem } from "@/data/moodboards";
 import type { GeneratedLook } from "@/lib/styleGeneration";
@@ -23,10 +24,11 @@ function Product({ product }: { product: RealProduct }) {
   </article>;
 }
 export function ShoppingSection({ look }: { look: GeneratedLook }) {
-  const { shopping, searchShopping, budget } = usePairly();
+  const { shopping, searchShopping, budget, budgetKnown } = usePairly();
   const [alternatives, setAlternatives] = useState<Record<string, boolean>>({});
-  const budgetParam = budget.max < BUDGET_LIMIT ? { maximum: budget.max, currency: "USD" } : undefined;
-  const inRange = (p: RealProduct) => p.price === null || (p.price >= budget.min && (budget.max >= BUDGET_LIMIT || p.price <= budget.max));
+  const known = budgetKnown && !look.demoSet;
+  const budgetParam = shoppingBudget(budget, known);
+  const inRange = (p: RealProduct) => priceInBudget(p.price, p.currency, budget, known);
   const initial = initialShoppingItems(look.items);
   const keyFor = (item: ConceptItem) => shoppingKey(look, item, undefined, budgetParam);
   const loading = initial.some((item) => shopping?.[keyFor(item)]?.status === "loading");
