@@ -3,7 +3,6 @@ import { PillButton } from "@/components/pairly/PillButton";
 import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
 import { quizAvailable } from "@/data/diagnosis";
 import { usePairly } from "@/store/PairlyContext";
-import { Sentences } from "@/components/pairly/Sentences";
 import { Logo } from "@/design-system/kodi-design-system-ac5f73";
 
 export function Welcome() {
