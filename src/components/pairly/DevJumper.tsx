@@ -39,7 +39,7 @@ export function DevJumper() {
         onClick={() => setOpen((o) => !o)}
         aria-label="DEV menu"
         aria-expanded={open}
-        className="flex h-touch w-5 items-center justify-center rounded-r-md bg-foreground/80 font-mono font-bold text-background opacity-60 [writing-mode:vertical-rl] hover:opacity-100 md:h-auto md:w-auto md:rounded-md md:px-2 md:py-1 md:[writing-mode:horizontal-tb]"
+        className="flex h-touch w-[var(--spacing-screen)] items-center justify-center rounded-r bg-foreground/80 font-mono font-bold text-background opacity-60 [writing-mode:vertical-rl] hover:opacity-100 md:h-auto md:w-auto md:rounded md:px-2 md:py-1 md:[writing-mode:horizontal-tb]"
       >
         DEV
       </button>
