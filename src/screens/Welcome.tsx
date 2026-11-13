@@ -13,9 +13,11 @@ export function Welcome() {
       <div className="flex flex-col items-center gap-screen">
       <Logo size="hero" />
       <h1 className="text-display font-bold">You own it.<br />KODI styles it.</h1>
+      {/* Holds the removed tagline's height so the lower block keeps its earlier position. */}
+      <div aria-hidden="true" className="h-[42px]" />
       </div>
       {preferenceLoaded && (
-        <div className="flex w-full flex-col gap-screen">
+        <div className="flex w-full flex-col gap-screen pt-[21px]">
           <h2 className="text-heading">What are you looking for?</h2>
           <PreferenceChoice />
           {stylePreference && <PillButton onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
