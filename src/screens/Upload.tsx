@@ -2,12 +2,11 @@ import { Sentences } from "@/components/pairly/Sentences";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Camera, ChevronLeft, ImageIcon, X } from "lucide-react";
 import { Photo } from "@/components/pairly/Photo";
-import { PillButton } from "@/components/pairly/PillButton";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
 import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
-import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
+import { Button, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 
 export function Upload() {
   const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, retake, quizSkipped, findMatches, planning, generatedLooks, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
@@ -69,12 +68,13 @@ export function Upload() {
 
       {!uploadedItem ? (
         <>
-          <div className="mt-6 flex flex-col items-center rounded-3xl border-2 border-dashed border-foreground/25 bg-card/60 px-5 py-10 text-center">
+          <div className="mt-[23px] flex flex-col items-center rounded-3xl border-2 border-dashed border-foreground/25 bg-card/60 px-5 py-5 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground" />
             <p className="mt-3 text-sm text-muted-foreground"><Sentences text="A jacket, coat, pants or shirt. Flat or on a hanger works best." /></p>
-            <div className="mt-6 w-full space-y-3">
-              <PillButton onClick={() => camRef.current?.click()}><Camera className="mr-2 h-4 w-4" />Take Photo</PillButton>
-              <PillButton variant="outline" onClick={() => libRef.current?.click()}>Choose From Library</PillButton>
+            {/* Box ~80% of its old height; buttons 90% (52→47, 48→43) with one shared font size. */}
+            <div className="mt-4 w-full space-y-2">
+              <Button fullWidth className="h-[47px] text-body-sm" onClick={() => camRef.current?.click()}><Camera className="h-4 w-4" />Take Photo</Button>
+              <Button fullWidth variant="secondary" className="h-[43px]" onClick={() => libRef.current?.click()}>Choose From Library</Button>
             </div>
           </div>
           <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Or try a sample</p>
