@@ -73,7 +73,7 @@ export function Social() {
         {/* Story-style reply bar over the photo; opens the comment sheet. */}
         {stack[0] && <button type="button" onClick={() => { setCommentId(stack[0]!.id); setComment(""); }} className="absolute inset-x-3 bottom-3 z-20 flex h-11 items-center rounded-full border border-white/70 bg-black/20 px-4 text-left text-body-sm text-white/90 backdrop-blur-sm outline-none focus-visible:ring-2 focus-visible:ring-white">Add a comment…</button>}
       </div>
-      {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p>{stack[0].credit && <PhotoCreditLine credit={stack[0].credit} />}</div>}
+      {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p></div>}
       {lastVoted && <div className="mt-screen flex flex-wrap items-center gap-screen" aria-label="Quick feedback">
         {FEEDBACK_CHIPS.slice(0, 3).map((chip) => <Chip key={chip} onClick={() => { addFeedback(lastVoted, chip); setLastVoted(null); toast("Thanks for the feedback"); }}>{chip}</Chip>)}
         <TextLinkButton onClick={() => setLastVoted(null)}>Skip</TextLinkButton>

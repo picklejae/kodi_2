@@ -4,13 +4,17 @@ import { Camera, ChevronLeft, ImageIcon } from "lucide-react";
 import { Photo } from "@/components/pairly/Photo";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
-import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, VIBE_PROMPTS, samplesFor, type ItemCategory } from "@/data/samples";
+import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, VIBE_PROMPTS, type ItemCategory } from "@/data/samples";
+
+const RECENT_SLOTS = 4;
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 import { Button, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 import { PillButton } from "@/components/pairly/PillButton";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, retake, quizSkipped, findMatches, planning, generatedLooks, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, retake, quizSkipped, findMatches, planning, generatedLooks, recordUpload, stylePreference, preferenceLoaded, setStylePreference, recentItems } = usePairly();
+  // Demo recents follow Men/Women; the user's own uploads (no department) always show, newest first.
+  const recents = recentItems.filter((item) => !item.department || item.department === (stylePreference ?? "menswear"));
   useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
   const libRef = useRef<HTMLInputElement>(null);
   // Size the selected-piece photo to the space that's left: shrink by any overflow, grow into any gap above the CTA.
@@ -87,13 +91,15 @@ export function Upload() {
               <Button fullWidth variant="secondary" className="h-[43px]" onClick={() => libRef.current?.click()}>Choose From Library</Button>
             </div>
           </div>
-          <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Or try a sample</p>
+          <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Recent uploads</p>
+          {/* Same 4-up grid the samples used, no captions; empty slots stay visible as dashed bubbles. */}
           <div className="mt-3 grid grid-cols-4 gap-2">
-            {samplesFor(stylePreference).map((s) => (
-              <button key={s.id} onClick={() => pick({ image: s.image, category: s.category, attributes: s.attributes, source: "sample", name: s.name })} className="text-left">
-                <Photo src={s.image} alt={s.name} className="aspect-square rounded-2xl shadow-soft" />
-                <p className="mt-1.5 text-[11px] font-medium leading-tight">{s.name}</p>
+            {Array.from({ length: RECENT_SLOTS }, (_, i) => recents[i]).map((r, i) => r ? (
+              <button key={r.id} aria-label={r.productName} onClick={() => pick({ image: r.imageUrl, category: r.category, attributes: r.attributes ?? GENERIC_ATTRIBUTES[r.category], source: "sample", name: r.productName })} className="text-left">
+                <Photo src={r.imageUrl} alt={r.productName} className="aspect-square rounded-2xl shadow-soft" />
               </button>
+            ) : (
+              <div key={`empty-${i}`} aria-hidden="true" className="aspect-square rounded-2xl border-2 border-dashed border-foreground/15 bg-card/40" />
             ))}
           </div>
         </>

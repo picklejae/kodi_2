@@ -58,60 +58,21 @@ export function Saved() {
   };
   return (
     <div className="px-6 pb-8 pt-12">
-      <h1 className="mb-6 text-title font-bold">Saved</h1>
-      <section aria-label="Recent Uploads">
-        <SectionHeader
-          title="Recent Uploads"
-          empty={!recentItems.length}
-          editing={recentEdit}
-          onToggle={() => setRecentEdit(!recentEdit)}
-        />
-        {!recentItems.length ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            Upload a photo to get started
-          </p>
-        ) : (
-          <div className="recent-carousel mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2">
-            {recentItems.map((item) => (
-              <div
-                key={item.id}
-                className={cn(
-                  "relative min-w-0 shrink-0 basis-[calc((100%-24px)/3.5)] snap-start transition duration-200",
-                  removing === item.id && "scale-90 opacity-0",
-                )}
-              >
-                <button
-                  type="button"
-                  aria-label={item.productName}
-                  onClick={() => {
-                    if (!recentEdit) setSelected(item);
-                  }}
-                  className={cn("block w-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring", recentEdit && "opacity-60")}
-                >
-                  <Photo
-                    src={item.imageUrl}
-                    alt={item.productName}
-                    className="aspect-square w-full rounded-xl"
-                  />
-                </button>
-                {recentEdit && (
-                  <DeleteIcon
-                    name={item.productName}
-                    onClick={() => setPending({ section: "recent", id: item.id })}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+      {/* Recent uploads moved to the Style tab; only saved outfits live here, so no section title. */}
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-title font-bold">Saved</h1>
+        {outfitCount > 0 && (
+          <PillButton
+            variant="ghost"
+            onClick={() => setSavedEdit(!savedEdit)}
+            aria-label={savedEdit ? "Done editing Saved Outfits" : "Edit Saved Outfits"}
+            className={cn("h-9 px-0", savedEdit ? "w-14" : "w-9")}
+          >
+            {savedEdit ? "Done" : <Pencil className="h-4 w-4" />}
+          </PillButton>
         )}
-      </section>
-      <section className="mt-8" aria-label="Saved Outfits">
-        <SectionHeader
-          title="Saved Outfits"
-          empty={!outfitCount}
-          editing={savedEdit}
-          onToggle={() => setSavedEdit(!savedEdit)}
-        />
+      </div>
+      <section aria-label="Saved Outfits">
         {!outfitCount ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No saved outfits yet</p>
         ) : (
