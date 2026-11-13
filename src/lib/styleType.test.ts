@@ -24,7 +24,7 @@ describe("computeStyleType", () => {
   });
   it("undo removes the last vote from the result", () => {
     const answers: Answer[] = ["no", "yes"];
-    expect(computeStyleType(ROUNDS, answers)).toBe("RNPS");
+    expect(computeStyleType(ROUNDS, answers)).toBe(ROUNDS[1]?.tags);
     expect(computeStyleType(ROUNDS, answers.slice(0, -1))).toBe("TNPF");
   });
 });
