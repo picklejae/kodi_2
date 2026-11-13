@@ -23,7 +23,7 @@ export function Results() {
       <h1 className="mt-6 font-serif text-4xl leading-tight">Style your piece</h1>
       <div className="mt-3 flex flex-wrap gap-2">{occasionLabel && <Chip>{occasionLabel}</Chip>}{note.trim() && <Chip className="max-w-full whitespace-normal [overflow-wrap:anywhere]">{note.trim()}</Chip>}</div>
       <div role="tablist" aria-label="Styling directions" className="mt-5 flex gap-1 rounded-full border border-border bg-card p-1 lg:max-w-md">
-        {looks.map((look, index) => <PillButton key={look.id} role="tab" id={`concept-${look.id}`} aria-controls="selected-concept" aria-selected={active.id === look.id} variant={active.id === look.id ? "primary" : "ghost"} onClick={() => setSelectedConcept(index)} className="h-10 min-w-0 flex-1 px-1 text-xs">{look.name}</PillButton>)}
+        {looks.map((look, index) => <PillButton key={look.id} role="tab" id={`concept-${look.id}`} aria-controls="selected-concept" aria-selected={active.id === look.id} variant={active.id === look.id ? "primary" : "ghost"} onClick={() => setSelectedConcept(index)} className="h-10 min-w-0 flex-1 gap-1 px-1 text-xs">{look.status === "loading" && <Loader2 aria-label="Generating" className="h-3 w-3 shrink-0 animate-spin" />}{look.status === "failed" && <ImageIcon aria-label="Generation failed" className="h-3 w-3 shrink-0" />}<span className="min-w-0">{look.name}</span></PillButton>)}
       </div>
       <p className="mt-4 text-[10px] text-muted-foreground">AI styling concepts · garment details and fit may vary</p>
       <div className="mt-3 grid gap-4 lg:grid-cols-3" aria-label="Outfit moodboards">

@@ -1,4 +1,7 @@
 # Roadmap
+- [x] Diagnose and improve Style loading without changing image quality, model preferences, or shopping
+- [x] Verify partial success, reuse, duplicate protection, retries, and practical timing measurements
+- [x] Investigate returning-user quiz bypass and actual sign-in; report only, no behavior changes
 - [x] Connect reference-photo planning and per-look AI generation to Style with retries and duplicate-request protection
 - [x] Verify returned sample images and synthetic garment file upload; 45 tests pass (real user garment not supplied)
 - [x] Replace Style results with three coordinated model-worn demo concepts and complete outfit items

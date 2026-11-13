@@ -97,6 +97,8 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const running = useRef(false);
   const runId = useRef(0);
   const inFlight = useRef(new Set<number>());
+  const existingRequest = useRef<string | null>(null);
+  const selectionTouched = useRef(false);
   const generation = useRef<{ reference: string; presentation: string; occasion: string; mood: string } | null>(null);
   const renderLook = async (index: number, look: GeneratedLook, token: number) => {
     const request = generation.current;
@@ -106,13 +108,21 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     try {
       const result = await renderFn({ data: { ...request, styling: look.styling } });
       if (runId.current !== token) return;
-      setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i !== index ? entry : result.ok ? { ...entry, status: "success", image: result.image, error: "" } : { ...entry, status: "failed", error: result.error }) ?? [] }));
+      setState((s) => ({ ...s, selectedConcept: result.ok && !selectionTouched.current && !s.generatedLooks?.some((entry) => entry.status === "success") ? index : s.selectedConcept, generatedLooks: s.generatedLooks?.map((entry, i) => i !== index ? entry : result.ok ? { ...entry, status: "success", image: result.image, error: "" } : { ...entry, status: "failed", error: result.error }) ?? [] }));
     } catch {
       if (runId.current === token) setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? { ...entry, status: "failed", error: "Connection interrupted. This attempt may have started; retry only for a new attempt." } : entry) ?? [] }));
     } finally { inFlight.current.delete(index); }
   };
   const createMoodboards = async () => {
-    if (!state.uploadedItem || running.current || inFlight.current.size) return;
+    if (!state.uploadedItem) return;
+    const key = JSON.stringify([state.uploadedItem.image, state.uploadedItem.category, state.uploadedItem.name, state.occasion, state.note.slice(0, 600)]);
+    if (existingRequest.current === key && (state.planning || state.generatedLooks?.length)) {
+      setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
+      return;
+    }
+    if (running.current || inFlight.current.size) return;
+    existingRequest.current = key;
+    selectionTouched.current = false;
     running.current = true;
     const token = ++runId.current;
     setState((s) => ({ ...s, screen: "results", activeTab: "style", selectedConcept: 0, generatedLooks: [], planning: true, generationError: "", picks: s.uploadedItem ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion) : s.picks }));
@@ -159,11 +169,11 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     back: () =>
       setState((s) => (s.answers.length ? { ...s, answers: s.answers.slice(0, -1) } : { ...s, screen: "welcome" })),
     retake: () => setState((s) => ({ ...s, answers: [], quizSkipped: false, screen: "diagnosis" })),
-    reset: () => { runId.current++; setState(initial); },
-    setUploadedItem: (uploadedItem) => { if (state.uploadedItem?.image !== uploadedItem?.image) runId.current++; setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0, generatedLooks: s.uploadedItem?.image === uploadedItem?.image ? s.generatedLooks ?? [] : [], planning: s.uploadedItem?.image === uploadedItem?.image ? s.planning ?? false : false, generationError: "" })); },
+    reset: () => { runId.current++; existingRequest.current = null; setState(initial); },
+    setUploadedItem: (uploadedItem) => { if (state.uploadedItem?.image !== uploadedItem?.image) { runId.current++; existingRequest.current = null; } setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0, generatedLooks: s.uploadedItem?.image === uploadedItem?.image ? s.generatedLooks ?? [] : [], planning: s.uploadedItem?.image === uploadedItem?.image ? s.planning ?? false : false, generationError: "" })); },
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),
     setNote: (note) => setState((s) => ({ ...s, note })),
-    setSelectedConcept: (selectedConcept) => setState((s) => ({ ...s, selectedConcept })),
+    setSelectedConcept: (selectedConcept) => { selectionTouched.current = true; setState((s) => ({ ...s, selectedConcept })); },
     countShopClick: () => setState((s) => ({ ...s, shopClicks: s.shopClicks + 1 })),
     findMatches: () => { void createMoodboards(); },
     retryLook: (index) => { const look = state.generatedLooks?.[index]; if (look?.status === "failed") void renderLook(index, look, runId.current); },

@@ -33,6 +33,7 @@ use the editor.
 - Main demo screens switch through PairlyContext on `/`; closet outfit details use `/closet/$id`, with the provider at the root so in-memory collections survive navigation.
 - Track Feed hint dismissal in shared React state; why: it appears only once per demo session across tab and detail navigation, without persistence.
 - Style generation uses server-only AI Gateway planning and reference-image edits; per-look results live in shared React state, never fall back to demos, and Closet retains OutfitResultView.
+- Reuse Style generation for identical garment/category/occasion/mood inputs and reveal the first success unless a look was explicitly selected; why: returning never repeats inference and mobile never waits on a slower default look.
 - Keep selected Style concept in shared React state and expand only Style results on desktop; why: look selection survives tab navigation without widening other screens.
 - Saved collections and uploads remain in React state with literal mock seeds; why: this demo intentionally resets on refresh without a backend.
 - Mock data lives in `src/data/*`, pure logic in `src/lib/*` with vitest tests beside it; why: keeps rules testable without UI.
