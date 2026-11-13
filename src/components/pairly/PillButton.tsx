@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import type { ButtonHTMLAttributes } from "react";
 import { Button, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 
@@ -9,5 +10,5 @@ export function PillButton({ variant = "primary", className, ...p }: ButtonHTMLA
     return margin ? [`${margin[1]}-screen`] : [];
   }).join(" ");
   if (variant === "ghost") return <TextLinkButton {...p} className={placement} />;
-  return <Button {...p} variant={variant === "outline" ? "secondary" : "primary"} fullWidth={!className?.includes("w-auto")} className={placement} />;
+  return <Button {...p} variant={variant === "outline" ? "secondary" : "primary"} fullWidth={!className?.includes("w-auto")} className={cn(placement, variant === "primary" && "capitalize")} />;
 }

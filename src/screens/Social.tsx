@@ -64,7 +64,7 @@ export function Social() {
         {FEEDBACK_CHIPS.slice(0, 3).map((chip) => <Chip key={chip} onClick={() => { addFeedback(lastVoted, chip); setLastVoted(null); toast("Thanks for the feedback"); }}>{chip}</Chip>)}
         <TextLinkButton onClick={() => setLastVoted(null)}>Skip</TextLinkButton>
       </div>}
-      <div className="mt-screen lg:col-start-2"><PrimaryButton aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
+      <div className="mt-screen lg:col-start-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
       <section ref={postsRef} className="mt-screen lg:col-start-2" aria-label="My posts">
         <h2 className="text-title">My posts</h2>
         <div className="flex flex-col gap-screen mt-screen">
@@ -81,7 +81,7 @@ export function Social() {
         <form className="flex flex-col gap-screen" onSubmit={(event) => { event.preventDefault(); postComment(); }}>
           <h2 className="text-heading">Comment on outfit</h2>
           <TextField autoFocus label="What would make this outfit better?" placeholder="What would make this outfit better?" value={comment} onChange={(event) => setComment(event.target.value)} />
-          <PrimaryButton type="submit" disabled={!comment.trim()}>Post</PrimaryButton>
+          <PrimaryButton className="capitalize" type="submit" disabled={!comment.trim()}>Post</PrimaryButton>
         </form>
       </BottomSheet>
       <BottomSheet open={!!detail} onClose={() => setDetailId(null)} title={detail?.question ?? "Post details"}>
