@@ -102,7 +102,7 @@ export function Upload() {
 
       </div>
       <div className="mt-auto pt-8 lg:mt-0">
-        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating looks" : "Kodi me"}</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating looks" : <>Kodi <span className="text-brand-orange">me</span></>}</PillButton>
       </div>
     </div>
   );
