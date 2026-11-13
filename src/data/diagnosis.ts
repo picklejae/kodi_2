@@ -10,6 +10,18 @@ import men09 from "@/assets/onboarding/men-09.jpg";
 import men10 from "@/assets/onboarding/men-10.jpg";
 import men11 from "@/assets/onboarding/men-11.jpg";
 import men12 from "@/assets/onboarding/men-12.jpg";
+import women01 from "@/assets/onboarding/women-01.jpg";
+import women02 from "@/assets/onboarding/women-02.jpg";
+import women03 from "@/assets/onboarding/women-03.jpg";
+import women04 from "@/assets/onboarding/women-04.jpg";
+import women05 from "@/assets/onboarding/women-05.jpg";
+import women06 from "@/assets/onboarding/women-06.jpg";
+import women07 from "@/assets/onboarding/women-07.jpg";
+import women08 from "@/assets/onboarding/women-08.jpg";
+import women09 from "@/assets/onboarding/women-09.jpg";
+import women10 from "@/assets/onboarding/women-10.jpg";
+import women11 from "@/assets/onboarding/women-11.jpg";
+import women12 from "@/assets/onboarding/women-12.jpg";
 import type { StyleTypeCode } from "./styleTypes";
 
 export interface DiagnosisCard { id: number; image: string; tags: StyleTypeCode }
@@ -31,20 +43,21 @@ export const ROUNDS: DiagnosisCard[] = [
   { id: 12, image: men12, tags: "RCDS" }, // green shell jacket, olive cargo trousers
 ];
 
-const w = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=70`;
+// Original AI-generated womenswear lookbook photos (faces cropped), same studio style as menswear.
+// Tags are demo annotations; all 16 Style Types are reachable.
 export const WOMEN_ROUNDS: DiagnosisCard[] = [
-  { id: 1, image: w("1554412933-514a83d2f3c8"), tags: "TNPF" },
-  { id: 2, image: w("1503342217505-b0a15ec3261c"), tags: "RNPS" },
-  { id: 3, image: w("1485968579580-b6d095142e6e"), tags: "TNDF" },
-  { id: 4, image: w("1509631179647-0177331693ae"), tags: "RCDS" },
-  { id: 5, image: w("1539109136881-3be0616acf4b"), tags: "TCPF" },
-  { id: 6, image: w("1544022613-e87ca75a784a"), tags: "RNDS" },
-  { id: 7, image: w("1485462537746-965f33f7f6a7"), tags: "TNPF" },
-  { id: 8, image: w("1529139574466-a303027c1d8b"), tags: "RCPS" },
-  { id: 9, image: w("1550614000-4895a10e1bfd"), tags: "RNPF" },
-  { id: 10, image: w("1581044777550-4cfa60707c03"), tags: "TCDF" },
-  { id: 11, image: w("1515886657613-9f3515b0c78f"), tags: "RCPS" },
-  { id: 12, image: w("1496747611176-843222e1e57c"), tags: "RCDF" },
+  { id: 1, image: women01, tags: "RNPF" }, // black oversized blazer, ivory knit, grey trousers
+  { id: 2, image: women02, tags: "RCPF" }, // cream pintuck blouse, dusty-pink pleated midi skirt
+  { id: 3, image: women03, tags: "RNPS" }, // navy breton stripe, white linen wide trousers
+  { id: 4, image: women04, tags: "TNDS" }, // indigo denim chore jacket, raw straight jeans, boots
+  { id: 5, image: women05, tags: "TCPF" }, // olive long vest, wide trousers, satin blouse
+  { id: 6, image: women06, tags: "TNPS" }, // cream and navy track jacket, track pants
+  { id: 7, image: women07, tags: "RCDF" }, // rust blouse, floral tiered maxi skirt
+  { id: 8, image: women08, tags: "RNDS" }, // black bomber, white tee, charcoal wide cargos
+  { id: 9, image: women09, tags: "TCDF" }, // burgundy cardigan, plaid pleated skirt, loafers
+  { id: 10, image: women10, tags: "TNPF" }, // cropped black blazer, navy satin slip dress
+  { id: 11, image: women11, tags: "TCDS" }, // green shell jacket, charcoal knit, black trousers
+  { id: 12, image: women12, tags: "RCPS" }, // denim jacket, white tee, ecru wide jeans
 ];
 
 /** Same 12-card structure and tags per preference, so scoring is identical. */
