@@ -117,7 +117,7 @@ export function Me() {
         <div className="mt-3 rounded-2xl bg-card px-4 py-4 shadow-soft">
           <div className="flex items-center justify-between">
             <span className="text-sm">Price range</span>
-            <span className={cn("text-sm text-muted-foreground", !budgetKnown && "underline underline-offset-4")}>{budgetKnown ? `$${budget.min} – $${budget.max}` : "Not sure yet"}</span>
+            <span className={cn("text-body text-muted-foreground", !budgetKnown && "underline underline-offset-4")}>{budgetKnown ? `$${budget.min} – $${budget.max}` : "Not sure yet"}</span>
           </div>
           <Slider
             className="mt-4"
