@@ -22,7 +22,7 @@ export function Reveal() {
       <div className="flex flex-1 flex-col">
       <p className="mt-6 text-sm">{line}</p>
       <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
-      <h2 className="mt-6 font-serif text-xl">Pieces people like you wear</h2>
+      <h2 className="mt-6 font-serif text-xl">People like you wear</h2>
       <div className="mt-3 grid grid-cols-4 gap-2">
         {pieces.map((piece) => <div key={piece.id}><Photo src={piece.image} alt={piece.name} className="aspect-[3/4] rounded-lg" /><p className="mt-2 text-[11px] leading-snug">{piece.name}</p></div>)}
       </div>
