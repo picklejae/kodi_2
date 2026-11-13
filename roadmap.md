@@ -52,3 +52,6 @@
 - [x] Reveal single button
 - [x] Sentence-level line breaks
 - [x] Upload: Kodi me button, remove preference toggle
+- [x] Feed: quick chips, pinned own post, simulated responses, scroll top
+- [x] Saved: label, remove Get feedback/items/Outfits, ⋯ delete menu, remove Recreate
+- [x] Womenswear: show onboarding quiz

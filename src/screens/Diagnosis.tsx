@@ -1,12 +1,13 @@
 import { Heart, Undo2, X } from "lucide-react";
 import { SwipePhotoCard } from "@/components/pairly/SwipePhotoCard";
 import { PillButton } from "@/components/pairly/PillButton";
-import { ROUNDS, quizAvailable } from "@/data/diagnosis";
+import { roundsFor, quizAvailable } from "@/data/diagnosis";
 import { usePairly } from "@/store/PairlyContext";
 
 export function Diagnosis() {
   const { answers, answer, back, skipQuiz, stylePreference } = usePairly();
   const i = answers.length;
+  const ROUNDS = roundsFor(stylePreference);
   if (stylePreference && !quizAvailable(stylePreference)) return (
     <div className="flex flex-1 flex-col justify-center gap-4 px-screen"><h2 className="font-serif text-3xl">Womenswear quiz looks are coming soon</h2><p className="text-sm text-muted-foreground">The current swipe photos are menswear only, so we skip the quiz for womenswear.</p><PillButton onClick={skipQuiz}>Start styling</PillButton></div>
   );

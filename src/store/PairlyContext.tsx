@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { useServerFn } from "@tanstack/react-start";
 import { planStyle, renderStyleLook } from "@/lib/styleGeneration.functions";
 import { looksFromPlan, photoReference, styleProfile, defaultConcept, type GeneratedLook, type StylePlan } from "@/lib/styleGeneration";
-import { ROUNDS } from "@/data/diagnosis";
+import { roundsFor } from "@/data/diagnosis";
 import { UPLOAD_SAMPLES, type ItemCategory, type Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
 import { computeDiagnosis, type Answer, type ExploreLevel } from "@/lib/styleType";
@@ -13,7 +13,7 @@ import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { POSTS, type SocialPost } from "@/data/social";
 import { jasonPosts } from "@/data/jasonPosts";
-import { savedLook, feedbackPost, appendComment } from "@/lib/feedFlow";
+import { savedLook, feedbackPost, appendComment, bumpPost } from "@/lib/feedFlow";
 import type { PresetRequest } from "@/lib/devPresets";
 import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "@/data/saved";
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
@@ -289,10 +289,10 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     go: (screen) => setState((s) => ({ ...s, screen, activeTab: screen === "upload" || screen === "results" ? "style" : s.activeTab })),
     answer: (a) =>
       setState((s) => {
-        if (s.answers.length >= ROUNDS.length) return s;
+        if (s.answers.length >= roundsFor(s.stylePreference).length) return s;
         const answers = [...s.answers, a];
-        if (answers.length >= ROUNDS.length) {
-          const diagnosis = computeDiagnosis(ROUNDS, answers);
+        if (answers.length >= roundsFor(s.stylePreference).length) {
+          const diagnosis = computeDiagnosis(roundsFor(s.stylePreference), answers);
           const { styleType } = diagnosis;
           const picks = s.uploadedItem && s.picks
             ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, styleType, s.occasion)
@@ -346,13 +346,12 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         voteGroups: [...p.voteGroups, { styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, yes: v === "up" ? 1 : 0, no: v === "down" ? 1 : 0 }] } : p),
     })),
     addFeedback: (id, text) => setState((s) => ({ ...s, posts: appendComment(s.posts, id, { text, author: "@jason", styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, createdAt: new Date().toISOString() }) })),
-    createPost: (p) => setState((s) => {
-      const id = `u${crypto.randomUUID()}`;
+    createPost: (p) => { const id = `u${crypto.randomUUID()}`; [1200, 2600, 4200, 6000].forEach((ms, step) => setTimeout(() => setState((s) => ({ ...s, posts: bumpPost(s.posts, id, step) })), ms)); setState((s) => {
       return {
         ...s, draft: null, activeTab: "feed", highlightedPost: id,
         posts: [{ ...p, ...(s.draft?.look ? { look: s.draft.look } : {}), ...(s.draft?.ownedImage ? { ownedImage: s.draft.ownedImage } : {}), id, author: "@jason", createdAt: new Date().toISOString(), styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true }, ...s.posts],
       };
-    }),
+    }); },
     postSavedLook: (outfit) => setState((s) => {
       const post: SocialPost = { id: `u${crypto.randomUUID()}`, author: "@jason", image: outfit.feedbackImage ?? outfit.imageUrl, question: `${outfit.lookName}. Does it work?`, occasion: s.occasion, styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, createdAt: new Date().toISOString(), votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true };
       const result = feedbackPost(s.posts, outfit, post);

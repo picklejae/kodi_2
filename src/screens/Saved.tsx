@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Trash2, Minus } from "lucide-react";
+import { Trash2, Minus, MoreHorizontal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
@@ -16,8 +17,7 @@ import { usePairly } from "@/store/PairlyContext";
 import type { RecentItem } from "@/data/saved";
 import { GENERIC_ATTRIBUTES } from "@/data/samples";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import { SecondaryButton } from "@/design-system/kodi-design-system-ac5f73";
+import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 export function Saved() {
   const {
     recentItems,
@@ -26,7 +26,6 @@ export function Saved() {
     deleteSavedOutfit,
     setUploadedItem,
     go,
-    postSavedLook,
   } = usePairly();
   const navigate = useNavigate();
   const [recentEdit, setRecentEdit] = useState(false),
@@ -55,7 +54,7 @@ export function Saved() {
   };
   return (
     <div className="px-6 pb-8 pt-12">
-      <h1 className="mb-6 text-display">Looks</h1>
+      <h1 className="mb-6 text-display">Saved</h1>
       <section aria-label="Recents">
         <SectionHeader
           title="Recents"
@@ -103,12 +102,6 @@ export function Saved() {
         )}
       </section>
       <section className="mt-8" aria-label="Looks">
-        <SectionHeader
-          title="Saved"
-          empty={!outfitCount}
-          editing={savedEdit}
-          onToggle={() => setSavedEdit(!savedEdit)}
-        />
         {!outfitCount ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No saved outfits yet</p>
         ) : (
@@ -143,17 +136,12 @@ export function Saved() {
                 >
                   {item.content}
                 </PillButton>
-                <div className="mt-screen">
-                  <p className="text-body-sm font-semibold">{item.outfit.lookName}</p>
-                  <ul className="text-caption text-muted-foreground">{item.outfit.products.map((piece) => <li key={`${piece.role}:${piece.name}`}>{piece.name}</li>)}</ul>
-                  {!savedEdit && <div className="mt-screen"><SecondaryButton fullWidth onClick={() => { postSavedLook(item.outfit); toast("Posted to Feed"); }}>Get feedback</SecondaryButton></div>}
+                <div className="absolute right-0 top-0">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild><TextLinkButton aria-label={`More options for outfit with ${item.name}`} className="min-h-touch min-w-touch justify-center"><MoreHorizontal /></TextLinkButton></DropdownMenuTrigger>
+                    <DropdownMenuContent align="end"><DropdownMenuItem onSelect={() => setPending({ section: "saved", id: item.id })}>Delete look</DropdownMenuItem></DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                {savedEdit && (
-                  <DeleteIcon
-                    name={item.name}
-                    onClick={() => setPending({ section: "saved", id: item.id })}
-                  />
-                )}
               </div>
             ))}
           </div>
