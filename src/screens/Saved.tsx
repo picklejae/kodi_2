@@ -85,7 +85,8 @@ export function Saved() {
                   <Photo
                     src={outfit.imageUrl}
                     alt={`Outfit with ${outfit.ownedName}`}
-                    className="h-full w-full [&_img]:object-top"
+                    fit="contain"
+                    className="h-full w-full"
                   />
                 ),
               })).map((item) => (
