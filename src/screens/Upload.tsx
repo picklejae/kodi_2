@@ -1,6 +1,6 @@
 import { Sentences } from "@/components/pairly/Sentences";
-import { useEffect, useRef, useState } from "react";
-import { Camera, ChevronLeft, ImageIcon, Loader2, X } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Camera, ChevronLeft, ImageIcon, X } from "lucide-react";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
 import { SelectChip } from "@/components/pairly/SelectChip";
@@ -11,17 +11,11 @@ import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 export function Upload() {
   const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
   useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
-  const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!analyzing) return;
-    const t = setTimeout(() => setAnalyzing(false), 1500);
-    return () => clearTimeout(t);
-  }, [analyzing]);
 
-  const pick = (item: UploadedItem) => { setUploadedItem(item); setAnalyzing(true); };
+  const pick = (item: UploadedItem) => setUploadedItem(item);
 
   const onFile = (f?: File) => {
     if (!f) return;
@@ -70,15 +64,8 @@ export function Upload() {
         <div className="mt-6 animate-in fade-in duration-300">
           <div className="relative">
             <Photo src={uploadedItem.image} alt={uploadedItem.name ?? "Your item"} className="h-64 rounded-3xl shadow-soft" />
-            <button onClick={() => { setUploadedItem(null); setAnalyzing(false); }} aria-label="Remove photo" className="absolute right-3 top-3 rounded-full bg-card/90 p-1.5"><X className="h-4 w-4" /></button>
-            {analyzing && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-3xl bg-background/70 backdrop-blur-sm">
-                <Loader2 className="h-6 w-6 animate-spin" />
-                <p className="mt-2 text-sm font-medium">Reading your piece…</p>
-              </div>
-            )}
+            <button onClick={() => setUploadedItem(null)} aria-label="Remove photo" className="absolute right-3 top-3 rounded-full bg-card/90 p-1.5"><X className="h-4 w-4" /></button>
           </div>
-          {!analyzing && (
             <div className="animate-in fade-in duration-300">
               {uploadedItem.source === "upload" ? (
                 <div className="mt-5">
@@ -96,13 +83,12 @@ export function Upload() {
               <input id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Gallery curator in the fall in Paris"
                 className="mt-2 h-11 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none focus:border-foreground" />
             </div>
-          )}
         </div>
       )}
 
       </div>
       <div className="mt-auto pt-8 lg:mt-0">
-        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
+        <PillButton disabled={!uploadedItem || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
       </div>
     </div>
   );

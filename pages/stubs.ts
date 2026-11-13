@@ -51,17 +51,14 @@ function pickSet(data: { category: string; name: string; reference: string }): C
   }
   return SETS[fingerprint(data.reference) % SETS.length];
 }
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function planStyle({ data }: { data: { category: string; name: string; reference: string } }) {
   const set = pickSet(data);
-  await wait(1200);
   return { ok: true as const, plan: { presentation: set.presentation, looks: set.looks.map(({ image: _image, ...look }, index) => ({ ...look, styling: `proto:${set.id}:${index}` })) } };
 }
 export async function renderStyleLook({ data }: { data: { styling: string } }) {
   const [, id, index] = data.styling.split(":");
   const image = SETS.find((set) => set.id === id)?.looks[Number(index)]?.image;
-  await wait(900 + Number(index) * 500);
   return image ? { ok: true as const, image } : { ok: false as const, error: "No saved look for this piece in the prototype." };
 }
 export async function findShoppingProducts() {
