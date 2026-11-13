@@ -1,5 +1,6 @@
 import type { ItemCategory } from "./samples";
 import type { ConceptItem } from "./moodboards";
+import { withStoreLink } from "./storeLinks";
 import r1 from "@/assets/recent-item-1.jpg";
 import r2 from "@/assets/recent-item-2.jpg";
 import r3 from "@/assets/recent-item-3.jpg";
@@ -64,7 +65,7 @@ function seed(id: string, imageUrl: string, lookName: string, explanation: strin
     ownedName,
     products: [
       { role: "Your piece", name: ownedName, owned: true, brand: null, price: null, shopUrl: null },
-      ...pieces.map(([role, name]): ConceptItem => ({ role, name, owned: false, brand: null, price: null, shopUrl: null })),
+      ...pieces.map(([role, name]): ConceptItem => withStoreLink({ role, name, owned: false, brand: null, price: null, shopUrl: null })),
     ],
   };
 }

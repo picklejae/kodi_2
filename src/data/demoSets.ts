@@ -9,6 +9,7 @@ import jacket from "@/assets/presets/piece-leather-jacket.jpg.asset.json";
 import { TIERS, type GeneratedLook } from "@/lib/styleGeneration";
 import type { SampleItem } from "./samples";
 import type { ConceptItem } from "./moodboards";
+import { withStoreLink } from "./storeLinks";
 
 export type DemoSetId = "set-a" | "set-b";
 /** SHA-256 of original uploaded bytes, before resizing; filenames are not identity. */
@@ -44,6 +45,6 @@ export function demoSetLooks(id: DemoSetId): GeneratedLook[] {
   return sets[id].map((entry, index) => ({
     id: `${id}-${index}`, demoSet: id, tier: TIERS[index] ?? "safe", shift: "", preference: "menswear", department: "men", status: "success", image: entry.image, name: entry.name,
     explanation: `${entry.pieces.map(([, name]) => name).join(", ")} complement your ${owned.name.toLowerCase()}.`, styling: entry.name,
-    items: [{ role: "Your piece", name: owned.name, image: owned.image, owned: true, brand: null, price: null, shopUrl: null }, ...entry.pieces.map(([role, name]): ConceptItem => ({ role, name, owned: false, brand: null, price: null, shopUrl: null }))],
+    items: [{ role: "Your piece", name: owned.name, image: owned.image, owned: true, brand: null, price: null, shopUrl: null }, ...entry.pieces.map(([role, name]): ConceptItem => withStoreLink({ role, name, owned: false, brand: null, price: null, shopUrl: null }))],
   }));
 }
