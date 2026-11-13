@@ -59,7 +59,7 @@ export function Me() {
                   onClick={() => setUnits(option)}
                   className={cn("h-touch w-24 whitespace-nowrap text-center text-sm font-normal transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring", units === option ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}
                 >
-                  {option === "metric" ? "cm · kg" : "ft·in · lb"}
+                  {option === "metric" ? "cm · kg" : "ft/in · lb"}
                 </button>
               ))}
             </div>
