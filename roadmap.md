@@ -56,3 +56,4 @@
 - [x] Saved: label, remove Get feedback/items/Outfits, ⋯ delete menu, remove Recreate
 - [x] Womenswear: show onboarding quiz
 - [x] Results: remove More casual/Lower budget; heart save button on photo top-right
+- [ ] Smaller bold unified screen titles; 2x2 style bars on Reveal and Me
