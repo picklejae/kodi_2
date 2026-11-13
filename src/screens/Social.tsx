@@ -7,13 +7,14 @@ import { BottomSheet, Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryBut
 import { FEEDBACK_CHIPS, type SocialPost } from "@/data/social";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { filterPosts, type SocialFilter } from "@/lib/social";
+import type { PhotoCredit } from "@/data/altMeFeed";
 import { myPosts, timeAgo } from "@/lib/feedFlow";
 import { VoteSplitBar } from "@/components/pairly/VoteSplitBar";
 import { SwipePhotoCard } from "@/components/pairly/SwipePhotoCard";
 import { usePairly } from "@/store/PairlyContext";
 
 export function Social() {
-  const { posts, styleType, userVotes, vote, addFeedback, openDraft, feedHintDismissed, dismissFeedHint, hideFeedHintForever, highlightedPost } = usePairly();
+  const { posts, styleType, stylePreference, userVotes, vote, addFeedback, openDraft, feedHintDismissed, dismissFeedHint, hideFeedHintForever, highlightedPost } = usePairly();
   const type = styleType ?? DEFAULT_CODE;
   const [filter, setFilter] = useState<SocialFilter>("similar");
   const [detailId, setDetailId] = useState<string | null>(null);
@@ -23,8 +24,12 @@ export function Social() {
   const [pinnedSheet, setPinnedSheet] = useState(false);
   const castVote = (id: string, v: "up" | "down") => { vote(id, v); setLastVoted(id); };
   const [highlight, setHighlight] = useState<string | null>(null);
-  const others = posts.filter((post) => !post.isUserPost);
-  const stack = (filter === "similar" ? filterPosts(others, type, filter) : [...others].sort((a, b) => b.votesUp + b.votesDown - (a.votesUp + a.votesDown))).filter((post) => !userVotes[post.id]);
+  // Each feed shows its own department (posts without one are menswear).
+  const pref = stylePreference ?? "menswear";
+  const others = posts.filter((post) => !post.isUserPost && (post.department ?? "menswear") === pref);
+  // "For you" keeps similar styles first; with a small department (womenswear) it falls back to all of its posts.
+  const similar = filterPosts(others, type, filter);
+  const stack = (filter === "similar" ? (similar.length >= 3 ? similar : [...similar, ...others.filter((post) => !similar.includes(post))]) : [...others].sort((a, b) => b.votesUp + b.votesDown - (a.votesUp + a.votesDown))).filter((post) => !userVotes[post.id]);
   const mine = myPosts(posts);
   const [pinIdx, setPinIdx] = useState(0);
   const [pinDir, setPinDir] = useState<"next" | "prev">("next");
@@ -68,7 +73,7 @@ export function Social() {
         {/* Story-style reply bar over the photo; opens the comment sheet. */}
         {stack[0] && <button type="button" onClick={() => { setCommentId(stack[0]!.id); setComment(""); }} className="absolute inset-x-3 bottom-3 z-20 flex h-11 items-center rounded-full border border-white/70 bg-black/20 px-4 text-left text-body-sm text-white/90 backdrop-blur-sm outline-none focus-visible:ring-2 focus-visible:ring-white">Add a comment…</button>}
       </div>
-      {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p></div>}
+      {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p>{stack[0].credit && <PhotoCreditLine credit={stack[0].credit} />}</div>}
       {lastVoted && <div className="mt-screen flex flex-wrap items-center gap-screen" aria-label="Quick feedback">
         {FEEDBACK_CHIPS.slice(0, 3).map((chip) => <Chip key={chip} onClick={() => { addFeedback(lastVoted, chip); setLastVoted(null); toast("Thanks for the feedback"); }}>{chip}</Chip>)}
         <TextLinkButton onClick={() => setLastVoted(null)}>Skip</TextLinkButton>
@@ -81,7 +86,7 @@ export function Social() {
         </form>
       </BottomSheet>
       <BottomSheet open={!!detail} onClose={() => setDetailId(null)} title={detail?.question ?? "Post details"}>
-        {detail && <div className="flex flex-col gap-screen"><h2 className="text-heading">{detail.question}</h2><PhotoCard src={detail.image} alt={detail.question} /><div className="flex flex-wrap items-center gap-screen text-caption"><span>{detail.author}</span><span>{timeAgo(detail)}</span></div><VoteSplitBar up={detail.votesUp} down={detail.votesDown} /><Comments post={detail} /><SecondaryButton onClick={() => { setCommentId(detail.id); setDetailId(null); setComment(""); }}><MessageCircle />Add comment</SecondaryButton></div>}
+        {detail && <div className="flex flex-col gap-screen"><h2 className="text-heading">{detail.question}</h2><PhotoCard src={detail.image} alt={detail.question} /><div className="flex flex-wrap items-center gap-screen text-caption"><span>{detail.author}</span><span>{timeAgo(detail)}</span></div>{detail.credit && <PhotoCreditLine credit={detail.credit} />}<VoteSplitBar up={detail.votesUp} down={detail.votesDown} /><Comments post={detail} /><SecondaryButton onClick={() => { setCommentId(detail.id); setDetailId(null); setComment(""); }}><MessageCircle />Add comment</SecondaryButton></div>}
       </BottomSheet>
       <BottomSheet open={pinnedSheet && !!cur} onClose={() => setPinnedSheet(false)} title="Feedback on your look">
         {cur && <div className="flex flex-col gap-screen"><h2 className="text-heading">Feedback on your look</h2><div className="mx-auto w-3/4"><PhotoCard src={cur.image} alt={cur.question} ratio="look" /></div><VoteSplitBar up={cur.votesUp} down={cur.votesDown} />
@@ -95,4 +100,15 @@ export function Social() {
 }
 function Comments({ post }: { post: SocialPost }) {
   return <div className="mt-screen flex flex-col gap-screen" aria-label="Comments">{post.feedback.map((feedback, index) => <div key={`${feedback.author}:${index}`}><div className="flex flex-wrap items-center gap-screen text-caption"><span>{feedback.author ?? "@member"}</span><span className="text-muted-foreground">{timeAgo(feedback)}</span></div><p className="text-body-sm">{feedback.text}</p></div>)}</div>;
+}
+
+/** Creator, source page and license for a third-party photo. */
+function PhotoCreditLine({ credit }: { credit: PhotoCredit }) {
+  return (
+    <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
+      <a href={credit.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Source</a>
+      {" · "}
+      <a href={credit.licenseUrl} target="_blank" rel="license noopener noreferrer" className="underline underline-offset-2">{credit.license}</a>
+    </p>
+  );
 }

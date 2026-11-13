@@ -10,14 +10,20 @@ describe("social", () => {
     if (!first || !last) throw new Error("Missing top-rated posts");
     expect(upPercent(first.votesUp, first.votesDown)).toBeGreaterThanOrEqual(upPercent(last.votesUp, last.votesDown));
   });
-  it("has 15 posts and 5 trends", () => { expect(POSTS).toHaveLength(15); expect(TRENDS).toHaveLength(5); });
+  it("has 15 member posts, 20 credited ALT ME photos and 5 trends", () => {
+    expect(POSTS.filter((p) => !p.credit)).toHaveLength(15);
+    expect(POSTS.filter((p) => p.credit && p.department === "womenswear")).toHaveLength(10);
+    expect(POSTS.filter((p) => p.credit && p.department === "menswear")).toHaveLength(10);
+    expect(POSTS.filter((p) => p.credit).every((p) => p.votesUp === 0 && p.feedback.length === 0 && p.credit?.licenseUrl.startsWith("https://"))).toBe(true);
+    expect(TRENDS).toHaveLength(5);
+  });
   it("People like me includes styles sharing at least three axes", () => {
     expect(similarStyle("TNPF", "TNDF")).toBe(true);
     expect(similarStyle("TNPF", "RNDS")).toBe(false);
-    expect(filterPosts(POSTS, "TNPF", "similar").map((p) => p.id)).toEqual(["p1", "p4", "p6", "p9", "p10", "p11", "p12", "p15"]);
+    expect(filterPosts(POSTS.filter((p) => !p.credit), "TNPF", "similar").map((p) => p.id)).toEqual(["p1", "p4", "p6", "p9", "p10", "p11", "p12", "p15"]);
   });
   it("More adventurous includes only high exploration posters and voters", () => {
-    expect(filterPosts(POSTS, "TNPF", "adventurous").map((p) => p.id)).toEqual(["p2", "p6", "p8", "p14"]);
+    expect(filterPosts(POSTS.filter((p) => !p.credit), "TNPF", "adventurous").map((p) => p.id)).toEqual(["p2", "p6", "p8", "p14"]);
     const groups = [{ styleType: "TNPF" as const, exploreLevel: "low" as const, yes: 8, no: 4 }, { styleType: "RCDS" as const, exploreLevel: "high" as const, yes: 4, no: 5 }];
     expect(filteredVotes(groups, "TNPF", "similar")).toEqual({ yes: 8, no: 4 });
     expect(filteredVotes(groups, "TNPF", "adventurous")).toEqual({ yes: 4, no: 5 });

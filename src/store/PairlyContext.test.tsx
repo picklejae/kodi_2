@@ -46,14 +46,14 @@ describe("quiz state", () => {
     act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.recordUpload("new-photo", "Blue shirt", "shirt"));
     expect(result.current.recentItems[0]?.imageUrl).toBe("new-photo");
-    expect(result.current.recentItems).toHaveLength(8);
+    expect(result.current.recentItems).toHaveLength(12); // 7 men's + 4 women's demo uploads + this one
     act(() => result.current.deleteRecent("jason-chinos"));
-    expect(result.current.savedOutfits).toHaveLength(3);
+    expect(result.current.savedOutfits).toHaveLength(6); // 3 men's + 3 women's examples
     act(() => result.current.deleteSavedOutfit("outfit-1"));
-    expect(result.current.savedOutfits).toHaveLength(2);
+    expect(result.current.savedOutfits).toHaveLength(5);
     act(() => result.current.reset());
-    expect(result.current.recentItems).toHaveLength(7);
-    expect(result.current.savedOutfits).toHaveLength(3);
+    expect(result.current.recentItems).toHaveLength(11);
+    expect(result.current.savedOutfits).toHaveLength(6);
   });
   it("saves a generated look to the front of Looks only once", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
@@ -69,13 +69,13 @@ describe("quiz state", () => {
     let saved = false;
     act(() => { saved = result.current.saveLook(look); });
     expect(saved).toBe(true);
-    expect(result.current.savedOutfits).toHaveLength(4);
+    expect(result.current.savedOutfits).toHaveLength(7); // 6 examples + the new save
     expect(result.current.savedOutfits[0]?.lookName).toBe("Tailored");
     expect(result.current.savedOutfits[0]?.ownedName).toBe("Camel coat");
     expect(result.current.savedOutfits[0]?.products).toHaveLength(2);
     act(() => { saved = result.current.saveLook(look); });
     expect(saved).toBe(false);
-    expect(result.current.savedOutfits).toHaveLength(4);
+    expect(result.current.savedOutfits).toHaveLength(7); // saving the same look again adds nothing
     const { image: _image, ...withoutImage } = look;
     act(() => { saved = result.current.saveLook({ ...withoutImage, status: "loading" }); });
     expect(saved).toBe(false);

@@ -3,10 +3,12 @@ import { RECENT_ITEMS, SAVED_OUTFITS } from "@/data/saved";
 import type { ConceptItem } from "@/data/moodboards";
 import { addRecent, removeRecent, removeOutfit, hotspotPlacements, HOTSPOT_POSITIONS } from "./saved";
 describe("Saved collections", () => {
-  it("starts with Jason’s chinos first and three curated example looks", () => {
-    expect(RECENT_ITEMS).toHaveLength(7);
+  it("starts with Jason’s chinos first and three curated example looks per department", () => {
+    expect(RECENT_ITEMS.filter((i) => i.department === "menswear")).toHaveLength(7);
+    expect(RECENT_ITEMS.filter((i) => i.department === "womenswear")).toHaveLength(4);
     expect(RECENT_ITEMS[0]?.productName).toBe("My beige chinos");
-    expect(SAVED_OUTFITS).toHaveLength(3);
+    expect(SAVED_OUTFITS.filter((o) => o.department === "menswear")).toHaveLength(3);
+    expect(SAVED_OUTFITS.filter((o) => o.department === "womenswear")).toHaveLength(3);
     expect(
       SAVED_OUTFITS.every((o) => o.imageUrl && o.products.some((p) => p.owned && p.role === "Your piece") && o.products.some((p) => !p.owned)),
     ).toBe(true);
@@ -23,12 +25,12 @@ describe("Saved collections", () => {
     expect(addRecent(RECENT_ITEMS, item)[0]?.id).toBe("new");
   });
   it("deletes a recent photo without deleting saved outfits", () => {
-    expect(removeRecent(RECENT_ITEMS, "jason-chinos")).toHaveLength(6);
-    expect(SAVED_OUTFITS).toHaveLength(3);
+    expect(removeRecent(RECENT_ITEMS, "jason-chinos")).toHaveLength(RECENT_ITEMS.length - 1);
+    expect(SAVED_OUTFITS).toHaveLength(6);
   });
   it("deletes only the selected saved outfit", () => {
     const next = removeOutfit(SAVED_OUTFITS, "outfit-1");
-    expect(next).toHaveLength(2);
+    expect(next).toHaveLength(SAVED_OUTFITS.length - 1);
     expect(next.some((o) => o.id === "outfit-1")).toBe(false);
   });
 });
