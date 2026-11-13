@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Correct the Style failure-state optional-array type error and update collection regression tests for Jason’s seeds
 - [ ] Jason demo user: use the earlier photos for Upload, selected-sample Results, Closet and Me; verify owned markers, two AI looks, error survival and unchanged presets
 - [ ] Studio onboarding photos: paused after interrupted edits; waiting for the photo task to resume
 - [x] Diagnose and improve Style loading without changing image quality, model preferences, or shopping

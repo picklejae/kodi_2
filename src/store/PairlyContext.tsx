@@ -159,7 +159,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       setState((s) => ({ ...s, generatedLooks: looks, planning: false }));
       await Promise.all(looks.map((look, index) => fromCloset && index === 0 ? Promise.resolve() : renderLook(index, look, token)));
     } catch (error) {
-      if (runId.current === token) setState((s) => ({ ...s, planning: false, generatedLooks: fromCloset ? s.generatedLooks?.map((look, index) => index === 0 ? look : { ...look, status: "failed", error: "Couldn’t prepare this new look. Try generation again." }) : s.generatedLooks, generationError: error instanceof Error ? error.message : "Couldn't prepare your styling directions." }));
+      if (runId.current === token) setState((s) => ({ ...s, planning: false, generatedLooks: fromCloset ? (s.generatedLooks ?? []).map((look, index) => index === 0 ? look : { ...look, status: "failed", error: "Couldn’t prepare this new look. Try generation again." }) : s.generatedLooks ?? [], generationError: error instanceof Error ? error.message : "Couldn't prepare your styling directions." }));
     } finally { running.current = false; }
   };
   const value = useMemo<PairlyCtx>(() => ({

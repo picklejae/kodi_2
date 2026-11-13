@@ -17,7 +17,7 @@ describe("Saved collections", () => {
       imageUrl: "uploaded",
       productName: "Uploaded jacket",
       category: "jacket" as const,
-      uploadedAt: "2026-11-13T01:30:00Z",
+      uploadedAt: "2026-11-13T05:30:00Z",
     };
     expect(addRecent(RECENT_ITEMS, item)[0]?.id).toBe("new");
   });
