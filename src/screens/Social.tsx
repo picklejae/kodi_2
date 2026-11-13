@@ -7,7 +7,6 @@ import { FEEDBACK_CHIPS, type SocialPost } from "@/data/social";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { filterPosts, type SocialFilter } from "@/lib/social";
 import { myPosts, timeAgo } from "@/lib/feedFlow";
-import { StyleBadge } from "@/components/pairly/SocialFeedback";
 import { VoteSplitBar } from "@/components/pairly/VoteSplitBar";
 import { SwipePhotoCard } from "@/components/pairly/SwipePhotoCard";
 import { usePairly } from "@/store/PairlyContext";
@@ -59,7 +58,7 @@ export function Social() {
       <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card lg:col-start-1 lg:row-span-6">
         {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
       </div>
-      {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span><StyleBadge type={stack[0].styleType} /></div><p className="text-body-sm">{stack[0].question}</p></div>}
+      {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p></div>}
       <div className="mt-screen flex items-center justify-between" aria-label="Outfit feedback">
         <SecondaryButton aria-label="Thumbs down" title="Thumbs down" disabled={!stack[0]} onClick={() => stack[0] && castVote(stack[0].id, "down")}><ThumbsDown /></SecondaryButton>
         <TextLinkButton disabled={!stack[0]} onClick={() => { if (stack[0]) { setCommentId(stack[0].id); setComment(""); } }}><MessageCircle />Comment</TextLinkButton>
@@ -78,7 +77,7 @@ export function Social() {
         </form>
       </BottomSheet>
       <BottomSheet open={!!detail} onClose={() => setDetailId(null)} title={detail?.question ?? "Post details"}>
-        {detail && <div className="flex flex-col gap-screen"><h2 className="text-heading">{detail.question}</h2><PhotoCard src={detail.image} alt={detail.question} /><div className="flex flex-wrap items-center gap-screen text-caption"><span>{detail.author}</span><StyleBadge type={detail.styleType} /><span>{timeAgo(detail)}</span></div><VoteSplitBar up={detail.votesUp} down={detail.votesDown} /><Comments post={detail} /><SecondaryButton onClick={() => { setCommentId(detail.id); setDetailId(null); setComment(""); }}><MessageCircle />Add comment</SecondaryButton></div>}
+        {detail && <div className="flex flex-col gap-screen"><h2 className="text-heading">{detail.question}</h2><PhotoCard src={detail.image} alt={detail.question} /><div className="flex flex-wrap items-center gap-screen text-caption"><span>{detail.author}</span><span>{timeAgo(detail)}</span></div><VoteSplitBar up={detail.votesUp} down={detail.votesDown} /><Comments post={detail} /><SecondaryButton onClick={() => { setCommentId(detail.id); setDetailId(null); setComment(""); }}><MessageCircle />Add comment</SecondaryButton></div>}
       </BottomSheet>
       <BottomSheet open={pinnedSheet && !!cur} onClose={() => setPinnedSheet(false)} title="Feedback on your look">
         {cur && <div className="flex flex-col gap-screen"><h2 className="text-heading">Feedback on your look</h2><PhotoCard src={cur.image} alt={cur.question} ratio="look" /><VoteSplitBar up={cur.votesUp} down={cur.votesDown} />
@@ -91,5 +90,5 @@ export function Social() {
   );
 }
 function Comments({ post }: { post: SocialPost }) {
-  return <div className="mt-screen flex flex-col gap-screen" aria-label="Comments">{post.feedback.map((feedback, index) => <div key={`${feedback.author}:${index}`}><div className="flex flex-wrap items-center gap-screen text-caption"><span>{feedback.author ?? "@member"}</span><StyleBadge type={feedback.styleType} /><span className="text-muted-foreground">{timeAgo(feedback)}</span></div><p className="text-body-sm">{feedback.text}</p></div>)}</div>;
+  return <div className="mt-screen flex flex-col gap-screen" aria-label="Comments">{post.feedback.map((feedback, index) => <div key={`${feedback.author}:${index}`}><div className="flex flex-wrap items-center gap-screen text-caption"><span>{feedback.author ?? "@member"}</span><span className="text-muted-foreground">{timeAgo(feedback)}</span></div><p className="text-body-sm">{feedback.text}</p></div>)}</div>;
 }
