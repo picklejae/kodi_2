@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { devButtonVisible, parsePresetParams } from "./devPresets";
 
 describe("parsePresetParams", () => {
+  it("opens the time-skip Feed preset without the budget step", () => {
+    expect(parsePresetParams("?screen=feed-later")?.preset).toBe("feed-later");
+    expect(parsePresetParams("?screen=looks")?.preset).toBe("saved");
+    expect(parsePresetParams("?screen=set-a")?.preset).toBe("set-a");
+    expect(parsePresetParams("?screen=set-b")?.preset).toBe("set-b");
+  });
   it("opens Saved from new and legacy URL presets", () => {
     expect(parsePresetParams("?screen=saved")?.preset).toBe("saved");
     expect(parsePresetParams("?screen=closet")?.preset).toBe("saved");
