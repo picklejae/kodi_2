@@ -48,3 +48,16 @@ describe("Looks to Feed", () => {
     expect(result[0]?.votesUp).toBe(38); expect(result[0]?.votesDown).toBe(5);
   });
 });
+import { bumpPost } from "./feedFlow";
+describe("bumpPost", () => {
+  it("adds votes and the three feedback lines once votesUp passes 3", () => {
+    const base = { id: "u1", author: "@jason", image: "", styleType: "TNPF", occasion: null, question: "", votesUp: 0, votesDown: 0, topFeedback: [], exploreLevel: "low", voteGroups: [], feedback: [], isUserPost: true } as never;
+    let posts = bumpPost([base], "u1", 0);
+    expect(posts[0].votesUp).toBe(2);
+    expect(posts[0].feedback).toHaveLength(0);
+    posts = bumpPost(posts, "u1", 1);
+    posts = bumpPost(posts, "u1", 2);
+    expect(posts[0].votesUp).toBe(6);
+    expect(posts[0].feedback.map((f) => f.text)).toEqual(["Great fit", "Add a layer", "Try darker shoes"]);
+  });
+});
