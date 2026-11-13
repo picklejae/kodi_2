@@ -64,7 +64,7 @@ export function Upload() {
       ) : (
         <div className="mt-6 animate-in fade-in duration-300">
           <div className="relative">
-            <Photo src={uploadedItem.image} alt={uploadedItem.name ?? "Your item"} className="h-64 rounded-3xl shadow-soft" />
+            <Photo src={uploadedItem.image} alt={uploadedItem.name ?? "Your item"} fit="contain" className="aspect-[4/5] w-full rounded-3xl bg-white p-4 shadow-soft" />
             <button onClick={() => setUploadedItem(null)} aria-label="Remove photo" className="absolute right-3 top-3 rounded-full bg-card/90 p-1.5"><X className="h-4 w-4" /></button>
           </div>
             <div className="animate-in fade-in duration-300">
