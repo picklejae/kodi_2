@@ -16,6 +16,7 @@ Base: kodi_2 `main` @ 2183350 (2026-11-13 10:11 CT). Earlier base: pairly `main`
 | 2 | `screens/Welcome.tsx`: 42px spacer under headline + `pt-[21px]` on lower block | Keep the lower block where it was before the tagline + divider were removed (ef21fbf, 8fb9b55) | ❌ dropped: the team restructured Welcome (863a71c…bad37a2), proto now uses theirs |
 | 3 | `screens/Social.tsx`: Your look card slides 48px + fades in over 320ms (ease-out-cubic) from the side of the arrow pressed, clipped inside the card; label shows `· 2/3` | Team: hard to notice the card changed when pressing ← →. v1 (16px/200ms) was too subtle — looked like a glitch. Respects reduced motion. | ⏳ prompt 3 |
 | 4 | `screens/Reveal.tsx`, `components/pairly/StyleScales.tsx` (`reveal` prop, Reveal only), `styles.css` (2 keyframes) | "Wow" moment after the quiz, kept refined: one staggered ~1.6s sequence — label → name rises out of a blur → 4 slider dots glide from centre to the user's scores → line, tags, piece photos rise in order → button last. Me screen's sliders unchanged. Reduced motion = no animation. | ⏳ prompt 4 |
+| 5 | `components/ui/sonner.tsx`: toasts last 2.5s (was sonner's 4s default) and close when tapped | Team: toasts (e.g. "Thanks for the feedback") linger; on phones sonner pauses its timer while touched, so they seemed stuck. | ⏳ prompt 5 |
 | — | `pages/stubs.ts` (prototype only, do not port) | Static site has no AI: planStyle/renderStyleLook return saved results. Oxford sample → Oxford set (3 looks exported from the Lovable cache, `pages/cache/`); pants sample → chinos set A; jacket/coat sample → leather set B; any upload → one of the three by image fingerprint. Shopping off. | n/a |
 
 ## Prompts for Lovable (enter after the account move)
@@ -35,4 +36,9 @@ Reveal screen (style-type result after the quiz): add one refined entrance seque
 3. 520ms: the 4 slider rows fade up, 70ms apart. Each dot starts at the centre and glides to the user's score (900ms, starting 250ms after its row, 110ms apart). Add this as an opt-in `reveal` prop on StyleScales so the Me screen stays static.
 4. 980ms: the description line; 1080ms: tags, 60ms apart; 1200ms: "Pieces people like you wear"; 1280ms: the 4 piece photos, 70ms apart; 1600ms: the Start exploring button.
 Use two CSS keyframes (rise, focus) with a per-element delay variable and `animation-fill-mode: both`. Turn everything off under prefers-reduced-motion. Remove the old whole-screen fade-in. Change nothing else.
+```
+
+**Prompt 5**
+```
+Toasts stay too long and can't be dismissed. In src/components/ui/sonner.tsx: set duration={2500} on the Toaster, and let a tap/click on any toast close it right away (document click listener in capture phase: if the target is inside [data-sonner-toast], call toast.dismiss()). Add cursor-pointer to the toast class. Change nothing else.
 ```
