@@ -124,7 +124,7 @@ describe("Style loading", () => {
     act(() => result.current.skipQuiz());
     act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
-    await waitFor(() => expect(result.current.generatedLooks?.every((look) => look.status === "success")).toBe(true));
+    await waitFor(() => expect(result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
     act(() => result.current.retake());
     for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPS" ? "yes" : "no"));
     act(() => result.current.findMatches());
