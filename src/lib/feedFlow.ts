@@ -2,6 +2,8 @@ import { JASON_FITS } from "@/data/jason";
 import type { SavedOutfit } from "@/data/saved";
 import type { SocialPost, Feedback } from "@/data/social";
 import type { GeneratedLook } from "./styleGeneration";
+import { jasonPosts } from "@/data/jasonPosts";
+import type { StyleTypeCode } from "@/data/styleTypes";
 
 export function savedLook(look: GeneratedLook): SavedOutfit | null {
   if (look.status !== "success" || !look.image) return null;
@@ -54,4 +56,17 @@ export function bumpPost(posts: SocialPost[], id: string, step: number): SocialP
     }
     return next;
   });
+}
+
+/** Demo "time skip": Jason's real-photo post appears in Feed only once a look from that piece's set is saved. */
+export function seededPostFor(look: GeneratedLook): "jason-heritage" | "jason-leather" | undefined {
+  if (look.demoSet === "set-a" || look.id === "jason-closet") return "jason-heritage";
+  if (look.demoSet === "set-b") return "jason-leather";
+  return undefined;
+}
+export function revealSeededPost(posts: SocialPost[], look: GeneratedLook, styleType?: StyleTypeCode): SocialPost[] {
+  const id = seededPostFor(look);
+  if (!id || posts.some((post) => post.id === id)) return posts;
+  const seeded = jasonPosts(styleType).find((post) => post.id === id);
+  return seeded ? [seeded, ...posts] : posts;
 }

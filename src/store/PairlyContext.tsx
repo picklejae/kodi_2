@@ -13,7 +13,7 @@ import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { POSTS, type SocialPost } from "@/data/social";
 import { jasonPosts } from "@/data/jasonPosts";
-import { savedLook, feedbackPost, appendComment, bumpPost } from "@/lib/feedFlow";
+import { savedLook, feedbackPost, appendComment, bumpPost, revealSeededPost } from "@/lib/feedFlow";
 import type { PresetRequest } from "@/lib/devPresets";
 import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "@/data/saved";
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
@@ -77,7 +77,7 @@ interface PairlyState {
   highlightedPost: string | null;
 }
 
-const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, body: { heightCm: null, weightKg: null }, units: "imperial", budget: { min: 0, max: BUDGET_LIMIT }, budgetKnown: false, activeTab: "style", posts: [...jasonPosts(), ...POSTS], userVotes: {}, draft: null, feedHintDismissed: false, highlightedPost: null };
+const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, stylePreference: null, preferenceLoaded: false, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, selectedConcept: 0, picks: null, body: { heightCm: null, weightKg: null }, units: "imperial", budget: { min: 0, max: BUDGET_LIMIT }, budgetKnown: false, activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false, highlightedPost: null };
 
 interface PairlyCtx extends PairlyState {
   recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
@@ -331,7 +331,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       const entry = savedLook(look);
       if (!entry) return false;
       if (state.savedOutfits.some((outfit) => outfit.id === entry.id)) return false;
-      setState((s) => (s.savedOutfits.some((outfit) => outfit.id === entry.id) ? s : { ...s, savedOutfits: [entry, ...s.savedOutfits] }));
+      setState((s) => (s.savedOutfits.some((outfit) => outfit.id === entry.id) ? s : { ...s, savedOutfits: [entry, ...s.savedOutfits], posts: revealSeededPost(s.posts, look, s.styleType ?? undefined) }));
       return true;
     },
     setBody: (body) => setState((s) => ({ ...s, body })),
@@ -363,11 +363,11 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       runId.current++; existingRequest.current = null; generation.current = null; cacheSession.current = null;
       if (preset === "set-a" || preset === "set-b") {
         const demo = DEMO_SAMPLES[preset];
-        return setState((s) => ({ ...initial, posts: [...jasonPosts(type), ...POSTS], preferenceLoaded: true, stylePreference: "menswear", feedHintDismissed: s.feedHintDismissed, styleType: type, uploadedItem: { ...demo, source: "sample", sampleId: demo.id }, generatedLooks: demoSetLooks(preset), screen: "results", activeTab: "style" }));
+        return setState((s) => ({ ...initial, posts: POSTS, preferenceLoaded: true, stylePreference: "menswear", feedHintDismissed: s.feedHintDismissed, styleType: type, uploadedItem: { ...demo, source: "sample", sampleId: demo.id }, generatedLooks: demoSetLooks(preset), screen: "results", activeTab: "style" }));
       }
       const item: UploadedItem = { image: sample.image, category: sample.category, attributes: sample.attributes, source: "sample", name: sample.name };
       // Functional update keeps a preference restored from storage in the same tick.
-      const base = (s: PairlyState): PairlyState => ({ ...initial, posts: [...jasonPosts(type), ...POSTS], stylePreference: s.stylePreference, preferenceLoaded: s.preferenceLoaded, feedHintDismissed: s.feedHintDismissed, styleType: preset === "welcome" || preset === "diagnosis" ? null : type });
+      const base = (s: PairlyState): PairlyState => ({ ...initial, posts: preset === "feed-later" ? [...jasonPosts(type), ...POSTS] : POSTS, stylePreference: s.stylePreference, preferenceLoaded: s.preferenceLoaded, feedHintDismissed: s.feedHintDismissed, styleType: preset === "welcome" || preset === "diagnosis" ? null : type });
       if (preset === "welcome" || preset === "diagnosis" || preset === "reveal" || preset === "upload") return setState((s) => ({ ...base(s), screen: preset }));
       const picks = generatePicks(CATALOG, item.category, item.name ?? item.category, type, null);
       setState((s) => ({ ...base(s), uploadedItem: item, picks, screen: "results", activeTab: preset === "feed" || preset === "feed-later" ? "feed" : preset === "saved" ? "saved" : "style", ...(preset === "feed-later" ? { highlightedPost: "jason-heritage" } : {}) }));
