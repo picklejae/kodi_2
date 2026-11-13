@@ -17,7 +17,7 @@ export function Welcome() {
       <p className="text-body-sm text-muted-foreground"><Sentences text="Swipe a few looks to find your style. Then get 3 ways to wear one piece you own." /></p>
       </div>
       {preferenceLoaded && (
-        <div className="mt-topbar flex w-full flex-col gap-screen border-t border-border pt-topbar">
+        <div className="flex w-full flex-col gap-screen border-t border-border pt-screen">
           <h2 className="text-heading">What are you looking for?</h2>
           <PreferenceChoice />
           {stylePreference && <PillButton onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
