@@ -1,6 +1,6 @@
 import { Sentences } from "@/components/pairly/Sentences";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Camera, ChevronLeft, ImageIcon, X } from "lucide-react";
+import { Camera, ChevronLeft, ImageIcon } from "lucide-react";
 import { Photo } from "@/components/pairly/Photo";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
@@ -65,7 +65,8 @@ export function Upload() {
     <div className="flex flex-1 flex-col px-screen pb-2 pt-12">
       <div>
       <div className="flex items-center gap-2">
-        <button onClick={() => go(quizSkipped ? "welcome" : "reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
+        {/* Back = the step the user came from: picked piece → picker (same URL), picker → previous page in history. */}
+        <button onClick={() => { if (uploadedItem) setUploadedItem(null); else if (window.history.length > 1) window.history.back(); else go(quizSkipped ? "welcome" : "budget"); }} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
         {quizSkipped ? <TextLinkButton onClick={retake}>Find Your Style</TextLinkButton> : <StyleTypeChip />}
       </div>
       {/* Once a piece is chosen the title gives its room to the photo (the tab bar already says Style). */}
@@ -101,7 +102,6 @@ export function Upload() {
           {/* 4:5 frame, as tall as fits without scrolling (see fitPhoto). */}
           <div ref={photoRef} className="relative mx-auto aspect-[4/5] max-w-full" style={photoHeight ? { height: photoHeight } : undefined}>
             <Photo src={uploadedItem.image} alt={uploadedItem.name ?? "Your item"} fit="contain" className="h-full w-full rounded-3xl bg-white p-1 shadow-soft" />
-            <button onClick={() => setUploadedItem(null)} aria-label="Remove photo" className="absolute right-3 top-3 rounded-full bg-card/90 p-1.5"><X className="h-4 w-4" /></button>
           </div>
             <div className="animate-in fade-in duration-300">
               {uploadedItem.source === "upload" ? (
