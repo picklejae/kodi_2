@@ -46,7 +46,7 @@ export function Social() {
   return (
     <div className="px-screen pt-topbar pb-tabbar lg:grid lg:grid-flow-dense lg:grid-cols-2 lg:items-start lg:gap-x-screen">
       <h1 className="text-title font-bold lg:col-span-2">Feed</h1>
-      <div className="mt-screen lg:col-start-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
+      <div className="mt-screen lg:col-span-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
       {cur && <div className="mt-screen flex items-center gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look">
         <img src={cur.image} alt={cur.question} className="aspect-[3/4] w-touch shrink-0 rounded-none bg-secondary object-cover" />
         <div className="flex min-w-0 flex-1 flex-col"><SectionLabel>Your look</SectionLabel><p className="text-body-sm">Yes {cur.votesUp} · No {cur.votesDown}</p><TextLinkButton onClick={() => setPinnedSheet(true)}>View feedback</TextLinkButton></div>
