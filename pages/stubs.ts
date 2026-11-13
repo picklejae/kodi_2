@@ -1,8 +1,12 @@
 // Static prototype: no server, so "AI" answers come from results that were already generated once.
 // planStyle picks one of three saved sets; renderStyleLook returns that set's saved image.
-// Samples map by category (shirt → Oxford, pants → chinos set A, jacket/coat → leather set B);
+// Womenswear: real women's outfit photos along the Safe / One step up / Bold ladder (see womenSet).
+// Menswear samples map by category (shirt → Oxford, pants → chinos set A, jacket/coat → leather set B);
 // uploads (always tagged "jacket" by the app) are spread across the three sets by image fingerprint.
 import { DEMO_SAMPLES, demoSetLooks } from "@/data/demoSets";
+import { WOMEN_LOOKS, pexels } from "@/data/womenLooks";
+import { axisShifts, closestAxis } from "@/lib/styleGeneration";
+import type { StyleTypeCode } from "@/data/styleTypes";
 import oxfordSafe from "./cache/oxford-safe.jpg";
 import oxfordStep from "./cache/oxford-step.jpg";
 import oxfordBold from "./cache/oxford-bold.jpg";
@@ -52,13 +56,54 @@ function pickSet(data: { category: string; name: string; reference: string }): C
   return SETS[fingerprint(data.reference) % SETS.length];
 }
 
-export async function planStyle({ data }: { data: { category: string; name: string; reference: string } }) {
-  const set = pickSet(data);
+// Womenswear: no saved mannequin renders exist, so use real women's outfit photos along the style ladder
+// (Safe = your type, One step up = closest axis flipped, Bold = one more axis flipped).
+const OPP: Record<string, string> = { T: "R", R: "T", N: "C", C: "N", P: "D", D: "P", F: "S", S: "F" };
+const flip = (code: string, axes: number[]) => [...code].map((c, i) => (axes.includes(i) ? OPP[c] : c)).join("") as StyleTypeCode;
+function roleOf(piece: string): Role {
+  if (/heel|boot|sneaker|sandal|loafer|shoe/i.test(piece)) return "Shoes";
+  if (/trouser|pant|jean|skirt/i.test(piece)) return "Bottoms";
+  if (/bag|tights|haircut|bob/i.test(piece)) return "Accessories";
+  return "Inner layer";
+}
+function womenSet(data: { styleType: StyleTypeCode; axisScores: number[]; reference: string }): CachedSet {
+  const near = closestAxis(data.axisScores);
+  const others = [0, 1, 2, 3].filter((i) => i !== near);
+  const pick = (code: StyleTypeCode, n: number) => { const list = WOMEN_LOOKS.filter((l) => l.code === code); return list[n % Math.max(1, list.length)]; };
+  const seed = fingerprint(data.reference);
+  const shifts = axisShifts(data.styleType);
+  const extra = others[seed % 3];
+  const plan = [
+    { tier: "safe" as const, code: data.styleType, axes: [] as number[] },
+    { tier: "step" as const, code: flip(data.styleType, [near]), axes: [near] },
+    { tier: "bold" as const, code: flip(data.styleType, [near, extra]), axes: [near, extra] },
+  ];
+  const names = { safe: "Your usual, polished", step: "One new note", bold: "Try something new" };
+  return {
+    id: `women-${data.styleType}-${seed % 97}`,
+    presentation: "Real outfit photos (prototype).",
+    looks: plan.map(({ tier, code, axes }, i) => {
+      const look = pick(code, seed + i);
+      const parts = look.description.split(/,| and /).map((x) => x.trim()).filter(Boolean);
+      return {
+        tier, shift: axes.map((a) => shifts[a]).join(", "), name: names[tier], image: pexels(look.photo, 700), styling: "",
+        explanation: `${look.description}. Pair it with your piece for this direction.`,
+        items: (parts.length >= 2 ? parts : [...parts, "Simple accessories"]).slice(0, 4).map((name, k) => ({ role: roleOf(name), name: name.charAt(0).toUpperCase() + name.slice(1), highlight: k < 2 })),
+      };
+    }),
+  };
+}
+const dynamicSets = new Map<string, CachedSet>();
+
+export async function planStyle({ data }: { data: { category: string; name: string; reference: string; preference?: string; styleType: StyleTypeCode; axisScores: number[] } }) {
+  let set: CachedSet;
+  if (data.preference === "womenswear") { set = womenSet(data); dynamicSets.set(set.id, set); }
+  else set = pickSet(data);
   return { ok: true as const, plan: { presentation: set.presentation, looks: set.looks.map(({ image: _image, ...look }, index) => ({ ...look, styling: `proto:${set.id}:${index}` })) } };
 }
 export async function renderStyleLook({ data }: { data: { styling: string } }) {
   const [, id, index] = data.styling.split(":");
-  const image = SETS.find((set) => set.id === id)?.looks[Number(index)]?.image;
+  const image = (dynamicSets.get(id) ?? SETS.find((set) => set.id === id))?.looks[Number(index)]?.image;
   return image ? { ok: true as const, image } : { ok: false as const, error: "No saved look for this piece in the prototype." };
 }
 export async function findShoppingProducts() {

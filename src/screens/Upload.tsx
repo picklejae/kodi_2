@@ -5,7 +5,7 @@ import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
-import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, SAMPLES, type ItemCategory } from "@/data/samples";
+import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
@@ -52,7 +52,7 @@ export function Upload() {
           </div>
           <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Or try a sample</p>
           <div className="mt-3 grid grid-cols-4 gap-2">
-            {SAMPLES.map((s) => (
+            {samplesFor(stylePreference).map((s) => (
               <button key={s.id} onClick={() => pick({ image: s.image, category: s.category, attributes: s.attributes, source: "sample", name: s.name })} className="text-left">
                 <Photo src={s.image} alt={s.name} className="aspect-square rounded-2xl shadow-soft" />
                 <p className="mt-1.5 text-[11px] font-medium leading-tight">{s.name}</p>

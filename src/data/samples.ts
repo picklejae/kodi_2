@@ -13,7 +13,19 @@ export const SAMPLES: SampleItem[] = [
   { id: "oxford", name: "Oxford shirt", image: img("1596755094514-f87e34085b2c"), category: "shirt", attributes: ["White", "Cotton", "Button-down"] },
 ];
 
-export const UPLOAD_SAMPLES: SampleItem[] = [JASON_SAMPLE, ...SAMPLES];
+// Womenswear samples: single garments on a hanger or flat (Pexels, free license).
+const px = (id: string) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&fit=crop&w=600&h=600`;
+export const WOMEN_SAMPLES: SampleItem[] = [
+  { id: "w-blazer", name: "Cream blazer", image: px("36553720"), category: "jacket", attributes: ["Cream", "Wool blend", "Tailored"] },
+  { id: "w-jeans", name: "Light-wash jeans", image: px("1082528"), category: "pants", attributes: ["Light blue", "Denim", "Straight"] },
+  { id: "w-tee", name: "White tee", image: px("18257675"), category: "shirt", attributes: ["White", "Cotton", "Relaxed"] },
+  { id: "w-knit", name: "Cable-knit sweater", image: px("13889763"), category: "knit", attributes: ["Cream", "Knit", "Cable"] },
+];
+export function samplesFor(preference: "menswear" | "womenswear" | null): SampleItem[] {
+  return preference === "womenswear" ? WOMEN_SAMPLES : SAMPLES;
+}
+
+export const UPLOAD_SAMPLES: SampleItem[] = [JASON_SAMPLE, ...SAMPLES, ...WOMEN_SAMPLES];
 
 // Simulated analysis for real uploads: generic attributes per chosen category.
 export const GENERIC_ATTRIBUTES: Record<ItemCategory, string[]> = {

@@ -8,9 +8,9 @@ import { stylePresentation } from "@/lib/stylePresentation";
 
 
 export function Reveal() {
-  const { styleType, axisScores, quizSkipped, go } = usePairly();
+  const { styleType, axisScores, quizSkipped, go, stylePreference } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
-  const { line, pieces } = stylePresentation(t.code);
+  const { line, pieces } = stylePresentation(t.code, stylePreference);
   return (
     <div className="flex flex-1 flex-col px-screen pt-14">
       <div>
