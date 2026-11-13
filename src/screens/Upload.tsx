@@ -75,7 +75,7 @@ export function Upload() {
       </div>
       {/* Once a piece is chosen the title gives its room to the photo (the tab bar already says Style). */}
       <h1 className={uploadedItem ? "sr-only" : "mt-6 text-title font-bold"}>Style</h1>
-      {!uploadedItem && <p className="mt-2 text-sm text-muted-foreground">Which piece are we styling</p>}
+      {!uploadedItem && <p className="mt-2 text-sm text-muted-foreground">Snap one piece you already own.</p>}
 
       <input ref={libRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       <input ref={camRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
@@ -112,7 +112,7 @@ export function Upload() {
             <div className="animate-in fade-in duration-300">
               {uploadedItem.source === "upload" ? (
                 <div className="mt-5">
-                  <p className="text-sm font-medium">Style with?</p>
+                  <p className="text-sm font-medium">Which piece are we styling</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {CATEGORIES.map((c) => <SelectChip key={c} active={uploadedItem.category === c} onClick={() => setCategory(c)}><span className="capitalize">{c}</span></SelectChip>)}
                   </div>
