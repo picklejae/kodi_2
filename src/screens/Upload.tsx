@@ -1,7 +1,6 @@
 import { Sentences } from "@/components/pairly/Sentences";
 import { useEffect, useRef, useState } from "react";
 import { Camera, ChevronLeft, ImageIcon, Loader2, X } from "lucide-react";
-import { Chip } from "@/components/pairly/Chip";
 import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
 import { SelectChip } from "@/components/pairly/SelectChip";
