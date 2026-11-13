@@ -27,6 +27,7 @@ export function Social() {
   const stack = filterPosts(posts.filter((post) => !post.isUserPost), type, filter).filter((post) => !userVotes[post.id]);
   const mine = myPosts(posts);
   const [pinIdx, setPinIdx] = useState(0);
+  useEffect(() => setPinIdx(0), [mine.length]);
   const cur = mine[Math.min(pinIdx, Math.max(0, mine.length - 1))];
   const detail = posts.find((post) => post.id === detailId);
   useEffect(() => {
