@@ -46,11 +46,11 @@ export const BUMP_FEEDBACK = ["Great fit", "Add a layer", "Try darker shoes"];
 export function bumpPost(posts: SocialPost[], id: string, step: number): SocialPost[] {
   return posts.map((p) => {
     if (p.id !== id) return p;
-    const [styleType, exploreLevel] = BUMP_GROUPS[step % BUMP_GROUPS.length];
+    const [styleType, exploreLevel] = BUMP_GROUPS[step % BUMP_GROUPS.length] ?? BUMP_GROUPS[0];
     const down = step % 2 === 1 ? 1 : 0;
     const next = { ...p, votesUp: p.votesUp + 2, votesDown: p.votesDown + down, voteGroups: [...p.voteGroups, { styleType, exploreLevel, yes: 2, no: down }] };
     if (next.votesUp > 3 && !next.feedback.some((f) => f.author === "@kodi.crew")) {
-      next.feedback = [...next.feedback, ...BUMP_FEEDBACK.map((text, i) => ({ text, author: "@kodi.crew", styleType: BUMP_GROUPS[i][0], exploreLevel: BUMP_GROUPS[i][1], createdAt: new Date().toISOString() }))];
+      next.feedback = [...next.feedback, ...BUMP_FEEDBACK.map((text, i) => ({ text, author: "@kodi.crew", styleType: (BUMP_GROUPS[i] ?? BUMP_GROUPS[0])[0], exploreLevel: (BUMP_GROUPS[i] ?? BUMP_GROUPS[0])[1], createdAt: new Date().toISOString() }))];
     }
     return next;
   });
