@@ -4,9 +4,9 @@ import { SavedLookDetail } from "@/components/pairly/SavedLookDetail";
 export const Route = createFileRoute("/menu2-saved-1/$id")({
   head: () => ({
     meta: [
-      { title: "Saved outfit · Pairly" },
+      { title: "Saved outfit · Kodi-Me" },
       { name: "description", content: "Revisit your saved outfit and the pieces paired with your own." },
-      { property: "og:title", content: "Saved outfit · Pairly" },
+      { property: "og:title", content: "Saved outfit · Kodi-Me" },
       { property: "og:description", content: "Revisit your saved outfit and the pieces paired with your own." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
