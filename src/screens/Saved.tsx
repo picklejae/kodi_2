@@ -163,7 +163,7 @@ export function Saved() {
           <DrawerPrimitive.Overlay className="recent-sheet-backdrop fixed inset-0 z-40" />
           <DrawerPrimitive.Content
             aria-describedby={undefined}
-            className="recent-sheet fixed bottom-0 left-1/2 z-50 h-auto max-h-[437px] w-full max-w-sheet -translate-x-1/2 rounded-t-[20px] bg-background px-4 pt-6 outline-none"
+            className="recent-sheet fixed bottom-0 left-1/2 z-50 h-auto max-h-[359px] w-full max-w-sheet -translate-x-1/2 rounded-t-[20px] bg-background px-4 pt-6 outline-none"
           >
             <div className="absolute left-1/2 top-2 h-[5px] w-9 -translate-x-1/2 rounded-full bg-muted-foreground/40" />
             {selected && (

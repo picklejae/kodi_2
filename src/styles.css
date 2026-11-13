@@ -12,7 +12,7 @@
 :root { --spacing-screen: 20px; }
 @media (min-width: 768px) { :root { --spacing-screen: 32px; } }
 @media (min-width: 1024px) { :root { --spacing-screen: 40px; } }
-@theme { --spacing-phone: 874px; --spacing-phone-w: 402px; }
+@theme { --spacing-phone: 718px; --spacing-phone-w: 402px; }
 /* Key color (Welcome CTA, "Kodi Me" accent). Name kept for existing classes. */
 @theme { --color-brand-orange: #812F46; }
 @utility page-container { width: 100%; margin-inline: auto; @media (min-width: 768px) { max-width: var(--container-page-tablet); } @media (min-width: 1024px) { max-width: var(--container-page-desktop); } }

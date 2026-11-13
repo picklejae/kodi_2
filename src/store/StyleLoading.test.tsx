@@ -121,12 +121,12 @@ describe("Style loading", () => {
   it("passes the completed Style Type and axis scores into planStyle", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
-    for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPS" ? "yes" : "no"));
+    for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPF" ? "yes" : "no"));
     act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
     await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(1));
-    expect(mocks.plan.mock.calls[0]?.[0].data.styleType).toBe("RNPS");
-    expect(mocks.plan.mock.calls[0]?.[0].data.axisScores).toEqual([1, 0, 0, 1]);
+    expect(mocks.plan.mock.calls[0]?.[0].data.styleType).toBe("RNPF");
+    expect(mocks.plan.mock.calls[0]?.[0].data.axisScores).toEqual([1, 0, 0, 0]);
   });
   it("a skipped quiz sends DEFAULT_CODE and neutral scores", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
@@ -161,10 +161,10 @@ describe("Style loading", () => {
     act(() => result.current.findMatches());
     await waitFor(() => expect(result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
     act(() => result.current.retake());
-    for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPS" ? "yes" : "no"));
+    for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPF" ? "yes" : "no"));
     act(() => result.current.findMatches());
     await waitFor(() => expect(mocks.plan).toHaveBeenCalledTimes(2));
-    expect(mocks.plan.mock.calls[1]?.[0].data.styleType).toBe("RNPS");
+    expect(mocks.plan.mock.calls[1]?.[0].data.styleType).toBe("RNPF");
   });
   it("routes Jason’s chinos sample to his fixed Set A avatars without any AI calls", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
