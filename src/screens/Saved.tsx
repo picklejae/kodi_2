@@ -19,14 +19,19 @@ import { GENERIC_ATTRIBUTES } from "@/data/samples";
 import { cn } from "@/lib/utils";
 export function Saved() {
   const {
-    recentItems,
-    savedOutfits,
+    recentItems: allRecent,
+    savedOutfits: allSaved,
+    stylePreference,
     deleteRecent,
     deleteSavedOutfit,
     setUploadedItem,
     go,
   } = usePairly();
   const navigate = useNavigate();
+  // Demo examples follow Men/Women; the user's own uploads and saves (no department) always show.
+  const pref = stylePreference ?? "menswear";
+  const recentItems = allRecent.filter((item) => !item.department || item.department === pref);
+  const savedOutfits = allSaved.filter((outfit) => !outfit.department || outfit.department === pref);
   const [recentEdit, setRecentEdit] = useState(false),
     [savedEdit, setSavedEdit] = useState(false);
   const [selected, setSelected] = useState<RecentItem | null>(null);
