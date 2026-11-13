@@ -11,7 +11,7 @@ import { usePairly } from "@/store/PairlyContext";
 import { ShoppingSection } from "@/components/pairly/ShoppingSection";
 
 export function Results() {
-  const { styleType, quizSkipped, uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, regenerate, saveLook, savedOutfits } = usePairly();
+  const { styleType, quizSkipped, uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, regenerate, saveLook, savedOutfits, deleteSavedOutfit } = usePairly();
   if (!uploadedItem) return <div className="flex flex-1 items-center justify-center px-screen"><PillButton onClick={() => go("upload")}>Pick a piece first</PillButton></div>;
   const looks = generatedLooks ?? [];
   const active = looks[selectedConcept] ?? looks[0];
