@@ -134,7 +134,6 @@ export function Me() {
             <span>${BUDGET_LIMIT}</span>
           </div>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Recommended products stay inside this range.</p>
       </section>
 
       <section className="mt-8" aria-label="Clothing preference">
