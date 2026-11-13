@@ -33,3 +33,6 @@ dist-ssr
 
 # Lovable sandbox workspace directory
 .workspace/
+
+# prototype site build output (proto branch only)
+dist-pages

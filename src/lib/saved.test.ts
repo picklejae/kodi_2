@@ -57,3 +57,14 @@ describe("hotspotPlacements", () => {
     expect(second).toMatchObject({ x: x + 12, y });
   });
 });
+describe("hotspotPlacements outerwear", () => {
+  it("gives a jacket its own outerwear pin next to the top", () => {
+    const products: ConceptItem[] = [
+      { role: "Inner layer", name: "Navy waxed jacket", owned: false, brand: null, price: null, shopUrl: null },
+      { role: "Inner layer", name: "Blue check shirt", owned: false, brand: null, price: null, shopUrl: null },
+    ];
+    const [jacket, shirt] = hotspotPlacements(products);
+    expect(jacket).toMatchObject(HOTSPOT_POSITIONS.outerwear);
+    expect(shirt).toMatchObject(HOTSPOT_POSITIONS.top);
+  });
+});

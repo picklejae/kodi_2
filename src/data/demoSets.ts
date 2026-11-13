@@ -30,9 +30,9 @@ export const DEMO_SAMPLES: Record<DemoSetId, SampleItem> = {
 // Descriptive piece labels transcribed from the supplied images; no invented brands/prices.
 const sets = {
   "set-a": [
-    { image: a1.url, name: "Heritage layers", pieces: [["Inner layer", "Navy waxed jacket with blue check shirt"], ["Shoes", "Black lace-up shoes"]] },
-    { image: a2.url, name: "Soft cable knit", pieces: [["Inner layer", "Ivory cable-knit sweater with white shirt"], ["Shoes", "Brown suede loafers"]] },
-    { image: a3.url, name: "Green and stripes", pieces: [["Inner layer", "Forest-green cardigan with navy-and-white striped tee"], ["Shoes", "Green retro sneakers"]] },
+    { image: a1.url, name: "Heritage layers", pieces: [["Inner layer", "Navy waxed jacket"], ["Inner layer", "Blue check shirt"], ["Shoes", "Black lace-up shoes"]] },
+    { image: a2.url, name: "Soft cable knit", pieces: [["Inner layer", "Ivory cable-knit sweater"], ["Inner layer", "White shirt"], ["Shoes", "Brown suede loafers"]] },
+    { image: a3.url, name: "Green and stripes", pieces: [["Inner layer", "Forest-green cardigan"], ["Inner layer", "Navy-and-white striped tee"], ["Shoes", "Green retro sneakers"]] },
   ],
   "set-b": [
     { image: b1.url, name: "Leather and cream", pieces: [["Inner layer", "Charcoal tee"], ["Bottoms", "Cream wide-leg trousers"], ["Shoes", "Black leather shoes"], ["Accessories", "Silver necklace and black belt"]] },

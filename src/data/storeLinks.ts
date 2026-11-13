@@ -6,11 +6,11 @@ const n = (path: string) => `https://www.nordstrom.com/s/${path}`;
 
 export const STORE_LINKS: Record<string, StoreLink> = {
   // Set A
-  "navy waxed jacket with blue check shirt": { brand: "Barbour · Modern Powell Waxed Jacket", price: 460, url: n("barbour-modern-powell-wax-jack/9081199") },
+  "navy waxed jacket": { brand: "Barbour · Modern Powell Waxed Jacket", price: 460, url: n("barbour-modern-powell-wax-jack/9081199") },
   "black lace-up shoes": { brand: "A. Veer · New York Lace-up Derby", price: null, url: n("new-york-lace-up-derby/8387389") },
-  "ivory cable-knit sweater with white shirt": { brand: "Boast · Cable-Knit Sweater", price: null, url: n("boast-cable-knit-sweater/9177553") },
+  "ivory cable-knit sweater": { brand: "Boast · Cable-Knit Sweater", price: null, url: n("boast-cable-knit-sweater/9177553") },
   "brown suede loafers": { brand: "Lands' End · Suede Penny Loafers", price: null, url: n("suede-penny-loafers/8299919") },
-  "forest-green cardigan with navy-and-white striped tee": { brand: "Cotton On · Men's Cropped Cardigan", price: null, url: n("mens-cropped-cardigan/8141533") },
+  "forest-green cardigan": { brand: "Cotton On · Men's Cropped Cardigan", price: null, url: n("mens-cropped-cardigan/8141533") },
   "green retro sneakers": { brand: "Vans · Premium Old Skool Suede Sneaker", price: null, url: n("premium-old-skool-suede-sneaker-men/7731258") },
   // Set B
   "charcoal tee": { brand: "GARNET · Cotton Crewneck T-shirt", price: 84, url: n("mens-cotton-crewneck-t-shirt/2228624") },
