@@ -10,7 +10,7 @@ import { stylePresentation } from "@/lib/stylePresentation";
 export function Reveal() {
   const { styleType, axisScores, quizSkipped, go, stylePreference } = usePairly();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
-  const { line, pieces } = stylePresentation(t.code, stylePreference);
+  const { pieces } = stylePresentation(t.code, stylePreference);
   return (
     <div className="flex flex-1 flex-col px-screen pt-14">
       <div>
@@ -20,8 +20,7 @@ export function Reveal() {
       <StyleScales type={t.code} scores={axisScores} reveal revealDelay={520} />
       </div>
       <div className="flex flex-1 flex-col">
-      <p className="reveal-rise mt-[60px] text-[15px] leading-snug" style={{ ["--d" as string]: "980ms" }}>{line}</p>
-      <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k, i) => <span key={k} className="reveal-rise" style={{ ["--d" as string]: `${1080 + i * 60}ms` }}><Chip>{k}</Chip></span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{t.keywords.map((k, i) => <span key={k} className="reveal-rise" style={{ ["--d" as string]: `${980 + i * 60}ms` }}><Chip>{k}</Chip></span>)}</div>
       <h2 className="reveal-rise mt-9 font-serif text-xl" style={{ ["--d" as string]: "1200ms" }}>People like you wear</h2>
       <div className="mt-3 grid grid-cols-4 gap-2">
         {pieces.map((piece, i) => <div key={piece.id} className="reveal-rise" style={{ ["--d" as string]: `${1280 + i * 70}ms` }}><Photo src={piece.image} alt={piece.name} className="aspect-[3/4] rounded-lg" /><p className="mt-2 text-[13px] leading-snug">{piece.name}</p></div>)}
