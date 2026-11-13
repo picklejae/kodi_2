@@ -2,7 +2,7 @@ import { AXIS_LABELS, STYLE_TYPES, type Axis, type StyleTypeCode } from "@/data/
 
 const AXES: Axis[] = ["fit", "color", "detail", "mood"];
 export function StyleScales({ type, scores }: { type: StyleTypeCode; scores: number[] | null }) {
-  return <div className="mt-6 space-y-4">{AXES.map((axis, idx) => {
+  return <div className="mt-6 grid grid-cols-2 gap-x-screen gap-y-4">{AXES.map((axis, idx) => {
     const [left, right] = AXIS_LABELS[axis];
     const score = scores?.[idx] ?? (STYLE_TYPES[type].code.charAt(idx) === left.charAt(0) ? 0.25 : 0.75);
     return <div key={axis} className="text-xs">

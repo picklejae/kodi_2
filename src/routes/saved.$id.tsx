@@ -50,7 +50,7 @@ function SavedOutfitDetail() {
           </PillButton>
           <StyleTypeChip />
         </div>
-        <h1 className="mb-6 mt-6 font-serif text-4xl">Saved outfit</h1>
+        <h1 className="mb-6 mt-6 text-title font-bold">Saved outfit</h1>
         {outfit ? (
           <OutfitResultView
             lookName={outfit.lookName}

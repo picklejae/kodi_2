@@ -11,11 +11,11 @@ export const ROUNDS: DiagnosisCard[] = [
   { id: 5, image: L.fashion, tags: "TCPF" },
   { id: 6, image: L.denim, tags: "RNDS" },
   { id: 7, image: L.suit2, tags: "TNPF" },
-  { id: 8, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=70", tags: "RCPS" },
+  { id: 8, image: "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?auto=format&fit=crop&w=600&q=70", tags: "RCPS" },
   { id: 9, image: L.coat, tags: "RNPF" },
   { id: 10, image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=600&q=70", tags: "TCDF" },
   { id: 11, image: "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=600&q=70", tags: "RCPS" },
-  { id: 12, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=70", tags: "RCDF" },
+  { id: 12, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=70", tags: "RCDF" },
 ];
 
 const w = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=70`;
@@ -26,7 +26,7 @@ export const WOMEN_ROUNDS: DiagnosisCard[] = [
   { id: 4, image: w("1509631179647-0177331693ae"), tags: "RCDS" },
   { id: 5, image: w("1539109136881-3be0616acf4b"), tags: "TCPF" },
   { id: 6, image: w("1544022613-e87ca75a784a"), tags: "RNDS" },
-  { id: 7, image: w("1520975954732-35dd22299614"), tags: "TNPF" },
+  { id: 7, image: w("1485462537746-965f33f7f6a7"), tags: "TNPF" },
   { id: 8, image: w("1529139574466-a303027c1d8b"), tags: "RCPS" },
   { id: 9, image: w("1550614000-4895a10e1bfd"), tags: "RNPF" },
   { id: 10, image: w("1581044777550-4cfa60707c03"), tags: "TCDF" },

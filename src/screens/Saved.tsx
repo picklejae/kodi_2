@@ -54,7 +54,7 @@ export function Saved() {
   };
   return (
     <div className="px-6 pb-8 pt-12">
-      <h1 className="mb-6 text-display">Saved</h1>
+      <h1 className="mb-6 text-title font-bold">Saved</h1>
       <section aria-label="Recents">
         <SectionHeader
           title="Recents"
