@@ -20,7 +20,7 @@ export function Reveal() {
       <StyleScales type={t.code} scores={axisScores} />
       </div>
       <div className="flex flex-1 flex-col">
-      <p className="mt-6 text-sm">{line}</p>
+      <p className="mt-6 text-[15px] leading-snug">{line}</p>
       <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
       <h2 className="mt-6 font-serif text-xl">People like you wear</h2>
       <div className="mt-3 grid grid-cols-4 gap-2">
