@@ -1,0 +1,89 @@
+/* KODI theme — import once in the app entry stylesheet after @import "tailwindcss". */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff; --foreground: #000000;
+  --card: #ffffff; --card-foreground: #000000;
+  --popover: #ffffff; --popover-foreground: #000000;
+  --primary: #000000; --primary-foreground: #ffffff;
+  --secondary: #e8e6e1; --secondary-foreground: #000000;
+  --muted: #f7f6f3; --muted-foreground: #2b2b2b;
+  --accent: #e8e6e1; --accent-foreground: #000000;
+  --destructive: #b42318;
+  --border: #e8e6e1; --input: #e8e6e1; --ring: #2b2b2b;
+  --border-strong: #2b2b2b;
+  --disabled: #b8b5ae;
+  --inverse: #000000; --inverse-foreground: #ffffff;
+  --toast: #2b2b2b; --toast-foreground: #ffffff;
+  --overlay: rgba(0, 0, 0, 0.5);
+  --radius: 0px;
+  --kodi-black: #000000; --kodi-ink: #2b2b2b; --kodi-stone: #e8e6e1;
+  --kodi-white: #ffffff; --kodi-warm-white: #f7f6f3; --kodi-disabled: #b8b5ae;
+}
+.dark {
+  --background: #000000; --foreground: #ffffff;
+  --card: #2b2b2b; --card-foreground: #ffffff;
+  --popover: #2b2b2b; --popover-foreground: #ffffff;
+  --primary: #ffffff; --primary-foreground: #000000;
+  --secondary: #2b2b2b; --secondary-foreground: #ffffff;
+  --muted: #2b2b2b; --muted-foreground: #e8e6e1;
+  --accent: #2b2b2b; --accent-foreground: #ffffff;
+  --border: #2b2b2b; --input: #2b2b2b; --ring: #e8e6e1;
+  --border-strong: #e8e6e1;
+  --inverse: #ffffff; --inverse-foreground: #000000;
+  --toast: #e8e6e1; --toast-foreground: #000000;
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
+@theme inline {
+  --color-background: var(--background); --color-foreground: var(--foreground);
+  --color-card: var(--card); --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary); --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent); --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border); --color-input: var(--input); --color-ring: var(--ring);
+  --color-border-strong: var(--border-strong);
+  --color-disabled: var(--disabled);
+  --color-inverse: var(--inverse); --color-inverse-foreground: var(--inverse-foreground);
+  --color-toast: var(--toast); --color-toast-foreground: var(--toast-foreground);
+  --color-overlay: var(--overlay);
+}
+
+@theme {
+  --font-sans: "Inter Tight", Arial, sans-serif;
+  --font-korean: "IBM Plex Sans KR", "Inter Tight", sans-serif;
+
+  --text-display: 40px; --text-display--line-height: 1.05; --text-display--letter-spacing: -0.03em;
+  --text-title: 32px; --text-title--line-height: 1.1; --text-title--letter-spacing: -0.02em;
+  --text-heading: 24px; --text-heading--line-height: 1.2;
+  --text-subheading: 20px; --text-subheading--line-height: 1.3;
+  --text-body: 16px; --text-body--line-height: 1.5;
+  --text-body-sm: 14px; --text-body-sm--line-height: 1.5;
+  --text-price: 13px; --text-price--line-height: 1.4;
+  --text-caption: 12px; --text-caption--line-height: 1.4;
+  --text-label: 11px; --text-label--line-height: 1.2;
+
+  --tracking-label: 0.12em;
+
+  --radius-none: 0px; --radius-sm: 4px; --radius-lg: 12px; --radius-pill: 999px;
+
+  --ease-kodi: cubic-bezier(0.2, 0, 0, 1);
+
+  --spacing-touch: 44px;
+  --spacing-topbar: 56px;
+  --spacing-tabbar: 64px;
+  --spacing-screen: 24px;
+  --container-mobile: 480px;
+  --container-desktop: 960px;
+  --container-sheet: 560px;
+  --container-swipe: 420px;
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  html { font-family: var(--font-sans); }
+  body { background: var(--background); color: var(--foreground); -webkit-font-smoothing: antialiased; }
+}

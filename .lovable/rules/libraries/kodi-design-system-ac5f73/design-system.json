@@ -1,0 +1,826 @@
+{
+  "meta": {
+    "name": "KODI Design System",
+    "package": "@ws-02ea6b1128c9bd969bc1/b70b4236-6885-46ce-b1ee-9f1a91999119",
+    "version": "1.0.0",
+    "framework": "react",
+    "css_framework": "tailwind",
+    "starter_template": "custom_design_system",
+    "theme_files": [
+      "src/design-system/theme.css"
+    ],
+    "source_type": "local",
+    "source_manifest": {
+      "#enrichment": "507d723cb973ab7849c2362f0db32662666746a89a6a87025c5badefa7380aa8",
+      ".dsignore": "2c7d76468c15bc0f1499420154f01ae3",
+      ".gitignore": "6059213806e442947666752f3db6bfdc",
+      ".lovable/meta.yaml": "8ec7245def9c0ef39976dd2bc212ff0a",
+      ".lovable/sources.yaml": "224156c036ff699c76cf9f048ba85276",
+      ".lovable/system.md": "6fdd39c4521fa487c42937a4a354b3b0",
+      "AGENTS.md": "0a80be47c380e749bbe03de585d9de6c",
+      "README.md": "d19675c449605f23c7cfa133c69b398b",
+      "bunfig.toml": "25f4c8696b22b0943db7191e0cdf7942",
+      "eslint.config.js": "07a67437fb1a45ab36d6de0145ff09de",
+      "lovable.toml": "9636c1bf32f9901bfba4eabb92981217",
+      "mockupPreviewPlugin.ts": "331c56b72ab88e9510bdaf1f21f2370e",
+      "package.json": "c9670c2ab805c67075ca66097495f825",
+      "public/favicon.png": "11e23e28709768b6f00390926492b670",
+      "src/assets/logos/kodi-logo.png": "e784d4ec2c747ddf716dce466194d083",
+      "src/design-system/components/BottomSheet.tsx": "bf25564603181810966af320634fe866",
+      "src/design-system/components/BottomTabBar.tsx": "a9c345013c34356e09dab524434111e9",
+      "src/design-system/components/Button.tsx": "842ffcce7de9c3bf2700e346c80c9099",
+      "src/design-system/components/Chip.tsx": "ff8842d4238a09dff40bde63754aafe4",
+      "src/design-system/components/EmptyState.tsx": "c2809274e4dbd77cce52ce66da13013c",
+      "src/design-system/components/LadderControl.tsx": "ebe2ffcf4df52643ee86f4fc5e16f932",
+      "src/design-system/components/Logo.tsx": "1b7da6913add8f5509503864cb4c9ec9",
+      "src/design-system/components/PhotoCard.tsx": "9d1267f80a737e8b3d3bfe1a4e87a807",
+      "src/design-system/components/ProductRow.tsx": "a6af827d05d7550798ab6fa820b56657",
+      "src/design-system/components/ProgressLine.tsx": "0adb17f4b411b872e3744f6900603094",
+      "src/design-system/components/ScaleBar.tsx": "6cbb50bde8d8811dc687d4d979d1650a",
+      "src/design-system/components/SectionLabel.tsx": "651f1f2b273f78fc5aeedfb0b9ac0bee",
+      "src/design-system/components/Spinner.tsx": "54fba99742b572cab23e3970d64b0810",
+      "src/design-system/components/SwipeCard.tsx": "3802f3883b7dc60da77d98a0e472aa51",
+      "src/design-system/components/TextField.tsx": "c4abca0c9b4414f2d5459839486d1bf6",
+      "src/design-system/components/TextLink.tsx": "370670ff61a2ed4df3564bacaac3f0cb",
+      "src/design-system/components/Toast.tsx": "a6005412382f2cc544c9fb581bb412d4",
+      "src/design-system/components/TopBar.tsx": "97f4b3f253ba961fd718069f3c1d0199",
+      "src/design-system/theme.css": "49d76c3a398af08e1e123554eb71e3d7",
+      "src/design-system/utils.ts": "1d8d8374a75da3af75783fd0c16b9639",
+      "src/index.ts": "7d6421c5d869088f8c6b5737644c97d9",
+      "src/mockup-preview.d.ts": "ae9d81e2b8514e13fd59b5b6bece9a64",
+      "src/routeTree.gen.ts": "b493492c3c7229d800131062a1facc31",
+      "src/router.tsx": "8f905e713b0eba7fa8148b7995a708c9",
+      "src/routes/[__component].preview.$.tsx": "e63e4b151fa738d36cb24710d2dbea18",
+      "src/routes/[__mockup].preview.$.tsx": "bc9ea23fc46521b323ef461c9e77ff48",
+      "src/routes/__root.tsx": "3e5458ec7aa3e647b4ea0571fef04e3b",
+      "src/routes/colors.tsx": "9a85485ab3dbaddbe2528d74616f71eb",
+      "src/routes/components.tsx": "45c8bf05128f3e25ffb0d22ae204fa90",
+      "src/routes/index.tsx": "d940a0dfce7b21e05e2e7ec4185a8b52",
+      "src/routes/typography.tsx": "7560f16f5b652d5bc5bb231dda27e616",
+      "src/showcase/Shell.tsx": "b1cc3c732b7f6dbb00ace950da5baad8",
+      "src/showcase/item-shirt.jpg": "af4f553eaf51f4bd2b959cfc905478a9",
+      "src/showcase/look-coat.jpg": "a2d020eaaffa823cfb142d147d7b956b",
+      "src/styles.css": "101c7bb2ad82cdc48512c3540ae82d63",
+      "tsconfig.json": "994abf64c2b9f78b568879f80ed0170e",
+      "vite.config.ts": "4802c3af8ca2a659650324eb1671e690",
+      "wrangler.jsonc": "680b897d48e44bcc65fe437c29b38f3b"
+    },
+    "pipeline_version": 8
+  },
+  "tokens": {
+    "color": [
+      {
+        "name": "--background",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--foreground",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--card",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--card-foreground",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--popover",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--popover-foreground",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--primary",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--primary-foreground",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--secondary",
+        "raw": "#e8e6e1",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--secondary-foreground",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--muted",
+        "raw": "#f7f6f3",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--muted-foreground",
+        "raw": "#2b2b2b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--accent",
+        "raw": "#e8e6e1",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--accent-foreground",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--destructive",
+        "raw": "#b42318",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--border",
+        "raw": "#e8e6e1",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--input",
+        "raw": "#e8e6e1",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--ring",
+        "raw": "#2b2b2b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--border-strong",
+        "raw": "#2b2b2b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--disabled",
+        "raw": "#b8b5ae",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--inverse",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--inverse-foreground",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--toast",
+        "raw": "#2b2b2b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--toast-foreground",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--overlay",
+        "raw": "rgba(0, 0, 0, 0.5)",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--kodi-black",
+        "raw": "#000000",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--kodi-ink",
+        "raw": "#2b2b2b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--kodi-stone",
+        "raw": "#e8e6e1",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--kodi-white",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--kodi-warm-white",
+        "raw": "#f7f6f3",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--kodi-disabled",
+        "raw": "#b8b5ae",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "spacing": [
+      {
+        "name": "--text-display--letter-spacing",
+        "raw": "-0.03em",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-title--letter-spacing",
+        "raw": "-0.02em",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--spacing-touch",
+        "raw": "44px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--spacing-topbar",
+        "raw": "56px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--spacing-tabbar",
+        "raw": "64px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--spacing-screen",
+        "raw": "24px",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "typography": [
+      {
+        "name": "--font-sans",
+        "raw": "\"Inter Tight\", Arial, sans-serif",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--font-korean",
+        "raw": "\"IBM Plex Sans KR\", \"Inter Tight\", sans-serif",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-display",
+        "raw": "40px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-display--line-height",
+        "raw": "1.05",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-title",
+        "raw": "32px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-title--line-height",
+        "raw": "1.1",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-heading",
+        "raw": "24px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-heading--line-height",
+        "raw": "1.2",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-subheading",
+        "raw": "20px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-subheading--line-height",
+        "raw": "1.3",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-body",
+        "raw": "16px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-body--line-height",
+        "raw": "1.5",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-body-sm",
+        "raw": "14px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-body-sm--line-height",
+        "raw": "1.5",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-price",
+        "raw": "13px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-price--line-height",
+        "raw": "1.4",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-caption",
+        "raw": "12px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-caption--line-height",
+        "raw": "1.4",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-label",
+        "raw": "11px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-label--line-height",
+        "raw": "1.2",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "radius": [
+      {
+        "name": "--radius",
+        "raw": "0px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-none",
+        "raw": "0px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-sm",
+        "raw": "4px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-lg",
+        "raw": "12px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-pill",
+        "raw": "999px",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "other": [
+      {
+        "name": "--tracking-label",
+        "raw": "0.12em",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--ease-kodi",
+        "raw": "cubic-bezier(0.2, 0, 0, 1)",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--container-mobile",
+        "raw": "480px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--container-desktop",
+        "raw": "960px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--container-sheet",
+        "raw": "560px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--container-swipe",
+        "raw": "420px",
+        "source": "src/design-system/theme.css"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "file": "src/design-system/components/Button.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "primary",
+            "secondary"
+          ],
+          "default": "primary"
+        },
+        {
+          "name": "fullWidth",
+          "type": "enum",
+          "values": [
+            "true",
+            "false"
+          ],
+          "default": "false"
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "name": "PrimaryButton",
+      "file": "src/design-system/components/Button.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "SecondaryButton",
+      "file": "src/design-system/components/Button.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "TextLink",
+      "file": "src/design-system/components/TextLink.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "TextLinkButton",
+      "file": "src/design-system/components/TextLink.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Chip",
+      "file": "src/design-system/components/Chip.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "selected",
+          "type": "boolean",
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "name": "SectionLabel",
+      "file": "src/design-system/components/SectionLabel.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "as",
+          "type": "enum",
+          "values": [
+            "h2",
+            "h3",
+            "h4",
+            "p"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Logo",
+      "file": "src/design-system/components/Logo.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "bar",
+            "hero"
+          ],
+          "default": "bar"
+        },
+        {
+          "name": "tone",
+          "type": "enum",
+          "values": [
+            "auto",
+            "black",
+            "white"
+          ],
+          "default": "auto"
+        }
+      ]
+    },
+    {
+      "name": "TopBar",
+      "file": "src/design-system/components/TopBar.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "title",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "onBack",
+          "type": "function"
+        },
+        {
+          "name": "backLabel",
+          "type": "string",
+          "default": "Go back"
+        },
+        {
+          "name": "trailing",
+          "type": "any"
+        }
+      ]
+    },
+    {
+      "name": "BottomTabBar",
+      "file": "src/design-system/components/BottomTabBar.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "active",
+          "type": "enum",
+          "values": [
+            "style",
+            "saved",
+            "feed",
+            "me"
+          ],
+          "required": true
+        },
+        {
+          "name": "onChange",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "name": "PhotoCard",
+      "file": "src/design-system/components/PhotoCard.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "src",
+          "type": "string"
+        },
+        {
+          "name": "alt",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "ratio",
+          "type": "enum",
+          "values": [
+            "look",
+            "item"
+          ],
+          "default": "look"
+        },
+        {
+          "name": "label",
+          "type": "any",
+          "default": "Loading photo"
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "name": "SwipeCard",
+      "file": "src/design-system/components/SwipeCard.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "src",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "alt",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "onSwipe",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "name": "LadderControl",
+      "file": "src/design-system/components/LadderControl.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "value",
+          "type": "enum",
+          "values": [
+            "safe",
+            "step",
+            "bold"
+          ],
+          "required": true
+        },
+        {
+          "name": "onChange",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "name": "ScaleBar",
+      "file": "src/design-system/components/ScaleBar.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "start",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "end",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "number",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "ProductRow",
+      "file": "src/design-system/components/ProductRow.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "image",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "brand",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "price",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "BottomSheet",
+      "file": "src/design-system/components/BottomSheet.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "name": "onClose",
+          "type": "function",
+          "required": true
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Toast",
+      "file": "src/design-system/components/Toast.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "duration",
+          "type": "number",
+          "default": "2500"
+        },
+        {
+          "name": "onDismiss",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "name": "TextField",
+      "file": "src/design-system/components/TextField.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "hideLabel",
+          "type": "boolean"
+        },
+        {
+          "name": "error",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "ProgressLine",
+      "file": "src/design-system/components/ProgressLine.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "value",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "text",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "EmptyState",
+      "file": "src/design-system/components/EmptyState.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "action",
+          "type": "any"
+        }
+      ]
+    },
+    {
+      "name": "Spinner",
+      "file": "src/design-system/components/Spinner.tsx",
+      "import_path": "",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "default": "Loading"
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "file": "src/assets/logos/kodi-logo.png",
+      "kind": "logo",
+      "format": "png"
+    }
+  ]
+}
