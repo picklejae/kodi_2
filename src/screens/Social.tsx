@@ -44,7 +44,7 @@ export function Social() {
         <TextLinkButton aria-pressed={filter === "similar"} onClick={() => setFilter("similar")}>People like me</TextLinkButton>
         <TextLinkButton aria-pressed={filter === "adventurous"} onClick={() => setFilter("adventurous")}>More adventurous</TextLinkButton>
       </div>
-      <div className="relative mt-screen aspect-[3/4]">
+      <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card">
         {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => postsRef.current?.scrollIntoView({ behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => vote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
       </div>
       {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span><StyleBadge type={stack[0].styleType} /></div><p className="text-body-sm">{stack[0].question}</p></div>}

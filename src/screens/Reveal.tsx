@@ -12,7 +12,8 @@ export function Reveal() {
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   const { line, pieces } = stylePresentation(t.code);
   return (
-    <div className="flex flex-1 flex-col px-6 pb-8 pt-14 animate-in fade-in duration-500">
+    <div className="flex flex-1 flex-col px-screen pb-8 pt-14 animate-in fade-in duration-500 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+      <div>
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</p>
       <h1 className="mt-3 font-serif text-4xl leading-tight">You're {/^[AEIOU]/i.test(t.name) ? "an" : "a"} {t.name}</h1>
       {quizSkipped && <p className="mt-3 text-sm text-muted-foreground">Not sure yet? Here's a classic starting point.</p>}
@@ -30,6 +31,8 @@ export function Reveal() {
           );
         })}
       </div>
+      </div>
+      <div className="flex flex-1 flex-col lg:flex-none">
       <p className="mt-6 text-sm">{line}</p>
       <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
       <h2 className="mt-6 font-serif text-xl">Pieces people like you wear</h2>
@@ -39,6 +42,7 @@ export function Reveal() {
       <div className="mt-auto space-y-3 pt-8">
         <PillButton onClick={() => go("budget")}>Find matches</PillButton>
         <PillButton variant="outline" onClick={retake}>Retake</PillButton>
+      </div>
       </div>
     </div>
   );

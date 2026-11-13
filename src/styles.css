@@ -3,6 +3,17 @@
 @import "./design-system/kodi-design-system-ac5f73/design-system/theme.css";
 @source "../src";
 
+/* Page width system (user-specified): phone full width, tablet 680, desktop 1040. */
+@theme {
+  --container-page-tablet: 680px;
+  --container-page-desktop: 1040px;
+  --container-card: 440px;
+}
+:root { --spacing-screen: 20px; }
+@media (min-width: 768px) { :root { --spacing-screen: 32px; } }
+@media (min-width: 1024px) { :root { --spacing-screen: 40px; } }
+@utility page-container { width: 100%; margin-inline: auto; @media (min-width: 768px) { max-width: var(--container-page-tablet); } @media (min-width: 1024px) { max-width: var(--container-page-desktop); } }
+
 /* Legacy aliases use the library tokens until every screen uses its type scale. */
 @theme inline {
   --font-serif: var(--font-sans);

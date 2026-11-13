@@ -3,17 +3,17 @@ import { usePairly, type StylePreference } from "@/store/PairlyContext";
 
 const OPTIONS: { value: StylePreference; label: string }[] = [{ value: "menswear", label: "Menswear" }, { value: "womenswear", label: "Womenswear" }];
 
-/** Clothing preference picker; a shopping department choice, not an identity question. */
+/** Full-width segmented clothing preference toggle; a shopping department choice, not an identity question. */
 export function PreferenceChoice({ compact = false }: { compact?: boolean }) {
   const { stylePreference, setStylePreference } = usePairly();
   return (
-    <div role="radiogroup" aria-label="What are you looking for?" className="grid grid-cols-2 gap-3">
+    <div role="radiogroup" aria-label="What are you looking for?" className="grid w-full grid-cols-2 rounded-none border border-muted-foreground">
       {OPTIONS.map((o) => {
         const on = stylePreference === o.value;
         return (
-          <button key={o.value} role="radio" aria-checked={on} onClick={() => setStylePreference(o.value)}
-            className={cn("rounded-full border text-sm font-semibold transition active:scale-[0.98]", compact ? "h-10" : "h-12",
-              on ? "border-primary bg-primary text-primary-foreground" : "border-foreground/80 bg-transparent text-foreground")}>
+          <button key={o.value} type="button" role="radio" aria-checked={on} onClick={() => setStylePreference(o.value)}
+            className={cn("rounded-none text-body-sm font-semibold transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", compact ? "h-10" : "h-touch",
+              on ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}>
             {o.label}
           </button>
         );
