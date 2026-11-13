@@ -10,16 +10,20 @@ export function Welcome() {
   const quiz = stylePreference ? quizAvailable(stylePreference) : true;
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-screen px-screen pb-screen pt-topbar text-center">
-      <div className="flex flex-col items-center gap-screen">
+      <div className="flex flex-col items-center gap-2">
       <Logo size="hero" />
-      <h1 className="text-display font-bold">You own it.<br />KODI styles it.</h1>
+      <h1 className="text-title font-bold">You own it.<br />KODI styles it.</h1>
       </div>
       {preferenceLoaded && (
         <div className="flex w-full flex-col gap-screen">
-          <h2 className="text-heading">What are you looking for?</h2>
-          <PreferenceChoice />
-          {stylePreference && <PillButton onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
-          <button type="button" onClick={() => toast("Coming soon")} className="self-center min-h-touch text-body-sm text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Sign in</button>
+          <div className="flex w-full flex-col gap-2">
+            <h2 className="text-heading">What are you looking for?</h2>
+            <PreferenceChoice />
+          </div>
+          <div className="flex w-full flex-col items-center gap-2">
+            {stylePreference && <PillButton onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
+            <button type="button" onClick={() => toast("Coming soon")} className="min-h-touch text-body-sm text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Sign in</button>
+          </div>
         </div>
       )}
     </div>
