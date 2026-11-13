@@ -50,7 +50,7 @@ describe("Style loading", () => {
     act(() => first.result.current.setStylePreference("menswear"));
     act(() => first.result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => first.result.current.findMatches());
-    await waitFor(() => expect(first.result.current.generatedLooks?.every((look) => look.status === "success")).toBe(true));
+    await waitFor(() => expect(first.result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
     const key = JSON.stringify(["garment", "menswear", "TNPF", "", "", "", [0.5, 0.5, 0.5, 0.5], "coat", "coat"]);
     await waitFor(async () => expect((await readStyleCache(key))?.looks).toHaveLength(3));
     first.unmount(); mocks.plan.mockClear(); mocks.render.mockClear(); mocks.photo.mockClear();
@@ -58,7 +58,7 @@ describe("Style loading", () => {
     act(() => second.result.current.setStylePreference("menswear"));
     act(() => second.result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => second.result.current.findMatches());
-    await waitFor(() => expect(second.result.current.generatedLooks?.every((look) => look.status === "success")).toBe(true));
+    await waitFor(() => expect(second.result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
     expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled(); expect(mocks.photo).not.toHaveBeenCalled();
     expect(second.result.current.planning).toBe(false);
     act(() => second.result.current.setUploadedItem({ image: "different-photo", category: "coat", attributes: [], source: "upload" }));
