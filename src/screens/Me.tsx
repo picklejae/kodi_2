@@ -90,13 +90,13 @@ export function Me() {
                     value={imperial.ft !== null ? String(imperial.ft) : ""}
                     onChange={(v) => setHeightImperial(v, imperial.ft === null && v === null ? null : imperial.inch)}
                   />
-                  <span className="text-xs text-muted-foreground">ft</span>
+                  <span className="w-6 text-left text-xs text-muted-foreground">ft</span>
                   <NumberInput
                     aria-label="Height inches"
                     value={imperial.inch !== null ? String(imperial.inch) : ""}
                     onChange={(v) => setHeightImperial(imperial.ft, v)}
                   />
-                  <span className="text-xs text-muted-foreground">in</span>
+                  <span className="w-6 text-left text-xs text-muted-foreground">in</span>
                 </div>
               </div>
               <NumberRow
@@ -153,7 +153,7 @@ function NumberRow({ label, unit, value, onChange, last = false }: { label: stri
       <span className="text-sm">{label}</span>
       <div className="flex items-center gap-2">
         <NumberInput aria-label={`${label} in ${unit}`} value={value} onChange={onChange} />
-        <span className="text-xs text-muted-foreground">{unit}</span>
+        <span className="w-6 text-left text-xs text-muted-foreground">{unit}</span>
       </div>
     </div>
   );
