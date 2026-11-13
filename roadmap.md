@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Polish favorite → Looks → Feed; seed Jason’s two static posts, add comments/detail sheets and duplicate highlighting; verify demo presets and tests
+- [x] Polish favorite → Looks → Feed; seeded Jason’s two static posts, comments/detail sheets and duplicate highlighting; mobile/desktop posting, swipe/filter, presets verified; 102 tests pass
 - [x] Thread f848b2e4-bc85-4409-aee4-c3463b930525: Me unit labels stay on one line at 390px and 799px; both unit switches verified
 - [x] Set up attached KODI theme, fonts, logo, shared buttons and navigation; 95 tests pass and mobile theme/navigation verified
 - [x] Match original chinos/leather-jacket uploads to Set A/B with zero AI calls; both real uploads verified, 30 focused tests pass
