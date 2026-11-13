@@ -120,6 +120,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const shoppingPending = useRef(new Set<string>());
   const shoppingCache = useRef<Record<string, ShoppingRecord>>({});
   const running = useRef(false);
+  const runSequence = useRef(0);
   const runId = useRef(0);
   const inFlight = useRef(new Set<number>());
   const existingRequest = useRef<string | null>(null);
@@ -161,7 +162,8 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   };
   const createMoodboards = async (force = false) => {
     if (!state.uploadedItem || !state.stylePreference) return;
-    const knownIdentity = imageIdentities.current.get(state.uploadedItem.image);
+    const identityKey = `${state.uploadedItem.source}:${state.uploadedItem.image}`;
+    const knownIdentity = imageIdentities.current.get(identityKey);
     if (!force && !bypassStyleCache(window.location.search) && typeof knownIdentity === "string") {
       const currentKey = styleCacheKey({ imageIdentity: knownIdentity, preference: state.stylePreference, ...styleProfile(state.styleType, state.axisScores, state.quizSkipped), occasion: state.occasion ?? "", mood: state.note.trim().slice(0, 600), body: generationBody(state.body), category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category });
       if (existingRequest.current === currentKey && !state.generationError && state.generatedLooks?.length) {
@@ -174,6 +176,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       return;
     }
     running.current = true;
+    const sequence = ++runSequence.current;
     let token = runId.current;
     const item = state.uploadedItem;
     const preference = state.stylePreference;
@@ -184,14 +187,14 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, screen: "results", activeTab: "style", picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
     try {
       const sampleId = item.source === "sample" ? UPLOAD_SAMPLES.find((sample) => sample.image === item.image)?.id : undefined;
-      let identityPromise = imageIdentities.current.get(item.image);
+      let identityPromise = imageIdentities.current.get(identityKey);
       if (!identityPromise) {
         identityPromise = originalImageIdentity(item.image, sampleId);
-        imageIdentities.current.set(item.image, identityPromise);
-        void identityPromise.catch(() => imageIdentities.current.delete(item.image));
+        imageIdentities.current.set(identityKey, identityPromise);
+        void identityPromise.catch(() => imageIdentities.current.delete(identityKey));
       }
       const imageIdentity = await identityPromise;
-      imageIdentities.current.set(item.image, imageIdentity);
+      imageIdentities.current.set(identityKey, imageIdentity);
       if (runId.current !== token) return;
       const key = styleCacheKey({ imageIdentity, preference, ...profile, occasion: requestContext.occasion, mood: state.note.trim().slice(0, 600), body: requestContext.body, category: item.category, name: item.name ?? item.category });
       if (!skipCache && existingRequest.current === key && !state.generationError && state.generatedLooks?.length) return;
@@ -241,7 +244,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       await persistSession(token);
     } catch (error) {
       if (runId.current === token) setState((s) => ({ ...s, planning: false, generatedLooks: fromCloset ? (s.generatedLooks ?? []).map((look, index) => index === 0 ? look : { ...look, status: "failed", error: "Couldn’t prepare this new look. Try generation again." }) : s.generatedLooks ?? [], generationError: error instanceof Error ? error.message : "Couldn't prepare your styling directions." }));
-    } finally { if (runId.current === token) running.current = false; }
+    } finally { if (runSequence.current === sequence) running.current = false; }
   };
   const value = useMemo<PairlyCtx>(() => ({
     ...state,

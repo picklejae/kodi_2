@@ -25,6 +25,26 @@ function deferred() {
 const plan: StylePlan = { presentation: "Same studio", looks: TIERS.map((tier, i) => ({ tier, shift: i === 0 ? "" : i === 1 ? "Tailored → Relaxed" : "Tailored → Relaxed, Neutral → Color", name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
 beforeEach(() => { vi.stubGlobal("indexedDB", new IDBFactory()); window.history.replaceState(null, "", "/"); Object.keys(mocks.presets).forEach((key) => delete mocks.presets[key]); localStorage.clear(); vi.resetAllMocks(); mocks.identity.mockImplementation(async (image: string, sampleId?: string) => sampleId ?? image); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it("restores only successful cached looks and retries a missing slot with one render call", async () => {
+    mocks.render.mockResolvedValueOnce({ ok: true, image: "safe-image" }).mockResolvedValueOnce({ ok: false, error: "Failed" }).mockResolvedValueOnce({ ok: true, image: "bold-image" });
+    const first = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => first.result.current.setStylePreference("menswear"));
+    act(() => first.result.current.setUploadedItem({ image: "partial-photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => first.result.current.findMatches());
+    const key = JSON.stringify(["partial-photo", "menswear", "TNPF", "", "", "", [0.5, 0.5, 0.5, 0.5], "coat", "coat"]);
+    await waitFor(async () => expect((await readStyleCache(key))?.looks).toHaveLength(2));
+    first.unmount(); mocks.plan.mockClear(); mocks.render.mockClear();
+    const second = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => second.result.current.setStylePreference("menswear"));
+    act(() => second.result.current.setUploadedItem({ image: "partial-photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => second.result.current.findMatches());
+    await waitFor(() => expect(second.result.current.generatedLooks?.map((look) => look.status)).toEqual(["success", "failed", "success"]));
+    expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled();
+    act(() => second.result.current.retryLook(1));
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(1));
+    expect(mocks.plan).not.toHaveBeenCalled();
+    await waitFor(async () => expect((await readStyleCache(key))?.looks).toHaveLength(3));
+  });
   it("restores the same completed key after remount with zero AI calls", async () => {
     const first = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => first.result.current.setStylePreference("menswear"));
