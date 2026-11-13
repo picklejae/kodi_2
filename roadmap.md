@@ -48,3 +48,6 @@
 - [x] Welcome/PreferenceChoice segmented toggle, stable photo area
 - [x] Responsive page container (phone/iPad/Mac)
 - [x] Me: wider units capsule; price range max thumb; underline Not sure yet
+- [x] Welcome CTA hierarchy
+- [x] Reveal single button
+- [x] Sentence-level line breaks
