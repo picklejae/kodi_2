@@ -38,7 +38,7 @@ export function Upload() {
         <button onClick={() => go("reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
         <StyleTypeChip />
       </div>
-      <h1 className="mt-6 font-serif text-4xl leading-tight">What do you want to wear?</h1>
+      <h1 className="mt-6 font-serif text-4xl leading-tight">Style</h1>
       <p className="mt-2 text-sm text-muted-foreground">Snap one piece you already own.</p>
 
       <input ref={libRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />

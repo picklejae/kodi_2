@@ -9,7 +9,7 @@ import { routeTree } from "@/routeTree.gen";
 describe("App routing", () => {
   it("matches saved outfit details by id", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes("/saved/outfit-1").at(-1)?.routeId).toBe("/saved/$id");
+    expect(router.matchRoutes("/closet/outfit-1").at(-1)?.routeId).toBe("/closet/$id");
   });
   it("matches a page for / instead of falling back to not found", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });

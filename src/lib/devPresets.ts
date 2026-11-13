@@ -1,15 +1,15 @@
 import { SAMPLES, type SampleItem } from "@/data/samples";
 import { DEFAULT_CODE, type StyleTypeCode } from "@/data/styleTypes";
 
-export type PresetId = "welcome" | "diagnosis" | "reveal" | "upload" | "results" | "social" | "saved";
+export type PresetId = "welcome" | "diagnosis" | "reveal" | "upload" | "results" | "feed" | "closet";
 export const PRESETS: { id: PresetId; label: string }[] = [
   { id: "welcome", label: "Welcome" },
   { id: "diagnosis", label: "Diagnosis (round 1)" },
   { id: "reveal", label: "Reveal (TNPF)" },
-  { id: "upload", label: "Upload (TNPF)" },
+  { id: "upload", label: "Style / Upload (TNPF)" },
   { id: "results", label: "Results (TNPF + blazer)" },
-  { id: "social", label: "Social tab" },
-  { id: "saved", label: "Saved" },
+  { id: "feed", label: "Feed" },
+  { id: "closet", label: "Closet" },
 ];
 
 export interface PresetRequest { preset: PresetId; type: StyleTypeCode; sample: SampleItem }
@@ -17,7 +17,8 @@ export interface PresetRequest { preset: PresetId; type: StyleTypeCode; sample: 
 /** Reads ?screen=&type=&sample= ; returns null when no valid screen is given. */
 export function parsePresetParams(search: string): PresetRequest | null {
   const q = new URLSearchParams(search);
-  const screen = q.get("screen")?.toLowerCase();
+  const requested = q.get("screen")?.toLowerCase();
+  const screen = requested === "social" ? "feed" : requested === "saved" ? "closet" : requested === "style" || requested === "match" ? "upload" : requested;
   if (!screen || !PRESETS.some((p) => p.id === screen)) return null;
   const t = q.get("type")?.toUpperCase() ?? "";
   const type = (/^[TR][NC][PD][FS]$/.test(t) ? t : DEFAULT_CODE) as StyleTypeCode;

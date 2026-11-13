@@ -7,15 +7,15 @@ import { OutfitResultView } from "@/components/pairly/OutfitResultView";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
 import { DevJumper } from "@/components/pairly/DevJumper";
 import { usePairly } from "@/store/PairlyContext";
-export const Route = createFileRoute("/saved/$id")({
+export const Route = createFileRoute("/closet/$id")({
   head: () => ({
     meta: [
-      { title: "Saved outfit · Pairly" },
+      { title: "Closet outfit · Pairly" },
       {
         name: "description",
         content: "Revisit your saved outfit and shop the pieces paired with your own.",
       },
-      { property: "og:title", content: "Saved outfit · Pairly" },
+      { property: "og:title", content: "Closet outfit · Pairly" },
       {
         property: "og:description",
         content: "Revisit your saved outfit and shop the pieces paired with your own.",
@@ -34,7 +34,7 @@ function SavedOutfitDetail() {
   const snapshot = savedLooks.find((o) => o.id === id);
   const back = () => {
     if (screen === "welcome") go("upload");
-    setTab("saved");
+    setTab("closet");
     navigate({ to: "/" });
   };
   return (
@@ -43,7 +43,7 @@ function SavedOutfitDetail() {
         <div className="flex items-center gap-3">
           <PillButton
             variant="ghost"
-            aria-label="Back to Saved"
+            aria-label="Back to Closet"
             onClick={back}
             className="h-9 w-9 px-0"
           >
@@ -51,7 +51,7 @@ function SavedOutfitDetail() {
           </PillButton>
           <StyleTypeChip />
         </div>
-        <h1 className="mb-6 mt-6 font-serif text-4xl">Saved outfit</h1>
+        <h1 className="mb-6 mt-6 font-serif text-4xl">Closet outfit</h1>
         {outfit ? (
           <OutfitResultView
             pick={outfit.look}
@@ -70,7 +70,7 @@ function SavedOutfitDetail() {
           <>
             <p className="text-sm text-muted-foreground">This outfit is no longer saved.</p>
             <PillButton className="mt-5" onClick={back}>
-              Back to Saved
+              Back to Closet
             </PillButton>
           </>
         )}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Plus, ThumbsDown, ThumbsUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { BottomSheet } from "@/components/pairly/BottomSheet";
 import { Chip } from "@/components/pairly/Chip";
@@ -18,7 +18,7 @@ type Detail = { title: string; image: string; groups: VoteGroup[]; feedback: Fee
 const occLabel = (o: SocialPost["occasion"]) => OCCASIONS.find((x) => x.id === o)?.label;
 
 export function Social() {
-  const { posts, styleType, userVotes, vote, addFeedback, openDraft } = usePairly();
+  const { posts, styleType, userVotes, vote, addFeedback, openDraft, feedHintDismissed, dismissFeedHint } = usePairly();
   const type = styleType ?? DEFAULT_CODE;
   const [filter, setFilter] = useState<SocialFilter>("similar");
   const [detail, setDetail] = useState<Detail | null>(null);
@@ -40,9 +40,8 @@ export function Social() {
     <div className="px-6 pt-12">
       {mine && <YourPost key={mine.id} post={mine} filter={filter} type={type} onOpen={() => setDetail({ title: mine.question, image: mine.image, groups: mine.voteGroups, feedback: mine.feedback, author: mine.author, type: mine.styleType })} />}
 
-      <h1 className="font-serif text-4xl">Rate the fit</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Swipe right if it works, left if it doesn't.</p>
-      <div className="mt-4 flex gap-2" role="group" aria-label="Social filter">
+      <h1 className="font-serif text-4xl">Feed</h1>
+      <div className="mt-4 flex gap-2" role="group" aria-label="Feed filter">
         <PillButton className="h-10 flex-1 px-3 text-xs" variant={filter === "similar" ? "primary" : "outline"} aria-pressed={filter === "similar"} onClick={() => { setFilter("similar"); setFeedbackFor(null); }}>People like me</PillButton>
         <PillButton className="h-10 flex-1 px-3 text-xs" variant={filter === "adventurous" ? "primary" : "outline"} aria-pressed={filter === "adventurous"} onClick={() => { setFilter("adventurous"); setFeedbackFor(null); }}>More adventurous</PillButton>
       </div>
@@ -119,6 +118,19 @@ export function Social() {
           <FeedbackList feedback={filteredFeedback(detail.feedback, type, filter)} />
         </>}
       </BottomSheet>
+      {!feedHintDismissed && (
+        <PillButton
+          variant="ghost"
+          aria-label="Dismiss swipe hint"
+          onClick={dismissFeedHint}
+          className="fixed inset-0 z-50 h-full w-full rounded-none bg-foreground/70 px-6 text-background backdrop-blur-sm"
+        >
+          <span className="flex w-full max-w-[342px] flex-col items-center gap-6 text-center">
+            <span className="flex items-center gap-12" aria-hidden="true"><ArrowLeft className="h-8 w-8" /><ArrowRight className="h-8 w-8" /></span>
+            <span className="font-serif text-3xl font-normal leading-snug">Swipe right if you love it, left to skip</span>
+          </span>
+        </PillButton>
+      )}
     </div>
   );
 }

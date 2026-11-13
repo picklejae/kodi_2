@@ -3,6 +3,17 @@ import { describe, expect, it } from "vitest";
 import { PairlyProvider, usePairly } from "./PairlyContext";
 
 describe("quiz state", () => {
+  it("shows the Feed hint once until demo reset, including across tab changes", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    expect(result.current.feedHintDismissed).toBe(false);
+    act(() => result.current.setTab("feed"));
+    act(() => result.current.dismissFeedHint());
+    act(() => result.current.setTab("closet"));
+    act(() => result.current.setTab("feed"));
+    expect(result.current.feedHintDismissed).toBe(true);
+    act(() => result.current.reset());
+    expect(result.current.feedHintDismissed).toBe(false);
+  });
   it("records uploads and deletes photos independently of saved outfits", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.recordUpload("new-photo", "Blue shirt", "shirt"));

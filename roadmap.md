@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Rename navigation to Style, Feed, Closet and Me, including headers, detail route and DEV names
+- [x] Add and verify a first-visit, tap-dismiss Feed swipe hint
 - [x] Make Recents a content-height iOS-style sheet capped at 50dvh
 - [x] Replace Saved navigation heart with a matching wardrobe outline icon
 - [x] Add Saved to DEV navigation and URL presets

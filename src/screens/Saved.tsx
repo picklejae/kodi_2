@@ -50,10 +50,11 @@ export function Saved() {
     }, 180);
   };
   const openOutfit = (id: string) => {
-    if (!savedEdit) navigate({ to: "/saved/$id", params: { id } });
+    if (!savedEdit) navigate({ to: "/closet/$id", params: { id } });
   };
   return (
     <div className="px-6 pb-8 pt-12">
+      <h1 className="mb-6 font-serif text-4xl">Closet</h1>
       <section aria-label="Recents">
         <SectionHeader
           title="Recents"
@@ -252,7 +253,7 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <h1 className="font-serif text-3xl">{title}</h1>
+      <h2 className="font-serif text-3xl">{title}</h2>
       {!empty && (
         <PillButton
           variant="ghost"

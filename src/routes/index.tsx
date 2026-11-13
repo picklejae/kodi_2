@@ -39,7 +39,7 @@ function Screens() {
   return (
     <>
       <div className="flex flex-1 flex-col pb-24">
-        {activeTab === "social" ? <Social /> : activeTab === "saved" ? <Saved /> : activeTab === "me" ? <Me /> : screen === "results" ? <Results /> : <Upload />}
+        {activeTab === "feed" ? <Social /> : activeTab === "closet" ? <Saved /> : activeTab === "me" ? <Me /> : screen === "results" ? <Results /> : <Upload />}
       </div>
       <BottomTabBar />
       <CreatePostSheet />

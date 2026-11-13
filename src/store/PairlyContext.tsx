@@ -13,7 +13,7 @@ import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
 
 export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
-export type Tab = "match" | "social" | "saved" | "me";
+export type Tab = "style" | "feed" | "closet" | "me";
 export interface PostDraft { image: string | null; pickImages?: string[]; look?: Look; ownedImage?: string }
 export interface SavedLook { id: string; look: Look; ownedImage: string; ownedName: string }
 
@@ -45,9 +45,10 @@ interface PairlyState {
   posts: SocialPost[];
   userVotes: Record<string, "up" | "down">;
   draft: PostDraft | null;
+  feedHintDismissed: boolean;
 }
 
-const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
+const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "style", posts: POSTS, userVotes: {}, draft: null, feedHintDismissed: false };
 
 interface PairlyCtx extends PairlyState {
   recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
@@ -66,6 +67,7 @@ interface PairlyCtx extends PairlyState {
   findMatches: () => void;
   toggleSave: (id: string) => boolean;
   setTab: (t: Tab) => void;
+  dismissFeedHint: () => void;
   openDraft: (d: PostDraft | null) => void;
   vote: (id: string, v: "up" | "down") => void;
   addFeedback: (id: string, chip: string) => void;
@@ -86,7 +88,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     recordUpload: (image, name = "Uploaded jacket", category = "jacket") => setState((s) => ({ ...s, recentItems: addRecent(s.recentItems, { id: crypto.randomUUID(), imageUrl: image, productName: name, category, uploadedAt: new Date().toISOString() }) })),
     deleteRecent: (id) => setState((s) => ({ ...s, recentItems: removeRecent(s.recentItems, id) })),
     deleteSavedOutfit: (id) => setState((s) => ({ ...s, savedOutfits: removeOutfit(s.savedOutfits, id), savedLooks: s.savedLooks.filter((entry) => entry.id !== id) })),
-    go: (screen) => setState((s) => ({ ...s, screen, activeTab: screen === "upload" || screen === "results" ? "match" : s.activeTab })),
+    go: (screen) => setState((s) => ({ ...s, screen, activeTab: screen === "upload" || screen === "results" ? "style" : s.activeTab })),
     answer: (a) =>
       setState((s) => {
         if (s.answers.length >= ROUNDS.length) return s;
@@ -137,6 +139,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       return saving;
     },
     setTab: (activeTab) => setState((s) => ({ ...s, activeTab })),
+    dismissFeedHint: () => setState((s) => ({ ...s, feedHintDismissed: true })),
     openDraft: (draft) => setState((s) => ({ ...s, draft })),
     vote: (id, v) => setState((s) => ({
       ...s, userVotes: { ...s.userVotes, [id]: v },
@@ -145,7 +148,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     })),
     addFeedback: (id, chip) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id ? { ...p, topFeedback: [chip, ...p.topFeedback].slice(0, 3), feedback: [{ text: chip, styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel }, ...p.feedback].slice(0, 4) } : p) })),
     createPost: (p) => setState((s) => ({
-      ...s, draft: null, activeTab: "social",
+      ...s, draft: null, activeTab: "feed",
       posts: [{ ...p, ...(s.draft?.look ? { look: s.draft.look } : {}), ...(s.draft?.ownedImage ? { ownedImage: s.draft.ownedImage } : {}), id: `u${crypto.randomUUID()}`, author: "@you", styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true }, ...s.posts],
     })),
     bumpUserPost: (id, up, down) => setState((s) => ({ ...s, posts: s.posts.map((p) => p.id === id ? { ...p, votesUp: p.votesUp + up, votesDown: p.votesDown + down,
@@ -153,10 +156,10 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       feedback: p.votesUp + up > 3 ? mockFeedback(["Great fit", "Add a layer", "Try darker shoes"]) : p.feedback } : p) })),
     loadPreset: ({ preset, type, sample }) => {
       const item: UploadedItem = { image: sample.image, category: sample.category, attributes: sample.attributes, source: "sample", name: sample.name };
-      const base: PairlyState = { ...initial, styleType: preset === "welcome" || preset === "diagnosis" ? null : type };
+      const base: PairlyState = { ...initial, feedHintDismissed: state.feedHintDismissed, styleType: preset === "welcome" || preset === "diagnosis" ? null : type };
       if (preset === "welcome" || preset === "diagnosis" || preset === "reveal" || preset === "upload") return setState({ ...base, screen: preset });
       const picks = generatePicks(CATALOG, item.category, item.name ?? item.category, type, null);
-      setState({ ...base, uploadedItem: item, picks, screen: "results", activeTab: preset === "social" ? "social" : preset === "saved" ? "saved" : "match" });
+      setState({ ...base, uploadedItem: item, picks, screen: "results", activeTab: preset === "feed" ? "feed" : preset === "closet" ? "closet" : "style" });
     },
   }), [state]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
