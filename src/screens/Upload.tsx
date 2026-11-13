@@ -4,7 +4,7 @@ import { Camera, ChevronLeft, ImageIcon, X } from "lucide-react";
 import { Photo } from "@/components/pairly/Photo";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
-import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategory } from "@/data/samples";
+import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, VIBE_PROMPTS, samplesFor, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 import { Button, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 import { PillButton } from "@/components/pairly/PillButton";
@@ -108,7 +108,15 @@ export function Upload() {
               <div className="mt-2 flex flex-nowrap gap-2">
                 {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
               </div>
-              <label htmlFor="outfit-note" className="mt-3 block text-sm font-medium">Anything else? A place or a vibe.</label>
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <label htmlFor="outfit-note" className="whitespace-nowrap text-sm font-medium">Anything else? A place or a vibe.</label>
+                {/* Demo helper: pick a ready-made prompt instead of typing live. */}
+                <select aria-label="Pick an example" value="" onChange={(e) => { if (e.target.value) setNote(e.target.value); }}
+                  className="w-[92px] shrink-0 cursor-pointer appearance-none truncate rounded-full border border-border bg-card px-2.5 py-0.5 text-xs text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  <option value="">Examples ▾</option>
+                  {VIBE_PROMPTS.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
               <input ref={noteRef} id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Gallery curator in the fall in Paris"
                 className="mt-2 h-10 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none focus:border-foreground" />
             </div>
