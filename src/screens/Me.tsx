@@ -50,17 +50,17 @@ export function Me() {
         <div className="mt-3 rounded-2xl bg-card px-4 shadow-soft">
           <div className="flex items-center justify-between gap-3 border-b border-border py-3">
             <span className="text-sm">Units</span>
-            <div className="flex gap-1 rounded-full border border-border bg-background p-1">
+            <div className="grid shrink-0 grid-cols-2 overflow-hidden rounded-full border border-border" role="group" aria-label="Units">
               {(["metric", "imperial"] as UnitSystem[]).map((option) => (
-                <PillButton
+                <button
                   key={option}
-                  variant={units === option ? "primary" : "ghost"}
+                  type="button"
                   aria-pressed={units === option}
                   onClick={() => setUnits(option)}
-                  className="w-auto"
+                  className={cn("h-touch w-24 whitespace-nowrap text-center text-body-sm font-medium transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring", units === option ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}
                 >
-                  <span className="inline-block min-w-16 whitespace-nowrap px-2 text-center">{option === "metric" ? "cm · kg" : "ft·in · lb"}</span>
-                </PillButton>
+                  {option === "metric" ? "cm · kg" : "ft·in · lb"}
+                </button>
               ))}
             </div>
           </div>
