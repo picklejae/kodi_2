@@ -54,9 +54,9 @@ export function Me() {
                   variant={units === option ? "primary" : "ghost"}
                   aria-pressed={units === option}
                   onClick={() => setUnits(option)}
-                  className="h-8 px-3 text-xs"
+                  className="w-auto"
                 >
-                  {option === "metric" ? "cm · kg" : "ft·in · lb"}
+                  <span className="whitespace-nowrap">{option === "metric" ? "cm · kg" : "ft·in · lb"}</span>
                 </PillButton>
               ))}
             </div>

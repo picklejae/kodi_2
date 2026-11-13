@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Thread f848b2e4-bc85-4409-aee4-c3463b930525: keep Me unit labels on one line and verify switching
 - [x] Set up attached KODI theme, fonts, logo, shared buttons and navigation; 95 tests pass and mobile theme/navigation verified
 - [x] Match original chinos/leather-jacket uploads to Set A/B with zero AI calls; both real uploads verified, 30 focused tests pass
 - [x] Unify live and existing generated moodboard avatars; preserve all protected uploads; live male/female render verified
