@@ -16,6 +16,14 @@ export function Upload() {
   // Size the selected-piece photo to the space that's left: shrink by any overflow, grow into any gap above the CTA.
   const photoRef = useRef<HTMLDivElement>(null);
   const noteRef = useRef<HTMLInputElement>(null);
+  const vibeRef = useRef<HTMLDivElement>(null);
+  const [vibeOpen, setVibeOpen] = useState(false);
+  useEffect(() => {
+    if (!vibeOpen) return;
+    const close = (e: PointerEvent) => { if (!vibeRef.current?.contains(e.target as Node)) setVibeOpen(false); };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [vibeOpen]);
   const ctaRef = useRef<HTMLDivElement>(null);
   const [photoHeight, setPhotoHeight] = useState<number | null>(null);
   useLayoutEffect(() => {
@@ -98,27 +106,34 @@ export function Upload() {
             <div className="animate-in fade-in duration-300">
               {uploadedItem.source === "upload" ? (
                 <div className="mt-5">
-                  <p className="text-xs text-muted-foreground">Which piece should we style?</p>
+                  <p className="text-sm font-medium">Style with?</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {CATEGORIES.map((c) => <SelectChip key={c} active={uploadedItem.category === c} onClick={() => setCategory(c)}><span className="capitalize">{c}</span></SelectChip>)}
                   </div>
                 </div>
               ) : null}
-              <p className="mt-3 text-sm font-medium">Where are you wearing it? <span className="text-muted-foreground font-normal">(optional)</span></p>
+              <p className={uploadedItem.source === "upload" ? "mt-6 text-sm font-medium" : "mt-3 text-sm font-medium"}>Where are you wearing it? <span className="text-muted-foreground font-normal">(optional)</span></p>
               <div className="mt-2 flex flex-nowrap gap-2">
                 {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
               </div>
-              <div className="mt-3 flex items-center justify-between gap-2">
-                <label htmlFor="outfit-note" className="whitespace-nowrap text-sm font-medium">Anything else? A place or a vibe.</label>
-                {/* Demo helper: pick a ready-made prompt instead of typing live. */}
-                <select aria-label="Pick an example" value="" onChange={(e) => { if (e.target.value) setNote(e.target.value); }}
-                  className="w-[92px] shrink-0 cursor-pointer appearance-none truncate rounded-full border border-border bg-card px-2.5 py-0.5 text-xs text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <option value="">Examples ▾</option>
-                  {VIBE_PROMPTS.map((p) => <option key={p} value={p}>{p}</option>)}
-                </select>
+              <label htmlFor="outfit-note" className="mt-6 block text-sm font-medium">Anything else? A place or a vibe.</label>
+              {/* Examples live in the field's ▼ menu (demo helper), plus "Type my own" to write freely. */}
+              <div ref={vibeRef} className="relative mt-2">
+                <input ref={noteRef} id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Gallery curator in the fall in Paris"
+                  className="h-10 w-full rounded-lg border border-border bg-card pl-3 pr-10 text-sm outline-none focus:border-foreground" />
+                <button type="button" aria-label="Show examples" aria-expanded={vibeOpen} onClick={() => setVibeOpen(!vibeOpen)}
+                  className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-[10px] text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">▼</button>
+                {vibeOpen && (
+                  <div role="listbox" aria-label="Examples" className="absolute bottom-full left-0 right-0 z-30 mb-1 overflow-hidden rounded-lg border border-border bg-popover shadow-soft">
+                    {VIBE_PROMPTS.map((p) => (
+                      <button key={p} type="button" role="option" aria-selected={note === p} onClick={() => { setNote(p); setVibeOpen(false); }}
+                        className="block w-full px-3 py-2 text-left text-sm hover:bg-secondary focus-visible:bg-secondary focus-visible:outline-none">{p}</button>
+                    ))}
+                    <button type="button" onClick={() => { setNote(""); setVibeOpen(false); noteRef.current?.focus(); }}
+                      className="block w-full border-t border-border px-3 py-2 text-left text-sm font-medium underline underline-offset-4 hover:bg-secondary focus-visible:bg-secondary focus-visible:outline-none">Type my own</button>
+                  </div>
+                )}
               </div>
-              <input ref={noteRef} id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Gallery curator in the fall in Paris"
-                className="mt-2 h-10 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none focus:border-foreground" />
             </div>
         </div>
       )}
