@@ -16,4 +16,4 @@
 .recent-sheet-backdrop { background: var(--overlay); }
 .recent-sheet { padding-bottom: var(--spacing-screen); transition-timing-function: var(--ease-kodi); }
 .recent-sheet::after { display: none; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0s !important; animation-duration: 0s !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
