@@ -81,17 +81,15 @@ describe("Style loading", () => {
     await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
     expect(mocks.plan).toHaveBeenCalledTimes(1);
   });
-  it("a preset photo makes zero AI calls on first use and loads for two seconds", async () => {
+  it("a preset photo makes zero AI calls on first use and loads without an artificial wait", async () => {
     mocks.presets[stylePresetKey("preset-photo", "menswear", "TNPF")] = { result: { ok: true, plan }, images: ["safe-preset", "step-preset", "bold-preset"] };
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("menswear"));
     act(() => result.current.setUploadedItem({ image: "preset-photo", category: "coat", attributes: [], source: "upload" }));
     act(() => result.current.setNote("Different occasion and mood do not invalidate a preset"));
-    const start = Date.now();
     act(() => result.current.findMatches());
-    await waitFor(() => expect(result.current.planning).toBe(true));
-    await waitFor(() => expect(result.current.generatedLooks?.[0]?.image).toBe("safe-preset"), { timeout: 3500 });
-    expect(Date.now() - start).toBeGreaterThanOrEqual(2000);
+    // The 2-second fake loading for presets was removed (8c74a51); presets now appear right away.
+    await waitFor(() => expect(result.current.generatedLooks?.[0]?.image).toBe("safe-preset"), { timeout: 1000 });
     expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled(); expect(mocks.photo).not.toHaveBeenCalled();
     act(() => result.current.regenerate());
     await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
