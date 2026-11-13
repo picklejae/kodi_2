@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { RotateCcw } from "lucide-react";
 import { usePairly } from "@/store/PairlyContext";
 import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 
