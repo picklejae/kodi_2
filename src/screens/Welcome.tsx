@@ -12,7 +12,7 @@ export function Welcome() {
     <div className="flex flex-1 flex-col items-center justify-center gap-screen px-screen pb-screen pt-topbar text-center">
       <div className="flex flex-col items-center gap-screen">
       <Logo size="hero" />
-      <h1 className="whitespace-nowrap text-subheading font-bold text-[#812F46]">You own it. KODI styles it.</h1>
+      <h1 className="whitespace-nowrap text-[22px] font-bold">You own it. KODI styles it.</h1>
       </div>
       {preferenceLoaded && (
         <div className="flex w-full flex-col gap-screen">
@@ -21,7 +21,7 @@ export function Welcome() {
             <PreferenceChoice />
           </div>
           <div className="flex w-full flex-col items-center gap-2 pt-2.5">
-            {stylePreference && <PillButton onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
+            {stylePreference && <PillButton accent onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
             <button type="button" onClick={() => toast("Coming soon")} className="min-h-touch text-body-sm text-muted-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Sign in</button>
           </div>
         </div>
