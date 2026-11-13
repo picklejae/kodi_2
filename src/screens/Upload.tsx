@@ -6,12 +6,12 @@ import { Photo } from "@/components/pairly/Photo";
 import { PillButton } from "@/components/pairly/PillButton";
 import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
-import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
 import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, UPLOAD_SAMPLES, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
+  useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
   const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -106,8 +106,7 @@ export function Upload() {
 
       </div>
       <div className="mt-auto pt-8 lg:mt-0">
-        <div className="mb-4"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Looking for</p><PreferenceChoice compact /></div>
-        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating moodboards" : "Create outfit moodboards"}</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating looks" : "Kodi me"}</PillButton>
       </div>
     </div>
   );
