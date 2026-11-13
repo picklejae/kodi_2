@@ -12,7 +12,7 @@ export function Me() {
   return (
     <div className="px-screen pb-8 pt-12">
       <div>
-      <h1 className="text-title font-bold">Me</h1>
+      <h1 className="text-title font-bold">Jason</h1>
 
       <section className="mt-8" aria-label="Your Style Type">
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</h2>
