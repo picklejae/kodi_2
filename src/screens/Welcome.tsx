@@ -9,9 +9,9 @@ export function Welcome() {
   const { go, stylePreference, preferenceLoaded, skipQuiz } = usePairly();
   const quiz = stylePreference ? quizAvailable(stylePreference) : true;
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-screen px-screen pb-screen pt-topbar text-center">
+    <div className="flex flex-1 flex-col items-center justify-center gap-topbar px-screen pb-screen pt-topbar text-center">
       <div className="flex flex-col items-center gap-screen">
-      <Logo size="hero" />
+      <Logo size="hero" className="w-36 [filter:invert(34%)_sepia(64%)_saturate(682%)_hue-rotate(294deg)_brightness(61%)_contrast(92%)]" />
       <h1 className="whitespace-nowrap text-[22px] font-bold">You own it. KODI styles it.</h1>
       </div>
       {preferenceLoaded && (
