@@ -289,10 +289,10 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     go: (screen) => setState((s) => ({ ...s, screen, activeTab: screen === "upload" || screen === "results" ? "style" : s.activeTab })),
     answer: (a) =>
       setState((s) => {
-        if (s.answers.length >= ROUNDS.length) return s;
+        if (s.answers.length >= roundsFor(s.stylePreference).length) return s;
         const answers = [...s.answers, a];
-        if (answers.length >= ROUNDS.length) {
-          const diagnosis = computeDiagnosis(ROUNDS, answers);
+        if (answers.length >= roundsFor(s.stylePreference).length) {
+          const diagnosis = computeDiagnosis(roundsFor(s.stylePreference), answers);
           const { styleType } = diagnosis;
           const picks = s.uploadedItem && s.picks
             ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, styleType, s.occasion)

@@ -1,7 +1,7 @@
 import { Heart, Undo2, X } from "lucide-react";
 import { SwipePhotoCard } from "@/components/pairly/SwipePhotoCard";
 import { PillButton } from "@/components/pairly/PillButton";
-import { ROUNDS, quizAvailable } from "@/data/diagnosis";
+import { roundsFor, quizAvailable } from "@/data/diagnosis";
 import { usePairly } from "@/store/PairlyContext";
 
 export function Diagnosis() {
