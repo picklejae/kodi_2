@@ -124,7 +124,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const inFlight = useRef(new Set<number>());
   const existingRequest = useRef<string | null>(null);
   const selectionTouched = useRef(false);
-  const imageIdentities = useRef(new Map<string, Promise<string>>());
+  const imageIdentities = useRef(new Map<string, string | Promise<string>>());
   const cacheSession = useRef<{ key: string; plan: StylePlan; looks: GeneratedLook[] } | null>(null);
   useEffect(() => {
     let saved: string | null = null;
@@ -161,6 +161,14 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   };
   const createMoodboards = async (force = false) => {
     if (!state.uploadedItem || !state.stylePreference) return;
+    const knownIdentity = imageIdentities.current.get(state.uploadedItem.image);
+    if (!force && !bypassStyleCache(window.location.search) && typeof knownIdentity === "string") {
+      const currentKey = styleCacheKey({ imageIdentity: knownIdentity, preference: state.stylePreference, ...styleProfile(state.styleType, state.axisScores, state.quizSkipped), occasion: state.occasion ?? "", mood: state.note.trim().slice(0, 600), body: generationBody(state.body), category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category });
+      if (existingRequest.current === currentKey && !state.generationError && state.generatedLooks?.length) {
+        setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
+        return;
+      }
+    }
     if (running.current || inFlight.current.size) {
       setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
       return;
@@ -183,6 +191,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         void identityPromise.catch(() => imageIdentities.current.delete(item.image));
       }
       const imageIdentity = await identityPromise;
+      imageIdentities.current.set(item.image, imageIdentity);
       if (runId.current !== token) return;
       const key = styleCacheKey({ imageIdentity, preference, ...profile, occasion: requestContext.occasion, mood: state.note.trim().slice(0, 600), body: requestContext.body, category: item.category, name: item.name ?? item.category });
       if (!skipCache && existingRequest.current === key && !state.generationError && state.generatedLooks?.length) return;
@@ -192,13 +201,14 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       const showLoading = () => setState((s) => ({ ...s, selectedConcept: defaultConcept(state.exploreLevel), generatedLooks: fromCloset ? jasonPendingLooks(preference).map((look, index) => index === 0 ? look : { ...look, status: "loading" }) : [], planning: true, generationError: "", picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
       const restore = (plan: StylePlan, successful: GeneratedLook[]) => {
         const planned = looksFromPlan(plan, item.name ?? item.category, item.image, preference);
-        const looks = planned.map((look) => {
+        const looks: GeneratedLook[] = planned.map((look) => {
           const hit = successful.find((saved) => saved.tier === look.tier);
           return hit ? { ...hit, status: "success" as const, error: "", items: look.items } : { ...look, status: "failed" as const, error: "This look wasn't generated. Retry this look." };
         });
         if (fromCloset) looks[0] = jasonClosetLook(preference);
         generation.current = { ...requestContext, reference: "", presentation: plan.presentation };
         cacheSession.current = { key, plan, looks };
+        running.current = false;
         setState((s) => ({ ...s, generatedLooks: looks, planning: false, generationError: "", selectedConcept: defaultConcept(state.exploreLevel), picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
       };
       const preset = skipCache ? undefined : STYLE_PRESETS[stylePresetKey(imageIdentity, preference, profile.styleType)];
@@ -206,7 +216,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         showLoading();
         await new Promise((resolve) => setTimeout(resolve, PRESET_LOADING_MS));
         if (runId.current !== token) return;
-        const looks = looksFromPlan(preset.result.plan, item.name ?? item.category, item.image, preference).map((look, index) => ({ ...look, image: preset.images[index], status: "success" as const }));
+        const looks = looksFromPlan(preset.result.plan, item.name ?? item.category, item.image, preference).map((look, index) => ({ ...look, image: preset.images[index] ?? "", status: "success" as const }));
         restore(preset.result.plan, looks);
         return;
       }
@@ -227,10 +237,11 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       cacheSession.current = { key, plan: result.plan, looks: [...looks] };
       setState((s) => ({ ...s, generatedLooks: looks, planning: false }));
       await Promise.all(looks.map((look, index) => fromCloset && index === 0 ? Promise.resolve() : renderLook(index, look, token)));
+      running.current = false;
       await persistSession(token);
     } catch (error) {
       if (runId.current === token) setState((s) => ({ ...s, planning: false, generatedLooks: fromCloset ? (s.generatedLooks ?? []).map((look, index) => index === 0 ? look : { ...look, status: "failed", error: "Couldn’t prepare this new look. Try generation again." }) : s.generatedLooks ?? [], generationError: error instanceof Error ? error.message : "Couldn't prepare your styling directions." }));
-    } finally { running.current = false; }
+    } finally { if (runId.current === token) running.current = false; }
   };
   const value = useMemo<PairlyCtx>(() => ({
     ...state,
