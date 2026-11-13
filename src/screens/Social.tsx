@@ -88,7 +88,7 @@ export function Social() {
           <Comments post={cur} /></div>}
       </BottomSheet>
       <BottomSheet open={!feedHintDismissed} onClose={dismissFeedHint} title="Swipe outfits">
-        <div className="flex flex-col items-center gap-screen text-center"><div className="flex gap-screen" aria-hidden="true"><ChevronLeft /><ChevronRight /></div><p className="whitespace-nowrap text-body font-semibold">Swipe right if you love it, left to skip</p><div className="flex w-full flex-col items-center gap-2"><PrimaryButton onClick={dismissFeedHint}>Explore Outfits</PrimaryButton><TextLinkButton onClick={hideFeedHintForever}>Don't show again</TextLinkButton></div></div>
+        <div className="flex flex-col items-center gap-screen text-center"><p className="whitespace-nowrap text-body font-semibold">Swipe right if you love it, left to skip</p><div className="flex w-full flex-col items-center gap-2"><PrimaryButton onClick={dismissFeedHint}>Explore Outfits</PrimaryButton><TextLinkButton onClick={hideFeedHintForever}>Don't show again</TextLinkButton></div></div>
       </BottomSheet>
     </div>
   );
