@@ -26,6 +26,7 @@ import { DEMO_SAMPLES, demoSetLooks, demoSetForImage } from "@/data/demoSets";
 
 export type StylePreference = "menswear" | "womenswear";
 export const PREFERENCE_KEY = "pairly.stylePreference";
+const FEED_HINT_KEY = "pairly.feedHintHidden";
 export type Screen = "welcome" | "diagnosis" | "reveal" | "budget" | "upload" | "results";
 export type Tab = "style" | "saved" | "feed" | "me";
 export type UnitSystem = "metric" | "imperial";
@@ -105,6 +106,7 @@ interface PairlyCtx extends PairlyState {
   completeBudget: (b: BudgetRange | null) => void;
   setTab: (t: Tab) => void;
   dismissFeedHint: () => void;
+  hideFeedHintForever: () => void;
   openDraft: (d: PostDraft | null) => void;
   vote: (id: string, v: "up" | "down") => void;
   addFeedback: (id: string, chip: string) => void;
@@ -135,8 +137,9 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const cacheSession = useRef<{ key: string; plan: StylePlan; looks: GeneratedLook[] } | null>(null);
   useEffect(() => {
     let saved: string | null = null;
-    try { saved = localStorage.getItem(PREFERENCE_KEY); } catch { /* storage unavailable */ }
-    setState((s) => ({ ...s, preferenceLoaded: true, stylePreference: s.stylePreference ?? (saved === "menswear" || saved === "womenswear" ? saved : null) }));
+    let hintHidden = false;
+    try { saved = localStorage.getItem(PREFERENCE_KEY); hintHidden = localStorage.getItem(FEED_HINT_KEY) === "1"; } catch { /* storage unavailable */ }
+    setState((s) => ({ ...s, preferenceLoaded: true, feedHintDismissed: s.feedHintDismissed || hintHidden, stylePreference: s.stylePreference ?? (saved === "menswear" || saved === "womenswear" ? saved : null) }));
   }, []);
   const generation = useRef<{ preference: StylePreference; reference: string; presentation: string; occasion: string; mood: string; body: string } | null>(null);
   const persistSession = async (token: number) => {
@@ -315,7 +318,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       runId.current++; existingRequest.current = null; generation.current = null;
       setState((s) => ({ ...s, stylePreference, generatedLooks: [], planning: false, generationError: "", selectedConcept: 0 }));
     },
-    reset: () => { runId.current++; existingRequest.current = null; try { localStorage.removeItem(PREFERENCE_KEY); } catch { /* storage unavailable */ } setState({ ...initial, preferenceLoaded: true }); },
+    reset: () => { runId.current++; existingRequest.current = null; try { localStorage.removeItem(PREFERENCE_KEY); localStorage.removeItem(FEED_HINT_KEY); } catch { /* storage unavailable */ } setState({ ...initial, preferenceLoaded: true }); },
     setUploadedItem: (uploadedItem) => { if (state.uploadedItem?.image !== uploadedItem?.image) { runId.current++; existingRequest.current = null; } setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0, generatedLooks: s.uploadedItem?.image === uploadedItem?.image ? s.generatedLooks ?? [] : uploadedItem && isJasonSample(uploadedItem) && s.stylePreference ? jasonPendingLooks(s.stylePreference) : [], planning: s.uploadedItem?.image === uploadedItem?.image ? s.planning ?? false : false, generationError: "" })); },
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),
     setNote: (note) => setState((s) => ({ ...s, note })),
@@ -337,6 +340,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     completeBudget: (budget) => setState((s) => ({ ...s, budget: budget ?? { min: 0, max: BUDGET_LIMIT }, budgetKnown: budget !== null, screen: "upload", activeTab: "style" })),
     setTab: (activeTab) => setState((s) => ({ ...s, activeTab })),
     dismissFeedHint: () => setState((s) => ({ ...s, feedHintDismissed: true })),
+    hideFeedHintForever: () => { try { localStorage.setItem(FEED_HINT_KEY, "1"); } catch { /* storage unavailable */ } setState((s) => ({ ...s, feedHintDismissed: true })); },
     openDraft: (draft) => setState((s) => ({ ...s, draft })),
     vote: (id, v) => setState((s) => ({
       ...s, userVotes: { ...s.userVotes, [id]: v },
