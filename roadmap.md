@@ -1,4 +1,6 @@
 # Roadmap
+- [ ] Restyle selected uploaded onboarding outfits into consistent studio portraits and fill five style gaps
+- [ ] Connect 16 quiz cards, Welcome photos and liked-photo Reveal; verify quiz and demo presets
 - [x] Diagnose and improve Style loading without changing image quality, model preferences, or shopping
 - [x] Verify partial success, reuse, duplicate protection, retries, and practical timing measurements
 - [x] Investigate returning-user quiz bypass and actual sign-in; report only, no behavior changes
