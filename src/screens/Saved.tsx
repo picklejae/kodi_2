@@ -57,7 +57,7 @@ export function Saved() {
       <h1 className="mb-6 text-title font-bold">Saved</h1>
       <section aria-label="Recents">
         <SectionHeader
-          title="Recents"
+          title="Recent Uploads"
           empty={!recentItems.length}
           editing={recentEdit}
           onToggle={() => setRecentEdit(!recentEdit)}
@@ -242,10 +242,10 @@ function SectionHeader({
         <PillButton
           variant="ghost"
           onClick={onToggle}
-          aria-label={editing ? `Done editing ${title}` : `Delete from ${title}`}
+          aria-label={editing ? `Done editing ${title}` : `Edit ${title}`}
           className={cn("h-9 px-0", editing ? "w-14" : "w-9")}
         >
-          {editing ? "Done" : <Trash2 className="h-4 w-4" />}
+          {editing ? "Done" : <Pencil className="h-4 w-4" />}
         </PillButton>
       )}
     </div>
