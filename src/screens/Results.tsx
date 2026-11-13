@@ -41,6 +41,7 @@ export function Results() {
           <p className="mt-3 text-[10px] text-muted-foreground">{look.id === "jason-closet" ? "From your closet · Your photo" : look.status === "success" ? "AI styling concept" : look.status === "loading" ? "Generating this look" : look.status === "idle" ? "Ready to generate" : "Generation failed · no demo fallback"}</p>
           {look.status === "failed" && <PillButton variant="outline" onClick={() => retryLook(index)} className="mt-3"><RefreshCw className="mr-2 h-4 w-4" />Retry this look</PillButton>}
           <p className="mt-3 hidden text-sm font-semibold lg:block">{look.name}</p>
+          {look.status === "success" && look.image && <div className="mt-screen"><PillButton variant="outline" aria-label={`Save ${look.name} look`} aria-pressed={savedOutfits.some((outfit) => outfit.id === `${look.id}:${look.image?.length}`)} onClick={() => { if (saveLook(look)) toast("Saved to your Looks"); }} className="w-auto"><Heart />{savedOutfits.some((outfit) => outfit.id === `${look.id}:${look.image?.length}`) ? "Saved" : "Save look"}</PillButton></div>}
         </div>)}
       </div>
       <div id="selected-concept" role="tabpanel" aria-labelledby={`concept-${active.id}`} className="mt-screen">
@@ -48,10 +49,7 @@ export function Results() {
         <p className="mt-screen text-body-sm">{active.explanation}</p>
         {!active.demoSet && <p className="mt-2 text-xs text-muted-foreground">{active.tier === "safe" ? `Within your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}` : `${active.tier === "step" ? "One step" : "A bold move"} from your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}${active.shift ? `: ${active.shift}` : ""}`}</p>}
         <div className="mt-5 flex flex-wrap gap-2"><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">More casual · Demo</PillButton><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">Lower budget · Demo</PillButton>
-        {active.status === "success" && active.image && active.id !== "jason-closet" && (() => {
-          const alreadySaved = savedOutfits.some((outfit) => outfit.id === `${active.id}:${active.image?.length}`);
-          return <PillButton variant="outline" aria-pressed={alreadySaved} onClick={() => { if (saveLook(active)) toast("Saved to your Looks"); }} className="h-9 w-auto gap-1 px-3 text-xs"><Heart className={alreadySaved ? "h-3 w-3 fill-foreground" : "h-3 w-3"} />{alreadySaved ? "Saved" : "Save look"}</PillButton>;
-        })()}</div>
+        </div>
         {active.id === "jason-closet" ? <section className="mt-7"><h3 className="font-serif text-2xl">In your closet</h3><div className="mt-3 divide-y divide-border">{active.items.map((item) => <div key={item.name} className="flex flex-wrap items-center justify-between gap-2 py-3"><p className="text-sm">{item.name}{item.role === "Your piece" ? " (your piece)" : ""}</p><Chip className="text-[10px]">In your closet</Chip></div>)}</div></section> : <ShoppingSection look={active} />}
       </div>
     </div>

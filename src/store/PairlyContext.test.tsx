@@ -104,11 +104,11 @@ describe("quiz state", () => {
     act(() => result.current.createPost({ image: "board-one", question: "First", occasion: null }));
     act(() => result.current.openDraft({ image: "board-two", ownedImage: "owned", look }));
     act(() => result.current.createPost({ image: "board-two", question: "Second", occasion: null }));
-    const mine = result.current.posts.filter((p) => p.isUserPost);
+    const mine = result.current.posts.filter((p) => p.isUserPost && p.id !== "jason-heritage" && p.id !== "jason-leather");
     expect(mine.map((p) => p.image)).toEqual(["board-two", "board-one"]);
     expect(mine.every((p) => p.look?.items.length === 2 && p.ownedImage === "owned")).toBe(true);
     act(() => result.current.reset());
-    expect(result.current.posts.some((p) => p.isUserPost)).toBe(false);
+    expect(result.current.posts.filter((p) => p.isUserPost).map((p) => p.id)).toEqual(["jason-heritage", "jason-leather"]);
   });
   it("carries the optional note to Results and counts every shop tap until reset", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
