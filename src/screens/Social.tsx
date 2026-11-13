@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, MessageCircle, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircle, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { BottomSheet, Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryButton, TextField, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 import { FEEDBACK_CHIPS, type SocialPost } from "@/data/social";
@@ -47,10 +47,10 @@ export function Social() {
     <div className="px-screen pt-topbar pb-tabbar lg:grid lg:grid-flow-dense lg:grid-cols-2 lg:items-start lg:gap-x-screen">
       <h1 className="text-title font-bold lg:col-span-2">Feed</h1>
       <div className="mt-screen lg:col-span-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
-      {cur && <div className="mt-screen flex items-center gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look">
+      {cur && <div className="relative mt-screen flex items-center gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look">
         <img src={cur.image} alt={cur.question} className="aspect-[3/4] w-touch shrink-0 rounded-none bg-secondary object-cover" />
         <div className="flex min-w-0 flex-1 flex-col"><SectionLabel>Your look</SectionLabel><p className="text-body-sm">Yes {cur.votesUp} · No {cur.votesDown}</p><TextLinkButton onClick={() => setPinnedSheet(true)}>View feedback</TextLinkButton></div>
-        {mine.length > 1 && <div className="flex shrink-0 items-center"><TextLinkButton aria-label="Previous look" className="min-h-touch min-w-touch justify-center" onClick={() => setPinIdx((pinIdx - 1 + mine.length) % mine.length)}><ArrowLeft /></TextLinkButton><TextLinkButton aria-label="Next look" className="min-h-touch min-w-touch justify-center" onClick={() => setPinIdx((pinIdx + 1) % mine.length)}><ArrowRight /></TextLinkButton></div>}
+        {mine.length > 1 && <><button type="button" aria-label="Previous look" className="absolute top-1/2 z-10 flex size-touch -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring left-0 -translate-x-1/2" onClick={() => setPinIdx((pinIdx - 1 + mine.length) % mine.length)}><ChevronLeft className="size-5" /></button><button type="button" aria-label="Next look" className="absolute top-1/2 z-10 flex size-touch -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring right-0 translate-x-1/2" onClick={() => setPinIdx((pinIdx + 1) % mine.length)}><ChevronRight className="size-5" /></button></>}
       </div>}
       {!cur && <div className="mt-screen flex items-center justify-between gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look"><p className="text-body-sm">Post your look to get votes</p><TextLinkButton onClick={() => openDraft({ image: null })}>Post a look</TextLinkButton></div>}
       <div className="mt-screen flex w-full gap-screen border-b border-border lg:col-start-2" role="group" aria-label="Feed filter">
@@ -84,7 +84,7 @@ export function Social() {
           <Comments post={cur} /></div>}
       </BottomSheet>
       <BottomSheet open={!feedHintDismissed} onClose={dismissFeedHint} title="Swipe outfits">
-        <div className="flex flex-col items-center gap-screen text-center"><div className="flex gap-screen" aria-hidden="true"><ArrowLeft /><ArrowRight /></div><p className="text-heading">Swipe right if you love it, left to skip</p><SecondaryButton aria-label="Dismiss swipe hint" onClick={dismissFeedHint}>Explore outfits</SecondaryButton></div>
+        <div className="flex flex-col items-center gap-screen text-center"><div className="flex gap-screen" aria-hidden="true"><ChevronLeft /><ChevronRight /></div><p className="text-heading">Swipe right if you love it, left to skip</p><SecondaryButton aria-label="Dismiss swipe hint" onClick={dismissFeedHint}>Explore outfits</SecondaryButton></div>
       </BottomSheet>
     </div>
   );
