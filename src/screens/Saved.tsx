@@ -201,7 +201,7 @@ export function Saved() {
                       image: selected.imageUrl,
                       name: selected.productName,
                       category: selected.category,
-                      attributes: GENERIC_ATTRIBUTES[selected.category],
+                      attributes: selected.attributes ?? GENERIC_ATTRIBUTES[selected.category],
                       source: "sample",
                     });
                     setSelected(null);

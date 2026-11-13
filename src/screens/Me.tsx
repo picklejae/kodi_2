@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Chip } from "@/components/pairly/Chip";
 import { PillButton } from "@/components/pairly/PillButton";
 import { DEFAULT_CODE, STYLE_TYPES } from "@/data/styleTypes";
@@ -8,7 +9,8 @@ import { Photo } from "@/components/pairly/Photo";
 import { PreferenceChoice } from "@/components/pairly/PreferenceChoice";
 
 export function Me() {
-  const { styleType, axisScores, retake, savedLooks, posts } = usePairly();
+  const { styleType, axisScores, retake, savedLooks, savedOutfits, posts } = usePairly();
+  const navigate = useNavigate();
   const t = STYLE_TYPES[styleType ?? DEFAULT_CODE];
   return (
     <div className="px-6 pt-12">
@@ -21,8 +23,9 @@ export function Me() {
       <section className="mt-8"><h2 className="font-serif text-2xl">What are you looking for?</h2><p className="mt-1 text-sm text-muted-foreground">Changing this clears current moodboards.</p><div className="mt-3"><PreferenceChoice compact /></div></section>
       <section className="mt-8 pb-8">
         <h2 className="font-serif text-2xl">My looks</h2>
-        {!savedLooks.length && !posts.some((p) => p.isUserPost) && <p className="mt-3 text-sm text-muted-foreground">No looks yet.</p>}
-        <div className="mt-4 space-y-6">
+        {!savedOutfits.length && !savedLooks.length && !posts.some((p) => p.isUserPost) && <p className="mt-3 text-sm text-muted-foreground">No looks yet.</p>}
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {savedOutfits.map((outfit) => <article key={outfit.id} aria-label="Closet look"><PillButton variant="ghost" aria-label={`Open ${outfit.ownedName} look`} onClick={() => navigate({ to: "/closet/$id", params: { id: outfit.id } })} className="block aspect-[3/4] h-auto overflow-hidden rounded-lg p-0"><Photo src={outfit.imageUrl} alt={outfit.ownedName} className="h-full w-full" /></PillButton></article>)}
           {posts.filter((p) => p.isUserPost).map((p) => <article key={p.id} aria-label="Posted look">
             {p.look && p.ownedImage ? <OutfitBoard itemImage={p.ownedImage} items={p.look.items} /> : <Photo src={p.image} alt={p.question} className="aspect-[9/8] rounded-lg" />}
             <p className="mt-2 text-xs text-muted-foreground">Posted</p><p className="mt-1 text-sm">{p.question}</p>

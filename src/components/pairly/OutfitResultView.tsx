@@ -55,9 +55,7 @@ export function OutfitResultView({
           {pick.reason}
         </p>
         <div className="mt-4 divide-y divide-border">
-          {pick.items.map((item) => (
-            <PickRow key={item.id} item={item} />
-          ))}
+          {products?.length && products.every((p) => p.isOwned) ? products.map((p) => <div key={p.id} className="py-3"><p className="text-sm font-semibold">{p.name}</p><p className="mt-1 text-xs text-muted-foreground">My closet · In your closet</p></div>) : pick.items.map((item) => <PickRow key={item.id} item={item} />)}
         </div>
       </article>
     </>
@@ -83,9 +81,8 @@ function HotspotImage({ imageUrl, products }: { imageUrl: string; products: Save
   }, []);
   return (
     <div ref={ref} className="relative aspect-[3/4]" onClick={() => setOpen(null)}>
-      <Photo src={imageUrl} alt="Saved outfit" className="h-full w-full rounded-2xl" />
+      <Photo src={imageUrl} alt="Saved outfit" className="h-full w-full rounded-2xl [&_img]:object-contain" />
       {products
-        .filter((p) => !p.isOwned)
         .map((p) => (
           <div key={p.id} className="absolute" style={{ left: `${p.x}%`, top: `${p.y}%` }}>
             <PillButton
@@ -120,10 +117,10 @@ function HotspotImage({ imageUrl, products }: { imageUrl: string; products: Save
                   <div className="min-w-0">
                     <p className="text-[10px] text-muted-foreground">{p.brand}</p>
                     <p className="text-xs font-semibold">{p.name}</p>
-                    <p className="mt-1 text-xs">{p.price}</p>
+                    <p className="mt-1 text-xs">{p.isOwned ? "In your closet" : p.price}</p>
                   </div>
                 </div>
-                <PillButton
+                {!p.isOwned && p.shopUrl && <PillButton
                   className="mt-3 h-8"
                   onClick={() => {
                     countShopClick();
@@ -131,7 +128,7 @@ function HotspotImage({ imageUrl, products }: { imageUrl: string; products: Save
                   }}
                 >
                   Shop
-                </PillButton>
+                </PillButton>}
               </div>
             )}
           </div>

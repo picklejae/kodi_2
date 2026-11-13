@@ -1,3 +1,4 @@
+import { JASON_SAMPLE } from "@/data/jason";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PairlyProvider, usePairly } from "./PairlyContext";
@@ -15,6 +16,45 @@ function deferred() {
 const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
 beforeEach(() => { localStorage.clear(); vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it("keeps Jason’s real first look and generates only the other two", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ ...JASON_SAMPLE, source: "sample" }));
+    expect(result.current.generatedLooks?.[0]?.name).toBe("From your closet");
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(2));
+    expect(result.current.generatedLooks).toHaveLength(3);
+    expect(result.current.generatedLooks?.[0]?.items.map((i) => i.name)).toEqual(["Navy waxed jacket", "Blue check shirt", "Beige wide chinos", "Black lace-up boots"]);
+    expect(result.current.generatedLooks?.[0]?.items.every((i) => i.owned && i.price === null && i.shopUrl === null)).toBe(true);
+    expect(result.current.generatedLooks?.[0]?.status).toBe("success");
+    const own = result.current.generatedLooks?.[0], item = own?.items[0];
+    if (!own || !item) throw new Error("Missing closet look");
+    act(() => result.current.searchShopping(own, item));
+    expect(mocks.shopping).not.toHaveBeenCalled();
+    act(() => result.current.findMatches());
+    expect(mocks.plan).toHaveBeenCalledTimes(1);
+  });
+  it("preserves Jason’s photo when planning fails and supports retry", async () => {
+    mocks.plan.mockResolvedValueOnce({ ok: false, error: "Planning unavailable" });
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ ...JASON_SAMPLE, source: "sample" }));
+    const photo = result.current.generatedLooks?.[0]?.image;
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(result.current.generationError).toBe("Planning unavailable"));
+    expect(result.current.generatedLooks?.map((l) => l.status)).toEqual(["success", "failed", "failed"]);
+    expect(result.current.generatedLooks?.[0]?.image).toBe(photo);
+    act(() => result.current.retryLook(1));
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(2));
+  });
+  it("a regular upload with the same name still generates all three", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ ...JASON_SAMPLE, source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
+    expect(result.current.generatedLooks?.[0]?.id).toBe("ai-0");
+  });
   it("shopping errors and no-match keep moodboards and bound retry to two attempts", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setStylePreference("womenswear"));

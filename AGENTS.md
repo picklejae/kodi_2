@@ -32,7 +32,7 @@ use the editor.
 ## Project rules
 - Main demo screens switch through PairlyContext on `/`; closet outfit details use `/closet/$id`, with the provider at the root so in-memory collections survive navigation.
 - Track Feed hint dismissal in shared React state; why: it appears only once per demo session across tab and detail navigation, without persistence.
-- Style generation uses server-only AI Gateway planning and reference-image edits; per-look results live in shared React state, never fall back to demos, and Closet retains OutfitResultView.
+- Style generation uses server-only AI Gateway planning and reference-image edits; per-look results live in shared React state, never fall back to demos; the exact Jason chinos sample reserves its first slot for an owned photo and renders only the other two, while Closet retains OutfitResultView.
 - Reuse Style generation for identical garment/category/occasion/mood inputs and reveal the first success unless a look was explicitly selected; why: returning never repeats inference and mobile never waits on a slower default look.
 - Keep selected Style concept in shared React state and expand only Style results on desktop; why: look selection survives tab navigation without widening other screens.
 - Saved collections and uploads remain in React state with literal mock seeds; why: this demo intentionally resets on refresh without a backend.
@@ -44,3 +44,5 @@ use the editor.
 - Keep attributed vote cohorts and feedback on mock posts, and retain saved look snapshots plus posted boards in the shared store; why: Social filters and Me history must stay consistent after switching pieces.
 - Persist the Menswear/Womenswear clothing preference in localStorage (read in an effect) and include it in the Style request key; why: returning visitors skip the choice and a change invalidates stale moodboards.
 - Keep shopping RPCs server-side and on-demand, restrict discovery to configured retailer product paths, and key shared per-role results by outfit, preference, market and budget; why: browsing never regenerates moodboards or exposes unrestricted URL fetching.
+
+- Keep legacy SAMPLES order for unchanged DEV defaults; use UPLOAD_SAMPLES for the Jason-first chooser, and store uploaded Jason media as local CDN asset pointers; why: preserves presets without committing binary uploads.

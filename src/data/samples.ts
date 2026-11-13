@@ -1,3 +1,4 @@
+import { JASON_SAMPLE } from "./jason";
 export type ItemCategory = "jacket" | "coat" | "pants" | "shirt" | "knit" | "shoes";
 export const CATEGORIES: ItemCategory[] = ["jacket", "coat", "pants", "shirt"];
 
@@ -11,6 +12,8 @@ export const SAMPLES: SampleItem[] = [
   { id: "denim", name: "Light denim", image: img("1541099649105-f69ad21f3246"), category: "pants", attributes: ["Light blue", "Denim", "Straight"] },
   { id: "oxford", name: "Oxford shirt", image: img("1596755094514-f87e34085b2c"), category: "shirt", attributes: ["White", "Cotton", "Button-down"] },
 ];
+
+export const UPLOAD_SAMPLES: SampleItem[] = [JASON_SAMPLE, ...SAMPLES];
 
 // Simulated analysis for real uploads: generic attributes per chosen category.
 export const GENERIC_ATTRIBUTES: Record<ItemCategory, string[]> = {

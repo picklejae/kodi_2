@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Jason demo user: waiting for jason-fit-01.jpg through jason-fit-08.jpg and piece-beige-chinos.jpg; update Upload, selected-sample Results, Closet, Me and tests only after photos arrive
+- [ ] Jason demo user: use the earlier photos for Upload, selected-sample Results, Closet and Me; verify owned markers, two AI looks, error survival and unchanged presets
 - [ ] Studio onboarding photos: paused after interrupted edits; waiting for the photo task to resume
 - [x] Diagnose and improve Style loading without changing image quality, model preferences, or shopping
 - [x] Verify partial success, reuse, duplicate protection, retries, and practical timing measurements
