@@ -6,20 +6,20 @@ import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 /** Portal target for sheets that must stay inside the phone frame. */
 export const PHONE_FRAME_ID = "phone-frame";
 
-/** One page container shared by every screen: same width at every breakpoint. */
-export function PhoneFrame({ children, phone = false }: { children: ReactNode; phone?: boolean }) {
+/** Scrolls the phone screen (not the window) back to the top. */
+export function scrollPhoneTop() {
+  document.querySelector(`#${PHONE_FRAME_ID} > div`)?.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/** Every screen renders inside one fixed iPhone-sized frame. */
+export function PhoneFrame({ children }: { children: ReactNode }) {
   const { reset } = usePairly();
-  const zoom = usePhoneZoom(phone);
+  const zoom = usePhoneZoom();
   const scroller = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   // The frame scrolls internally, so window.scrollTo in ScreenSync can't reset it.
   useEffect(() => { scroller.current?.scrollTo(0, 0); }, [pathname]);
   const resetLink = <div className="absolute right-screen top-0 z-20"><TextLinkButton onClick={reset} aria-label="Reset demo">Reset demo</TextLinkButton></div>;
-  if (!phone) return (
-    <div className="min-h-dvh overflow-x-clip bg-background">
-      <div className="page-container relative flex min-h-dvh flex-col">{resetLink}{children}</div>
-    </div>
-  );
   return (
     <div className="flex h-dvh items-center justify-center overflow-hidden bg-background">
       {/* Fixed iPhone 18 viewport (402×874 pt) at every breakpoint, with phone-sized gutters; not responsive by design.
@@ -35,14 +35,13 @@ export function PhoneFrame({ children, phone = false }: { children: ReactNode; p
 const PHONE_W = 402, PHONE_H = 874, MARGIN = 16;
 
 /** Shrinks the fixed phone uniformly when the window is smaller, so the frame never scrolls; layout stays 402×874. */
-function usePhoneZoom(phone: boolean) {
+function usePhoneZoom() {
   const [zoom, setZoom] = useState(1);
   useEffect(() => {
-    if (!phone) return;
     const fit = () => setZoom(Math.min(1, (innerHeight - 2 * MARGIN) / PHONE_H, (innerWidth - 2 * MARGIN) / PHONE_W));
     fit();
     addEventListener("resize", fit);
     return () => removeEventListener("resize", fit);
-  }, [phone]);
+  }, []);
   return zoom;
 }

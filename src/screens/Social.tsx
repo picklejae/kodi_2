@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { scrollPhoneTop } from "@/components/pairly/PhoneFrame";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, MessageCircle, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
@@ -33,7 +34,7 @@ export function Social() {
   useEffect(() => {
     if (!highlightedPost || !feedHintDismissed) return;
     const frame = requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollPhoneTop();
       setHighlight(highlightedPost);
     });
     const timer = setTimeout(() => setHighlight(null), 3000);
@@ -45,10 +46,10 @@ export function Social() {
     setCommentId(null); setComment(""); toast("Thanks for the feedback");
   };
   return (
-    <div className="px-screen pt-topbar pb-tabbar lg:grid lg:grid-flow-dense lg:grid-cols-2 lg:items-start lg:gap-x-screen">
-      <h1 className="text-title font-bold lg:col-span-2">Feed</h1>
-      <div className="mt-screen lg:col-span-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New Post</PrimaryButton></div>
-      {cur && <div className="relative mt-screen flex items-center gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look">
+    <div className="px-screen pt-topbar pb-tabbar">
+      <h1 className="text-title font-bold">Feed</h1>
+      <div className="mt-screen"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New Post</PrimaryButton></div>
+      {cur && <div className="relative mt-screen flex items-center gap-screen border border-border p-screen" aria-label="Your look">
         {/* Clear but quick change of look: 48px slide + fade from the side of the arrow pressed, 320ms ease-out-cubic. Clipped so it never spills past the card border. */}
         <div className="flex min-w-0 flex-1 overflow-hidden">
         <div key={cur.id} className={cn("flex min-w-0 flex-1 items-center gap-screen animate-in fade-in duration-[320ms] ease-[cubic-bezier(0.33,1,0.68,1)] motion-reduce:animate-none", pinDir === "next" ? "slide-in-from-right-12" : "slide-in-from-left-12")}>
@@ -58,12 +59,12 @@ export function Social() {
         </div>
         {mine.length > 1 && <><button type="button" aria-label="Previous look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring left-0 -translate-x-1/2" onClick={() => { setPinDir("prev"); setPinIdx((pinIdx - 1 + mine.length) % mine.length); }}><ChevronLeft className="size-4" /></button><button type="button" aria-label="Next look" className="absolute top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring right-0 translate-x-1/2" onClick={() => { setPinDir("next"); setPinIdx((pinIdx + 1) % mine.length); }}><ChevronRight className="size-4" /></button></>}
       </div>}
-      {!cur && <div className="mt-screen flex items-center justify-between gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look"><p className="text-body-sm">Post your look to get votes</p><TextLinkButton onClick={() => openDraft({ image: null })}>Post a look</TextLinkButton></div>}
-      <div className="mt-screen flex w-full gap-screen border-b border-border lg:col-start-2" role="group" aria-label="Feed filter">
+      {!cur && <div className="mt-screen flex items-center justify-between gap-screen border border-border p-screen" aria-label="Your look"><p className="text-body-sm">Post your look to get votes</p><TextLinkButton onClick={() => openDraft({ image: null })}>Post a look</TextLinkButton></div>}
+      <div className="mt-screen flex w-full gap-screen border-b border-border" role="group" aria-label="Feed filter">
         {([["similar", "For you"], ["adventurous", "Trending"]] as const).map(([v, label]) => <button key={v} type="button" aria-pressed={filter === v} onClick={() => setFilter(v)} className={cn("-mb-px h-touch border-b-2 text-body-sm font-medium transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring", filter === v ? "border-foreground text-foreground" : "border-transparent text-muted-foreground")}>{label}</button>)}
       </div>
-      <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card lg:col-start-1 lg:row-span-6">
-        {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
+      <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card">
+        {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={scrollPhoneTop}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
       </div>
       {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p></div>}
       <div className="mt-screen flex items-center justify-between" aria-label="Outfit feedback">

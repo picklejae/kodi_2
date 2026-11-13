@@ -28,7 +28,7 @@ export function Upload() {
     uploadedItem && setUploadedItem({ ...uploadedItem, category: c, attributes: GENERIC_ATTRIBUTES[c] });
 
   return (
-    <div className="flex flex-1 flex-col px-screen pb-8 pt-12 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+    <div className="flex flex-1 flex-col px-screen pb-8 pt-12">
       <div>
       <div className="flex items-center gap-2">
         <button onClick={() => go("reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>

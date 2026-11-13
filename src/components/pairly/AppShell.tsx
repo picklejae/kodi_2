@@ -50,8 +50,6 @@ export function ScreenSync() {
   return null;
 }
 
-const PHONE_SCREENS = ["welcome", "diagnosis", "reveal", "budget"];
-
 export function AppShell() {
   const { screen, activeTab } = usePairly();
   const { pathname } = useLocation();
@@ -75,7 +73,7 @@ export function AppShell() {
   );
   return (
     <>
-      <PhoneFrame phone={PHONE_SCREENS.includes(s) || tab === "saved"}>{body}</PhoneFrame>
+      <PhoneFrame>{body}</PhoneFrame>
       <DevJumper />
     </>
   );
