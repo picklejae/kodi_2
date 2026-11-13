@@ -47,10 +47,13 @@ function Screens() {
   );
 }
 
+const PHONE_SCREENS = ["welcome", "diagnosis", "reveal", "budget"];
+
 function Index() {
+  const { screen } = usePairly();
   return (
     <>
-      <PhoneFrame><Screens /></PhoneFrame>
+      <PhoneFrame phone={PHONE_SCREENS.includes(screen)}><Screens /></PhoneFrame>
       <DevJumper />
     </>
   );
