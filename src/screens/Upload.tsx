@@ -7,9 +7,10 @@ import { SelectChip } from "@/components/pairly/SelectChip";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
 import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, samplesFor, type ItemCategory } from "@/data/samples";
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
+import { TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, retake, quizSkipped, recordUpload, stylePreference, preferenceLoaded, setStylePreference } = usePairly();
   useEffect(() => { if (preferenceLoaded && !stylePreference) setStylePreference("menswear"); }, [preferenceLoaded, stylePreference, setStylePreference]);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -31,8 +32,8 @@ export function Upload() {
     <div className="flex flex-1 flex-col px-screen pb-8 pt-12">
       <div>
       <div className="flex items-center gap-2">
-        <button onClick={() => go("reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
-        <StyleTypeChip />
+        <button onClick={() => go(quizSkipped ? "welcome" : "reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
+        {quizSkipped ? <TextLinkButton onClick={retake}>Find Your Style</TextLinkButton> : <StyleTypeChip />}
       </div>
       <h1 className="mt-6 text-title font-bold">Style</h1>
       <p className="mt-2 text-sm text-muted-foreground">Snap one piece you already own.</p>
