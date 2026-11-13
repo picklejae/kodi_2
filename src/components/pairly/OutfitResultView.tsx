@@ -24,11 +24,6 @@ export function OutfitResultView({
       <HotspotImage imageUrl={imageUrl} products={products} />
       <h2 className="mt-4 font-serif text-2xl">{lookName}</h2>
       <p className="mt-2 text-sm leading-relaxed">{explanation}</p>
-      <div className="mt-4 divide-y divide-border">
-        {products.map((product, index) => (
-          <ProductRow key={`${product.name}-${index}`} product={product} />
-        ))}
-      </div>
     </article>
   );
 }
@@ -116,35 +111,6 @@ function HotspotImage({ imageUrl, products }: { imageUrl: string; products: Conc
           </div>
         );
       })}
-    </div>
-  );
-}
-
-function ProductRow({ product }: { product: ConceptItem }) {
-  const { countShopClick } = usePairly();
-  return (
-    <div className="flex gap-3 py-4 first:pt-0 last:pb-0">
-      {product.image && <Photo src={product.image} alt={product.name} className="h-28 w-20 shrink-0 rounded-lg" />}
-      <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold uppercase text-muted-foreground">
-          {product.owned ? "Your piece — Already yours" : product.role}
-        </p>
-        <h3 className="mt-1 font-serif text-lg leading-snug">{product.name}</h3>
-        {product.brand && <p className="text-xs text-muted-foreground">{product.brand}</p>}
-        {priceLabel(product) && <p className="mt-1 text-sm font-semibold">{priceLabel(product)}</p>}
-        {product.shopUrl && (
-          <PillButton
-            variant="outline"
-            className="mt-2 h-9"
-            onClick={() => {
-              countShopClick();
-              window.open(product.shopUrl ?? undefined, "_blank", "noopener,noreferrer");
-            }}
-          >
-            Shop
-          </PillButton>
-        )}
-      </div>
     </div>
   );
 }
