@@ -35,6 +35,25 @@ function priceLabel(price: number | null, currency: string | null = "USD") {
 }
 type Lookup = RealProduct | "loading" | { error: string };
 
+const SHOP_CACHE_KEY = "kodi.shopCache.v1";
+const SHOP_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+const shopCacheId = (pref: string, p: ConceptItem) => JSON.stringify([pref, p.role, p.name.trim().toLowerCase()]);
+function readShopCache(pref: string, product: ConceptItem): RealProduct | null {
+  try {
+    const all = JSON.parse(localStorage.getItem(SHOP_CACHE_KEY) ?? "{}") as Record<string, { at: number; product: RealProduct }>;
+    const entry = all[shopCacheId(pref, product)];
+    return entry && Date.now() - entry.at < SHOP_CACHE_TTL ? entry.product : null;
+  } catch { return null; }
+}
+function writeShopCache(pref: string, product: ConceptItem, hit: RealProduct) {
+  try {
+    const all = JSON.parse(localStorage.getItem(SHOP_CACHE_KEY) ?? "{}") as Record<string, { at: number; product: RealProduct }>;
+    all[shopCacheId(pref, product)] = { at: Date.now(), product: hit };
+    const keep = Object.entries(all).sort((a, b) => b[1].at - a[1].at).slice(0, 60);
+    localStorage.setItem(SHOP_CACHE_KEY, JSON.stringify(Object.fromEntries(keep)));
+  } catch { /* storage full or blocked: skip caching */ }
+}
+
 function HotspotImage({ imageUrl, products }: { imageUrl: string; products: ConceptItem[] }) {
   return (
     <div className="relative aspect-[3/4]">
@@ -51,13 +70,21 @@ export function HotspotLayer({ products }: { products: ConceptItem[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { countShopClick, stylePreference } = usePairly();
   const shopFn = useServerFn(findShoppingProducts);
-  // shortcut: lookups live per mounted view, so reopening the outfit searches again (Firecrawl credits); move to the store if that matters.
+  // Store matches are cached in this browser (7 days) so a second tap is instant and spends no Firecrawl credits.
+  // Only successful matches are kept; "no match" and errors are remembered for this view only, so a retry is possible.
+  const pref = stylePreference ?? "menswear";
   const [found, setFound] = useState<Record<string, Lookup>>({});
   const lookup = (product: ConceptItem) => {
     if (product.shopUrl || found[product.name]) return;
+    const cached = readShopCache(pref, product);
+    if (cached) { setFound((f) => ({ ...f, [product.name]: cached })); return; }
     setFound((f) => ({ ...f, [product.name]: "loading" }));
-    shopFn({ data: { role: product.role as ShoppingInput["role"], description: product.name, preference: stylePreference ?? "menswear" } })
-      .then((r) => setFound((f) => ({ ...f, [product.name]: r.status === "success" && r.products[0] ? r.products[0] : { error: r.error ?? "No store match for this piece yet." } })))
+    shopFn({ data: { role: product.role as ShoppingInput["role"], description: product.name, preference: pref } })
+      .then((r) => {
+        const hit = r.status === "success" && r.products[0] ? r.products[0] : null;
+        if (hit) writeShopCache(pref, product, hit);
+        setFound((f) => ({ ...f, [product.name]: hit ?? { error: r.error ?? "No store match for this piece yet." } }));
+      })
       .catch(() => setFound((f) => ({ ...f, [product.name]: { error: "Shopping connection interrupted." } })));
   };
   const placements = hotspotPlacements(products);
