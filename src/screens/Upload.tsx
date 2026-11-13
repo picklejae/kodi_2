@@ -112,7 +112,7 @@ export function Upload() {
             <div className="animate-in fade-in duration-300">
               {uploadedItem.source === "upload" ? (
                 <div className="mt-5">
-                  <p className="text-sm font-medium">Which piece are we styling</p>
+                  <p className="text-sm font-medium">Which piece are we styling?</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {CATEGORIES.map((c) => <SelectChip key={c} active={uploadedItem.category === c} onClick={() => setCategory(c)}><span className="capitalize">{c}</span></SelectChip>)}
                   </div>
