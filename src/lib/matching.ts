@@ -9,7 +9,7 @@ export type Picks = Record<Boldness, Pick>;
 // Same or near-duplicate catalog categories for an uploaded item.
 export const EXCLUDED: Record<ItemCategory, CatalogCategory[]> = {
   jacket: ["outerwear"], coat: ["outerwear"], pants: ["pants"], skirt: ["pants"], shirt: ["shirts"],
-  knit: ["knits"], shoes: ["shoes"],
+  knit: ["knits"], shoes: ["shoes"], bag: ["accessories"],
 };
 
 const OCCASION_MOOD: Record<Occasion, "F" | "S"> = { coffee: "S", recruiting: "F", date: "F", weekend: "S" };

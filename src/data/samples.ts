@@ -1,30 +1,30 @@
 import { JASON_SAMPLE } from "./jason";
-import womenSkirt from "@/assets/samples/women-satin-midi-skirt.jpg";
-import womenTrench from "@/assets/samples/women-trench-coat.jpg";
-import womenJeans from "@/assets/samples/women-jeans.jpg";
-import womenCardigan from "@/assets/samples/women-cardigan.jpg";
-export type ItemCategory = "jacket" | "coat" | "pants" | "skirt" | "shirt" | "knit" | "shoes";
+import menBlazer from "@/assets/samples/men-navy-blazer.jpg";
+import menCoat from "@/assets/samples/men-camel-coat.jpg";
+import menJeans from "@/assets/samples/men-light-jeans.jpg";
+import menDerbies from "@/assets/samples/men-brown-derbies.jpg";
+import womenCoat from "@/assets/samples/women-camel-coat.jpg";
+import womenJeans from "@/assets/samples/women-light-jeans.jpg";
+import womenBlazer from "@/assets/samples/women-navy-blazer.jpg";
+import womenBag from "@/assets/samples/women-burgundy-bag.jpg";
+export type ItemCategory = "jacket" | "coat" | "pants" | "skirt" | "shirt" | "knit" | "shoes" | "bag";
 export const CATEGORIES: ItemCategory[] = ["jacket", "coat", "pants", "shirt"];
 
 export interface SampleItem { id: string; name: string; image: string; category: ItemCategory; attributes: string[] }
 
-const img = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=70`;
-
+// Default samples: original AI-generated single-garment product photos (no person), one studio style.
 export const SAMPLES: SampleItem[] = [
-  { id: "blazer", name: "Navy blazer", image: img("1594938298603-c8148c4dae35"), category: "jacket", attributes: ["Navy", "Wool", "Tailored"] },
-  { id: "coat", name: "Camel coat", image: img("1539533018447-63fcce2678e3"), category: "coat", attributes: ["Camel", "Wool", "Long"] },
-  { id: "denim", name: "Light denim", image: img("1541099649105-f69ad21f3246"), category: "pants", attributes: ["Light blue", "Denim", "Straight"] },
-  { id: "oxford", name: "Oxford shirt", image: img("1596755094514-f87e34085b2c"), category: "shirt", attributes: ["White", "Cotton", "Button-down"] },
+  { id: "blazer", name: "Navy blazer", image: menBlazer, category: "jacket", attributes: ["Navy", "Wool", "Tailored"] },
+  { id: "coat", name: "Camel coat", image: menCoat, category: "coat", attributes: ["Camel", "Wool", "Long"] },
+  { id: "denim", name: "Light denim", image: menJeans, category: "pants", attributes: ["Light blue", "Denim", "Straight"] },
+  { id: "derby", name: "Brown derbies", image: menDerbies, category: "shoes", attributes: ["Dark brown", "Leather", "Lace-up"] },
 ];
 
-// Womenswear samples: Zara product shots on a plain background (team reference board, 11/13).
-// Bundled in src/assets/samples (no outside loading); original product pages: zara.com satin-midi-skirt p02157252,
-// zw-collection belted trench p00518241, women's high-waist jeans, women's knit cardigans.
 export const WOMEN_SAMPLES: SampleItem[] = [
-  { id: "w-skirt", name: "Satin midi skirt", image: womenSkirt, category: "skirt", attributes: ["Beige", "Satin", "Midi"] },
-  { id: "w-trench", name: "Trench coat", image: womenTrench, category: "coat", attributes: ["Beige", "Cotton", "Belted"] },
-  { id: "w-jeans", name: "Jeans", image: womenJeans, category: "pants", attributes: ["Light blue", "Denim", "High waist"] },
-  { id: "w-cardigan", name: "Cardigan", image: womenCardigan, category: "knit", attributes: ["Ecru", "Knit", "Gold buttons"] },
+  { id: "w-coat", name: "Camel coat", image: womenCoat, category: "coat", attributes: ["Camel", "Wool", "Tailored"] },
+  { id: "w-jeans", name: "Light jeans", image: womenJeans, category: "pants", attributes: ["Light blue", "Denim", "Straight"] },
+  { id: "w-blazer", name: "Navy blazer", image: womenBlazer, category: "jacket", attributes: ["Navy", "Wool", "Fitted"] },
+  { id: "w-bag", name: "Burgundy handbag", image: womenBag, category: "bag", attributes: ["Burgundy", "Leather", "Structured"] },
 ];
 export function samplesFor(preference: "menswear" | "womenswear" | null): SampleItem[] {
   return preference === "womenswear" ? WOMEN_SAMPLES : SAMPLES;
@@ -41,6 +41,7 @@ export const GENERIC_ATTRIBUTES: Record<ItemCategory, string[]> = {
   shirt: ["Light", "Cotton", "Classic"],
   knit: ["Soft", "Knitted", "Relaxed"],
   shoes: ["Leather", "Classic"],
+  bag: ["Leather", "Structured"],
 };
 
 export type Occasion = "coffee" | "recruiting" | "date" | "weekend";
