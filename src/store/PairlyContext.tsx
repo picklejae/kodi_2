@@ -181,7 +181,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     const profile = styleProfile(state.styleType, state.axisScores, state.quizSkipped);
     const skipCache = force || bypassStyleCache(window.location.search);
     const requestContext = { preference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600), body: generationBody(state.body) };
-    setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
+    setState((s) => ({ ...s, screen: "results", activeTab: "style", picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
     try {
       const sampleId = item.source === "sample" ? UPLOAD_SAMPLES.find((sample) => sample.image === item.image)?.id : undefined;
       let identityPromise = imageIdentities.current.get(item.image);
