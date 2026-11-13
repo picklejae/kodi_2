@@ -149,7 +149,7 @@ export function HotspotLayer({ products }: { products: ConceptItem[] }) {
                       </div>
                       {hit === "loading" && <p className="mt-2 text-[10px] text-muted-foreground">Finding it in stores…</p>}
                       {hit && hit !== "loading" && "error" in hit && <p className="mt-2 text-[10px] text-muted-foreground">{hit.error}</p>}
-                      {url && <p className="mt-2 text-[10px] font-semibold underline underline-offset-4">View at {real?.retailer ?? "store"}</p>}
+                      {url && <p className="mt-2 text-[10px] font-semibold underline underline-offset-4">View at {real?.retailer ?? (url.includes("nordstrom.com") ? "Nordstrom" : "store")}</p>}
                     </>
                   );
                   return url ? (
