@@ -8,8 +8,10 @@ import { BottomSheet } from "@/design-system/kodi-design-system-ac5f73";
  * The vendor panel caps itself at 85vh — the *window*, which is taller than the phone
  * frame the app lives in — so a long sheet grew past the frame's top edge and hid its
  * own close affordance. max-h-full re-anchors that cap to the frame (100% of it), and
- * the sticky bar keeps the close button inside the frame even while the sheet scrolls.
- * The negative margins only cancel the vendor's own p-6 so the bar spans the panel.
+ * the sticky bar keeps the close button at the top of the panel even while the sheet
+ * scrolls. pt-0 drops the vendor's top padding so the bar sits flush with the panel's
+ * top edge instead of leaving a sliver of scrolled content above it; the bar's own
+ * padding and negative margin restore the inset and span the panel edge to edge.
  */
 export function Sheet({ open, onClose, title, children }: {
   open: boolean;
@@ -18,9 +20,8 @@ export function Sheet({ open, onClose, title, children }: {
   children: ReactNode;
 }) {
   return (
-    <BottomSheet open={open} onClose={onClose} title={title} className="max-h-full">
-      {children}
-      <div className="sticky bottom-0 z-10 -mx-6 -mb-6 flex justify-end bg-popover px-6 pb-6 pt-2">
+    <BottomSheet open={open} onClose={onClose} title={title} className="max-h-full pt-0">
+      <div className="sticky top-0 z-10 -mx-6 flex justify-end bg-popover px-6 pb-1 pt-3">
         <button
           type="button"
           aria-label="Close"
@@ -30,6 +31,7 @@ export function Sheet({ open, onClose, title, children }: {
           <X className="size-5" />
         </button>
       </div>
+      {children}
     </BottomSheet>
   );
 }
