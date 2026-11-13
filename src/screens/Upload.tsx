@@ -93,7 +93,7 @@ export function Upload() {
                 {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
               </div>
               <label htmlFor="outfit-note" className="mt-5 block text-sm font-medium">Anything else? A place or a vibe.</label>
-              <input id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Dinner in the city, not too formal"
+              <input id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Gallery curator in the fall in Paris"
                 className="mt-2 h-11 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none focus:border-foreground" />
             </div>
           )}
