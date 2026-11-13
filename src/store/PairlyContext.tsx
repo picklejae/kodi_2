@@ -3,9 +3,9 @@ import { isJasonSample, jasonPendingLooks, jasonClosetLook } from "@/data/jason"
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { planStyle, renderStyleLook } from "@/lib/styleGeneration.functions";
-import { looksFromPlan, photoReference, styleProfile, defaultConcept, type GeneratedLook } from "@/lib/styleGeneration";
+import { looksFromPlan, photoReference, styleProfile, defaultConcept, type GeneratedLook, type StylePlan } from "@/lib/styleGeneration";
 import { ROUNDS } from "@/data/diagnosis";
-import type { ItemCategory, Occasion } from "@/data/samples";
+import { UPLOAD_SAMPLES, type ItemCategory, type Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
 import { computeDiagnosis, type Answer, type ExploreLevel } from "@/lib/styleType";
 import { generatePicks, type Picks, type Pick as Look } from "@/lib/matching";
@@ -17,6 +17,8 @@ import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
 import { findShoppingProducts } from "@/lib/shopping.functions";
 import { MAX_ATTEMPTS, SHOPPING_TTL, shoppingKey, type ShoppingInput, type ShoppingRecord } from "@/lib/shopping";
+import { STYLE_PRESETS, stylePresetKey, PRESET_LOADING_MS } from "@/data/stylePresets";
+import { originalImageIdentity, styleCacheKey, generationBody, bypassStyleCache, readStyleCache, writeStyleCache } from "@/lib/styleCache";
 import type { ConceptItem } from "@/data/moodboards";
 
 export type StylePreference = "menswear" | "womenswear";
@@ -35,6 +37,7 @@ export interface UploadedItem {
   attributes: string[];
   source: "upload" | "sample";
   name?: string;
+  sampleId?: string;
 }
 
 interface PairlyState {
@@ -87,6 +90,7 @@ interface PairlyCtx extends PairlyState {
   setSelectedConcept: (index: number) => void;
   countShopClick: () => void;
   findMatches: () => void;
+  regenerate: () => void;
   retryLook: (index: number) => void;
   searchShopping: (look: GeneratedLook, item: ConceptItem, country?: string, budget?: ShoppingInput["budget"]) => void;
   saveLook: (look: GeneratedLook) => boolean;
@@ -116,60 +120,131 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const shoppingPending = useRef(new Set<string>());
   const shoppingCache = useRef<Record<string, ShoppingRecord>>({});
   const running = useRef(false);
+  const runSequence = useRef(0);
   const runId = useRef(0);
   const inFlight = useRef(new Set<number>());
   const existingRequest = useRef<string | null>(null);
   const selectionTouched = useRef(false);
+  const imageIdentities = useRef(new Map<string, string | Promise<string>>());
+  const cacheSession = useRef<{ key: string; plan: StylePlan; looks: GeneratedLook[] } | null>(null);
   useEffect(() => {
     let saved: string | null = null;
     try { saved = localStorage.getItem(PREFERENCE_KEY); } catch { /* storage unavailable */ }
     setState((s) => ({ ...s, preferenceLoaded: true, stylePreference: s.stylePreference ?? (saved === "menswear" || saved === "womenswear" ? saved : null) }));
   }, []);
   const generation = useRef<{ preference: StylePreference; reference: string; presentation: string; occasion: string; mood: string; body: string } | null>(null);
+  const persistSession = async (token: number) => {
+    const session = cacheSession.current;
+    if (runId.current !== token || !session) return;
+    await writeStyleCache({ ...session, createdAt: Date.now() });
+  };
   const renderLook = async (index: number, look: GeneratedLook, token: number) => {
     const request = generation.current;
     if (!request || inFlight.current.has(index)) return;
     inFlight.current.add(index);
     setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? { ...entry, status: "loading", error: "" } : entry) ?? [] }));
+    let completed: GeneratedLook;
     try {
-      const result = await renderFn({ data: { ...request, styling: look.styling } });
-      if (runId.current !== token) return;
-      setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i !== index ? entry : result.ok ? { ...entry, status: "success", image: result.image, error: "" } : { ...entry, status: "failed", error: result.error }) ?? [] }));
+      // A partial cached result prepares the reference only on explicit retry.
+      const ownedImage = look.items.find((item) => item.role === "Your piece")?.image;
+      const reference = request.reference || (ownedImage ? await photoReference(ownedImage) : "");
+      const result = await renderFn({ data: { ...request, reference, styling: look.styling } });
+      completed = result.ok ? { ...look, status: "success", image: result.image, error: "" } : { ...look, status: "failed", error: result.error };
     } catch {
-      if (runId.current === token) setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? { ...entry, status: "failed", error: "Connection interrupted. This attempt may have started; retry only for a new attempt." } : entry) ?? [] }));
-    } finally { inFlight.current.delete(index); }
+      completed = { ...look, status: "failed", error: "Connection interrupted. This attempt may have started; retry only for a new attempt." };
+    }
+    if (runId.current === token) {
+      if (cacheSession.current) cacheSession.current.looks[index] = completed;
+      setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? completed : entry) ?? [] }));
+    }
+    inFlight.current.delete(index);
+    if (!running.current) await persistSession(token);
   };
-  const createMoodboards = async () => {
+  const createMoodboards = async (force = false) => {
     if (!state.uploadedItem || !state.stylePreference) return;
-    const preference = state.stylePreference;
-    const fromCloset = isJasonSample(state.uploadedItem);
-    const profile = styleProfile(state.styleType, state.axisScores, state.quizSkipped);
-    const key = JSON.stringify([profile.styleType, profile.axisScores, preference, state.uploadedItem.image, state.uploadedItem.category, state.uploadedItem.name, state.occasion, state.note.slice(0, 600)]);
-    if (existingRequest.current === key && !state.generationError && (state.planning || state.generatedLooks?.length)) {
+    const identityKey = `${state.uploadedItem.source}:${state.uploadedItem.image}`;
+    const knownIdentity = imageIdentities.current.get(identityKey);
+    if (!force && !bypassStyleCache(window.location.search) && typeof knownIdentity === "string") {
+      const currentKey = styleCacheKey({ imageIdentity: knownIdentity, preference: state.stylePreference, ...styleProfile(state.styleType, state.axisScores, state.quizSkipped), occasion: state.occasion ?? "", mood: state.note.trim().slice(0, 600), body: generationBody(state.body), category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category });
+      if (existingRequest.current === currentKey && !state.generationError && state.generatedLooks?.length) {
+        setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
+        return;
+      }
+    }
+    if (running.current || inFlight.current.size) {
       setState((s) => ({ ...s, screen: "results", activeTab: "style" }));
       return;
     }
-    if (running.current || inFlight.current.size) return;
-    existingRequest.current = key;
-    selectionTouched.current = false;
     running.current = true;
-    const token = ++runId.current;
-    setState((s) => ({ ...s, screen: "results", activeTab: "style", selectedConcept: defaultConcept(state.exploreLevel), generatedLooks: fromCloset ? jasonPendingLooks(preference).map((look, index) => index === 0 ? look : { ...look, status: "loading" }) : [], planning: true, generationError: "", picks: s.uploadedItem ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion) : s.picks }));
+    const sequence = ++runSequence.current;
+    let token = runId.current;
+    const item = state.uploadedItem;
+    const preference = state.stylePreference;
+    const fromCloset = isJasonSample(item);
+    const profile = styleProfile(state.styleType, state.axisScores, state.quizSkipped);
+    const skipCache = force || bypassStyleCache(window.location.search);
+    const requestContext = { preference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600), body: generationBody(state.body) };
+    setState((s) => ({ ...s, screen: "results", activeTab: "style", picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
     try {
-      const reference = await photoReference(state.uploadedItem.image);
-      const { heightCm, weightKg } = state.body;
-      const request = { preference, reference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600), body: heightCm && weightKg ? `approximately ${Math.round(heightCm)} cm tall and ${Math.round(weightKg)} kg` : "" };
-      const result = await planFn({ data: { ...request, ...profile, category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category } });
+      const sampleId = item.source === "sample" ? UPLOAD_SAMPLES.find((sample) => sample.image === item.image)?.id : undefined;
+      let identityPromise = imageIdentities.current.get(identityKey);
+      if (!identityPromise) {
+        identityPromise = originalImageIdentity(item.image, sampleId);
+        imageIdentities.current.set(identityKey, identityPromise);
+        void identityPromise.catch(() => imageIdentities.current.delete(identityKey));
+      }
+      const imageIdentity = await identityPromise;
+      imageIdentities.current.set(identityKey, imageIdentity);
+      if (runId.current !== token) return;
+      const key = styleCacheKey({ imageIdentity, preference, ...profile, occasion: requestContext.occasion, mood: state.note.trim().slice(0, 600), body: requestContext.body, category: item.category, name: item.name ?? item.category });
+      if (!skipCache && existingRequest.current === key && !state.generationError && state.generatedLooks?.length) return;
+      existingRequest.current = key;
+      selectionTouched.current = false;
+      token = ++runId.current;
+      const showLoading = () => setState((s) => ({ ...s, selectedConcept: defaultConcept(state.exploreLevel), generatedLooks: fromCloset ? jasonPendingLooks(preference).map((look, index) => index === 0 ? look : { ...look, status: "loading" }) : [], planning: true, generationError: "", picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
+      const restore = (plan: StylePlan, successful: GeneratedLook[]) => {
+        const planned = looksFromPlan(plan, item.name ?? item.category, item.image, preference);
+        const looks: GeneratedLook[] = planned.map((look) => {
+          const hit = successful.find((saved) => saved.tier === look.tier);
+          return hit ? { ...hit, status: "success" as const, error: "", items: look.items } : { ...look, status: "failed" as const, error: "This look wasn't generated. Retry this look." };
+        });
+        if (fromCloset) looks[0] = jasonClosetLook(preference);
+        generation.current = { ...requestContext, reference: "", presentation: plan.presentation };
+        cacheSession.current = { key, plan, looks };
+        running.current = false;
+        setState((s) => ({ ...s, generatedLooks: looks, planning: false, generationError: "", selectedConcept: defaultConcept(state.exploreLevel), picks: generatePicks(CATALOG, item.category, item.name ?? item.category, profile.styleType, s.occasion) }));
+      };
+      const preset = skipCache ? undefined : STYLE_PRESETS[stylePresetKey(imageIdentity, preference, profile.styleType)];
+      if (preset) {
+        showLoading();
+        await new Promise((resolve) => setTimeout(resolve, PRESET_LOADING_MS));
+        if (runId.current !== token) return;
+        const looks = looksFromPlan(preset.result.plan, item.name ?? item.category, item.image, preference).map((look, index) => ({ ...look, image: preset.images[index] ?? "", status: "success" as const }));
+        restore(preset.result.plan, looks);
+        return;
+      }
+      const cached = skipCache ? null : await readStyleCache(key);
+      if (runId.current !== token) return;
+      if (cached) { restore(cached.plan, cached.looks); return; }
+      showLoading();
+      cacheSession.current = null;
+      const reference = await photoReference(item.image);
+      if (runId.current !== token) return;
+      const request = { ...requestContext, reference };
+      const result = await planFn({ data: { ...request, ...profile, category: item.category, name: item.name ?? item.category } });
       if (runId.current !== token) return;
       if (!result.ok) throw new Error(result.error);
-      const planned = looksFromPlan(result.plan, state.uploadedItem.name ?? state.uploadedItem.category, state.uploadedItem.image, preference);
+      const planned = looksFromPlan(result.plan, item.name ?? item.category, item.image, preference);
       const looks = fromCloset ? [jasonClosetLook(preference), ...planned.slice(1)] : planned;
       generation.current = { ...request, presentation: result.plan.presentation };
+      cacheSession.current = { key, plan: result.plan, looks: [...looks] };
       setState((s) => ({ ...s, generatedLooks: looks, planning: false }));
       await Promise.all(looks.map((look, index) => fromCloset && index === 0 ? Promise.resolve() : renderLook(index, look, token)));
+      running.current = false;
+      await persistSession(token);
     } catch (error) {
       if (runId.current === token) setState((s) => ({ ...s, planning: false, generatedLooks: fromCloset ? (s.generatedLooks ?? []).map((look, index) => index === 0 ? look : { ...look, status: "failed", error: "Couldn’t prepare this new look. Try generation again." }) : s.generatedLooks ?? [], generationError: error instanceof Error ? error.message : "Couldn't prepare your styling directions." }));
-    } finally { running.current = false; }
+    } finally { if (runSequence.current === sequence) running.current = false; }
   };
   const value = useMemo<PairlyCtx>(() => ({
     ...state,
@@ -232,6 +307,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     setSelectedConcept: (selectedConcept) => { selectionTouched.current = true; setState((s) => ({ ...s, selectedConcept })); },
     countShopClick: () => setState((s) => ({ ...s, shopClicks: s.shopClicks + 1 })),
     findMatches: () => { void createMoodboards(); },
+    regenerate: () => { void createMoodboards(true); },
     retryLook: (index) => { const look = state.generatedLooks?.[index]; if (look?.status !== "failed") return; if (state.generationError) { void createMoodboards(); return; } void renderLook(index, look, runId.current); },
     saveLook: (look) => {
       if (look.status !== "success" || !look.image) return false;

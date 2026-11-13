@@ -5,20 +5,93 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { ROUNDS } from "@/data/diagnosis";
 import { PairlyProvider, usePairly } from "./PairlyContext";
+import { IDBFactory } from "fake-indexeddb";
+import { readStyleCache } from "@/lib/styleCache";
+import { stylePresetKey, type StylePreset } from "@/data/stylePresets";
+import { TIERS, type StylePlan } from "@/lib/styleGeneration";
 
-const mocks = vi.hoisted(() => ({ plan: vi.fn(), render: vi.fn(), photo: vi.fn(), shopping: vi.fn() }));
+const mocks = vi.hoisted(() => ({ plan: vi.fn(), render: vi.fn(), photo: vi.fn(), shopping: vi.fn(), identity: vi.fn(), presets: {} as Record<string, StylePreset> }));
 vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: unknown) => fn }));
 vi.mock("@/lib/styleGeneration.functions", () => ({ planStyle: mocks.plan, renderStyleLook: mocks.render }));
 vi.mock("@/lib/shopping.functions", () => ({ findShoppingProducts: mocks.shopping }));
 vi.mock("@/lib/styleGeneration", async (load) => ({ ...await load<object>(), photoReference: mocks.photo }));
+vi.mock("@/lib/styleCache", async (load) => ({ ...await load<object>(), originalImageIdentity: mocks.identity }));
+vi.mock("@/data/stylePresets", async (load) => ({ ...await load<object>(), STYLE_PRESETS: mocks.presets }));
 function deferred() {
   let resolve: (value: { ok: boolean; image?: string; error?: string }) => void = () => {};
   const promise = new Promise<{ ok: boolean; image?: string; error?: string }>((r) => { resolve = r; });
   return { promise, resolve };
 }
-const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ tier: ["safe", "step", "bold"][i], shift: i === 0 ? "" : i === 1 ? "Tailored → Relaxed" : "Tailored → Relaxed, Neutral → Color", name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
-beforeEach(() => { localStorage.clear(); vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
+const plan: StylePlan = { presentation: "Same studio", looks: TIERS.map((tier, i) => ({ tier, shift: i === 0 ? "" : i === 1 ? "Tailored → Relaxed" : "Tailored → Relaxed, Neutral → Color", name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
+beforeEach(() => { vi.stubGlobal("indexedDB", new IDBFactory()); window.history.replaceState(null, "", "/"); Object.keys(mocks.presets).forEach((key) => delete mocks.presets[key]); localStorage.clear(); vi.resetAllMocks(); mocks.identity.mockImplementation(async (image: string, sampleId?: string) => sampleId ?? image); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it("restores only successful cached looks and retries a missing slot with one render call", async () => {
+    mocks.render.mockResolvedValueOnce({ ok: true, image: "safe-image" }).mockResolvedValueOnce({ ok: false, error: "Failed" }).mockResolvedValueOnce({ ok: true, image: "bold-image" });
+    const first = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => first.result.current.setStylePreference("menswear"));
+    act(() => first.result.current.setUploadedItem({ image: "partial-photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => first.result.current.findMatches());
+    const key = JSON.stringify(["partial-photo", "menswear", "TNPF", "", "", "", [0.5, 0.5, 0.5, 0.5], "coat", "coat"]);
+    await waitFor(async () => expect((await readStyleCache(key))?.looks).toHaveLength(2));
+    first.unmount(); mocks.plan.mockClear(); mocks.render.mockClear();
+    const second = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => second.result.current.setStylePreference("menswear"));
+    act(() => second.result.current.setUploadedItem({ image: "partial-photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => second.result.current.findMatches());
+    await waitFor(() => expect(second.result.current.generatedLooks?.map((look) => look.status)).toEqual(["success", "failed", "success"]));
+    expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled();
+    act(() => second.result.current.retryLook(1));
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(1));
+    expect(mocks.plan).not.toHaveBeenCalled();
+    await waitFor(async () => expect((await readStyleCache(key))?.looks).toHaveLength(3));
+  });
+  it("restores the same completed key after remount with zero AI calls", async () => {
+    const first = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => first.result.current.setStylePreference("menswear"));
+    act(() => first.result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => first.result.current.findMatches());
+    await waitFor(() => expect(first.result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
+    const key = JSON.stringify(["garment", "menswear", "TNPF", "", "", "", [0.5, 0.5, 0.5, 0.5], "coat", "coat"]);
+    await waitFor(async () => expect((await readStyleCache(key))?.looks).toHaveLength(3));
+    first.unmount(); mocks.plan.mockClear(); mocks.render.mockClear(); mocks.photo.mockClear();
+    const second = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => second.result.current.setStylePreference("menswear"));
+    act(() => second.result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => second.result.current.findMatches());
+    await waitFor(() => expect(second.result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
+    expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled(); expect(mocks.photo).not.toHaveBeenCalled();
+    expect(second.result.current.planning).toBe(false);
+    act(() => second.result.current.setUploadedItem({ image: "different-photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => second.result.current.findMatches());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
+    expect(mocks.plan).toHaveBeenCalledTimes(1);
+  });
+  it("a preset photo makes zero AI calls on first use and loads for two seconds", async () => {
+    mocks.presets[stylePresetKey("preset-photo", "menswear", "TNPF")] = { result: { ok: true, plan }, images: ["safe-preset", "step-preset", "bold-preset"] };
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ image: "preset-photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.setNote("Different occasion and mood do not invalidate a preset"));
+    const start = Date.now();
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(result.current.planning).toBe(true));
+    await waitFor(() => expect(result.current.generatedLooks?.[0]?.image).toBe("safe-preset"), { timeout: 3500 });
+    expect(Date.now() - start).toBeGreaterThanOrEqual(2000);
+    expect(mocks.plan).not.toHaveBeenCalled(); expect(mocks.render).not.toHaveBeenCalled(); expect(mocks.photo).not.toHaveBeenCalled();
+    act(() => result.current.regenerate());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
+    expect(mocks.plan).toHaveBeenCalledTimes(1);
+  });
+  it("nocache bypasses presets and saved results", async () => {
+    window.history.replaceState(null, "", "/?nocache=1");
+    mocks.presets[stylePresetKey("photo", "menswear", "TNPF")] = { result: { ok: true, plan }, images: ["a", "b", "c"] };
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ image: "photo", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(mocks.render).toHaveBeenCalledTimes(3));
+    expect(mocks.plan).toHaveBeenCalledTimes(1);
+  });
   it("Results tabs follow Safe, One step up, Bold tier order", async () => {
     const { result } = renderHook(() => usePairly(), { wrapper: ({ children }) => <PairlyProvider>{children}<Results /></PairlyProvider> });
     act(() => result.current.setStylePreference("menswear"));
@@ -71,7 +144,7 @@ describe("Style loading", () => {
     act(() => result.current.skipQuiz());
     act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
     act(() => result.current.findMatches());
-    await waitFor(() => expect(result.current.generatedLooks?.every((look) => look.status === "success")).toBe(true));
+    await waitFor(() => expect(result.current.generatedLooks?.filter((look) => look.status === "success")).toHaveLength(3));
     act(() => result.current.retake());
     for (const card of ROUNDS) act(() => result.current.answer(card.tags === "RNPS" ? "yes" : "no"));
     act(() => result.current.findMatches());
