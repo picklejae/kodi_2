@@ -11,7 +11,7 @@ import { usePairly } from "@/store/PairlyContext";
 import { ShoppingSection } from "@/components/pairly/ShoppingSection";
 
 export function Results() {
-  const { styleType, quizSkipped, uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, saveLook, savedOutfits } = usePairly();
+  const { styleType, quizSkipped, uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, regenerate, saveLook, savedOutfits } = usePairly();
   if (!uploadedItem) return <div className="flex flex-1 items-center justify-center px-6"><PillButton onClick={() => go("upload")}>Pick a piece first</PillButton></div>;
   const looks = generatedLooks ?? [];
   const active = looks[selectedConcept] ?? looks[0];
@@ -30,6 +30,7 @@ export function Results() {
       <div role="tablist" aria-label="Styling directions" className="mt-3 flex gap-1 rounded-2xl border border-border bg-card p-1 lg:max-w-md">
         {looks.map((look, index) => <PillButton key={look.id} role="tab" id={`concept-${look.id}`} aria-controls="selected-concept" aria-selected={active.id === look.id} variant={active.id === look.id ? "primary" : "ghost"} onClick={() => setSelectedConcept(index)} className="h-16 min-w-0 flex-1 gap-1 px-1 text-xs">{(look.status === "loading" || look.status === "idle") && <Loader2 aria-label="Generating" className="h-3 w-3 shrink-0 animate-spin" />}{look.status === "failed" && <ImageIcon aria-label="Generation failed" className="h-3 w-3 shrink-0" />}<span className="min-w-0"><span className="block font-semibold">{TIER_LABELS[look.tier]}</span><span className="mt-1 block truncate text-[10px] font-normal" title={look.name}>{look.name}</span></span></PillButton>)}
       </div>
+      <PillButton variant="ghost" onClick={regenerate} disabled={planning || looks.some((look) => look.status === "loading")} className="mt-2 h-8 w-auto self-start px-0 text-xs font-normal underline underline-offset-4">Regenerate</PillButton>
       <p className="mt-4 text-[10px] text-muted-foreground">{looks[0]?.id === "jason-closet" ? "Your closet photo + two AI styling concepts" : "AI styling concepts · garment details and fit may vary"}</p>
       {looks.some((look) => look.status === "idle") && <PillButton className="mt-3" onClick={findMatches}>Create two new looks</PillButton>}
       <div className="mt-3 grid gap-4 lg:grid-cols-3" aria-label="Outfit moodboards">
