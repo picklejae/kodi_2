@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { useServerFn } from "@tanstack/react-start";
 import { planStyle, renderStyleLook } from "@/lib/styleGeneration.functions";
 import { looksFromPlan, photoReference, styleProfile, defaultConcept, type GeneratedLook, type StylePlan } from "@/lib/styleGeneration";
-import { ROUNDS } from "@/data/diagnosis";
+import { roundsFor } from "@/data/diagnosis";
 import { UPLOAD_SAMPLES, type ItemCategory, type Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
 import { computeDiagnosis, type Answer, type ExploreLevel } from "@/lib/styleType";
