@@ -24,7 +24,8 @@ export function Social() {
   const castVote = (id: string, v: "up" | "down") => { vote(id, v); setLastVoted(id); };
   const [highlight, setHighlight] = useState<string | null>(null);
   const postsRef = useRef<HTMLElement>(null);
-  const stack = filterPosts(posts.filter((post) => !post.isUserPost), type, filter).filter((post) => !userVotes[post.id]);
+  const others = posts.filter((post) => !post.isUserPost);
+  const stack = (filter === "similar" ? filterPosts(others, type, filter) : [...others].sort((a, b) => b.votesUp + b.votesDown - (a.votesUp + a.votesDown))).filter((post) => !userVotes[post.id]);
   const mine = myPosts(posts);
   const [pinIdx, setPinIdx] = useState(0);
   useEffect(() => setPinIdx(0), [mine.length]);
@@ -53,8 +54,8 @@ export function Social() {
         {mine.length > 1 && <div className="flex shrink-0 items-center"><TextLinkButton aria-label="Previous look" className="min-h-touch min-w-touch justify-center" onClick={() => setPinIdx((pinIdx - 1 + mine.length) % mine.length)}><ArrowLeft /></TextLinkButton><TextLinkButton aria-label="Next look" className="min-h-touch min-w-touch justify-center" onClick={() => setPinIdx((pinIdx + 1) % mine.length)}><ArrowRight /></TextLinkButton></div>}
       </div>}
       {!cur && <div className="mt-screen flex items-center justify-between gap-screen border border-border p-screen lg:col-span-2" aria-label="Your look"><p className="text-body-sm">Post your look to get votes</p><TextLinkButton onClick={() => openDraft({ image: null })}>Post a look</TextLinkButton></div>}
-      <div className="mt-screen grid w-full grid-cols-2 border border-border lg:col-start-2" role="group" aria-label="Feed filter">
-        {([["similar", "People like me"], ["adventurous", "More adventurous"]] as const).map(([v, label]) => <button key={v} type="button" aria-pressed={filter === v} onClick={() => setFilter(v)} className={cn("h-touch text-body-sm font-medium transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring", filter === v ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}>{label}</button>)}
+      <div className="mt-screen flex w-full gap-screen border-b border-border lg:col-start-2" role="group" aria-label="Feed filter">
+        {([["similar", "For you"], ["adventurous", "Trending"]] as const).map(([v, label]) => <button key={v} type="button" aria-pressed={filter === v} onClick={() => setFilter(v)} className={cn("-mb-px h-touch border-b-2 text-body-sm font-medium transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring", filter === v ? "border-foreground text-foreground" : "border-transparent text-muted-foreground")}>{label}</button>)}
       </div>
       <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card lg:col-start-1 lg:row-span-6">
         {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => postsRef.current?.scrollIntoView({ behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
