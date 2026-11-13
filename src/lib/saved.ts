@@ -31,6 +31,7 @@ const ROLE_CATEGORY: Record<ConceptItem["role"], HotspotCategory | null> = {
   // No pins for accessories or bags: they are too small to place reliably on the render.
   "Accessories": null,
 };
+const OUTER = /\b(jacket|coat|overcoat|blazer|cardigan|parka|bomber|trench|overshirt|gilet|vest)\b/i;
 export interface HotspotPlacement {
   product: ConceptItem;
   x: number;
@@ -42,7 +43,8 @@ export function hotspotPlacements(products: ConceptItem[]): HotspotPlacement[] {
   const placements: HotspotPlacement[] = [];
   for (const product of products) {
     if (product.owned) continue;
-    const category = ROLE_CATEGORY[product.role];
+    // Outer pieces arrive as "Inner layer" (the AI role set has no outerwear), so place them by name.
+    const category = product.role === "Inner layer" && OUTER.test(product.name) ? "outerwear" : ROLE_CATEGORY[product.role];
     if (!category) continue;
     const count = seen.get(category) ?? 0;
     seen.set(category, count + 1);
