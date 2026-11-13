@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { scrollPhoneTop } from "@/components/pairly/PhoneFrame";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, MessageCircle, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { BottomSheet, Chip, SectionLabel, PhotoCard, PrimaryButton, SecondaryButton, TextField, TextLinkButton } from "@/design-system/kodi-design-system-ac5f73";
 import { FEEDBACK_CHIPS, type SocialPost } from "@/data/social";
@@ -65,13 +65,10 @@ export function Social() {
       </div>
       <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card">
         {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={scrollPhoneTop}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
+        {/* Story-style reply bar over the photo; opens the comment sheet. */}
+        {stack[0] && <button type="button" onClick={() => { setCommentId(stack[0]!.id); setComment(""); }} className="absolute inset-x-3 bottom-3 z-20 flex h-11 items-center rounded-full border border-white/70 bg-black/20 px-4 text-left text-body-sm text-white/90 backdrop-blur-sm outline-none focus-visible:ring-2 focus-visible:ring-white">Add a comment…</button>}
       </div>
       {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span></div><p className="text-body-sm">{stack[0].question}</p></div>}
-      <div className="mt-screen flex items-center justify-between" aria-label="Outfit feedback">
-        <SecondaryButton aria-label="Thumbs down" title="Thumbs down" disabled={!stack[0]} onClick={() => stack[0] && castVote(stack[0].id, "down")}><ThumbsDown /></SecondaryButton>
-        <TextLinkButton disabled={!stack[0]} onClick={() => { if (stack[0]) { setCommentId(stack[0].id); setComment(""); } }}><MessageCircle />Comment</TextLinkButton>
-        <SecondaryButton aria-label="Thumbs up" title="Thumbs up" disabled={!stack[0]} onClick={() => stack[0] && castVote(stack[0].id, "up")}><ThumbsUp /></SecondaryButton>
-      </div>
       {lastVoted && <div className="mt-screen flex flex-wrap items-center gap-screen" aria-label="Quick feedback">
         {FEEDBACK_CHIPS.slice(0, 3).map((chip) => <Chip key={chip} onClick={() => { addFeedback(lastVoted, chip); setLastVoted(null); toast("Thanks for the feedback"); }}>{chip}</Chip>)}
         <TextLinkButton onClick={() => setLastVoted(null)}>Skip</TextLinkButton>
