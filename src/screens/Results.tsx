@@ -15,7 +15,7 @@ export function Results() {
   if (!uploadedItem) return <div className="flex flex-1 items-center justify-center px-screen"><PillButton onClick={() => go("upload")}>Pick a piece first</PillButton></div>;
   const looks = generatedLooks ?? [];
   const active = looks[selectedConcept] ?? looks[0];
-  if (!active) return <div className="px-screen pb-12 pt-12"><PillButton variant="ghost" aria-label="Back to Style" onClick={() => go("upload")} className="h-9 w-9 px-0"><ChevronLeft className="h-5 w-5" /></PillButton><h1 className="mt-6 font-serif text-4xl">Style your piece</h1><div role="status" className="mt-8 flex aspect-[3/4] flex-col items-center justify-center gap-5 rounded-2xl bg-secondary p-6 text-center">{planning ? <><Loader2 className="h-8 w-8 animate-spin" /><p>Creating your three styling directions…</p></> : <><ImageIcon className="h-8 w-8" /><p>{generationError || "Ready to style your piece"}</p><PillButton onClick={findMatches}>{generationError ? "Try generation again" : "Create outfit moodboards"}</PillButton></>}</div></div>;
+  if (!active) return <div className="px-screen pb-12 pt-12"><PillButton variant="ghost" aria-label="Back to Style" onClick={() => go("upload")} className="h-9 w-9 px-0"><ChevronLeft className="h-5 w-5" /></PillButton><h1 className="mt-6 text-title font-bold">Style your piece</h1><div role="status" className="mt-8 flex aspect-[3/4] flex-col items-center justify-center gap-5 rounded-2xl bg-secondary p-6 text-center">{planning ? <><Loader2 className="h-8 w-8 animate-spin" /><p>Creating your three styling directions…</p></> : <><ImageIcon className="h-8 w-8" /><p>{generationError || "Ready to style your piece"}</p><PillButton onClick={findMatches}>{generationError ? "Try generation again" : "Create outfit moodboards"}</PillButton></>}</div></div>;
   const occasionLabel = OCCASIONS.find((entry) => entry.id === occasion)?.label;
   return (
     <div className="flex flex-1 flex-col px-screen pb-screen pt-topbar">
@@ -24,7 +24,7 @@ export function Results() {
         <Photo src={uploadedItem.image} alt={uploadedItem.name ?? "Your item"} className="h-12 w-12 shrink-0 rounded-xl" />
         <div><p className="text-label text-muted-foreground">Your piece</p><p className="text-body-sm font-semibold capitalize">{uploadedItem.name ?? uploadedItem.category}</p></div>
       </div>
-      <h1 className="mt-screen text-display">Style your piece</h1>
+      <h1 className="mt-screen text-title font-bold">Style your piece</h1>
       <div className="mt-screen flex flex-wrap gap-screen">{occasionLabel && <Chip>{occasionLabel}</Chip>}{note.trim() && <p className="min-w-0 text-body-sm text-muted-foreground break-all">{note.trim()}</p>}</div>
       <p className="mt-screen text-body-sm">How far do you want to go from your usual style?</p>
       <div role="tablist" aria-label="Styling directions" className="mt-3 flex gap-1 rounded-2xl border border-border bg-card p-1">

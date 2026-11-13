@@ -15,9 +15,9 @@ export function Reveal() {
     <div className="flex flex-1 flex-col px-screen pb-8 pt-14 animate-in fade-in duration-500">
       <div>
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your Style Type</p>
-      <h1 className="mt-3 font-serif text-4xl leading-tight">You're {/^[AEIOU]/i.test(t.name) ? "an" : "a"} {t.name}</h1>
+      <h1 className="mt-3 text-title font-bold">You're {/^[AEIOU]/i.test(t.name) ? "an" : "a"} {t.name}</h1>
       {quizSkipped && <p className="mt-3 text-sm text-muted-foreground">Not sure yet? Here's a classic starting point.</p>}
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 grid grid-cols-2 gap-x-screen gap-y-4">
         {AXES.map((a, idx) => {
           const [left, right] = AXIS_LABELS[a];
           const score = axisScores?.[idx] ?? (t.code.charAt(idx) === left.charAt(0) ? 0.25 : 0.75);
