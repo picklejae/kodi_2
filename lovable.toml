@@ -1,4 +1,5 @@
 [[libraries]]
-project_id = "b70b4236-6885-46ce-b1ee-9f1a91999119"
-version = "1.0.0"
-slug = "kodi-design-system-ac5f73"
+  name = "KODI Design System"
+  project_id = "b70b4236-6885-46ce-b1ee-9f1a91999119"
+  slug = "kodi-design-system-ac5f73"
+  version = "1.0.0"
