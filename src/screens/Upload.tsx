@@ -1,3 +1,4 @@
+import { Sentences } from "@/components/pairly/Sentences";
 import { useEffect, useRef, useState } from "react";
 import { Camera, ChevronLeft, ImageIcon, Loader2, X } from "lucide-react";
 import { Chip } from "@/components/pairly/Chip";
@@ -50,7 +51,7 @@ export function Upload() {
         <>
           <div className="mt-6 flex flex-col items-center rounded-3xl border-2 border-dashed border-foreground/25 bg-card/60 px-5 py-10 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground" />
-            <p className="mt-3 text-sm text-muted-foreground">A jacket, coat, pants or shirt. Flat or on a hanger works best.</p>
+            <p className="mt-3 text-sm text-muted-foreground"><Sentences text="A jacket, coat, pants or shirt. Flat or on a hanger works best." /></p>
             <div className="mt-6 w-full space-y-3">
               <PillButton onClick={() => camRef.current?.click()}><Camera className="mr-2 h-4 w-4" />Take photo</PillButton>
               <PillButton variant="outline" onClick={() => libRef.current?.click()}>Choose from library</PillButton>
