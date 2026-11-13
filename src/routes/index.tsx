@@ -30,10 +30,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Screens() {
-  const { screen, activeTab, posts } = usePairly();
-  // Also scroll up when a new post is created, so the pinned "Your post" is visible.
-  const myPosts = posts.filter((p) => p.isUserPost).length;
-  useEffect(() => { window.scrollTo(0, 0); }, [screen, activeTab, myPosts]);
+  const { screen, activeTab } = usePairly();
+  useEffect(() => { window.scrollTo(0, 0); }, [screen, activeTab]);
   if (screen === "diagnosis") return <Diagnosis />;
   if (screen === "reveal") return <Reveal />;
   if (screen === "budget") return <Budget />;

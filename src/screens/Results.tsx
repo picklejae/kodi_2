@@ -48,7 +48,7 @@ export function Results() {
         <p className="mt-screen text-body-sm">{active.explanation}</p>
         {!active.demoSet && <p className="mt-2 text-xs text-muted-foreground">{active.tier === "safe" ? `Within your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}` : `${active.tier === "step" ? "One step" : "A bold move"} from your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}${active.shift ? `: ${active.shift}` : ""}`}</p>}
         <div className="mt-5 flex flex-wrap gap-2"><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">More casual · Demo</PillButton><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">Lower budget · Demo</PillButton>
-        {active.status === "success" && active.image && active.id !== "jason-closet" && (() => {
+        {active.status === "success" && active.image && (() => {
           const alreadySaved = savedOutfits.some((outfit) => outfit.id === `${active.id}:${active.image?.length}`);
           return <PillButton variant="outline" aria-pressed={alreadySaved} onClick={() => { if (saveLook(active)) toast("Saved to your Looks"); }} className="h-9 w-auto gap-1 px-3 text-xs"><Heart className={alreadySaved ? "h-3 w-3 fill-foreground" : "h-3 w-3"} />{alreadySaved ? "Saved" : "Save look"}</PillButton>;
         })()}</div>

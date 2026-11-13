@@ -16,6 +16,8 @@ import { usePairly } from "@/store/PairlyContext";
 import type { RecentItem } from "@/data/saved";
 import { GENERIC_ATTRIBUTES } from "@/data/samples";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { SecondaryButton } from "@/design-system/kodi-design-system-ac5f73";
 export function Saved() {
   const {
     recentItems,
@@ -24,6 +26,7 @@ export function Saved() {
     deleteSavedOutfit,
     setUploadedItem,
     go,
+    postSavedLook,
   } = usePairly();
   const navigate = useNavigate();
   const [recentEdit, setRecentEdit] = useState(false),
@@ -52,7 +55,7 @@ export function Saved() {
   };
   return (
     <div className="px-6 pb-8 pt-12">
-      <h1 className="mb-6 font-serif text-4xl">Saved</h1>
+      <h1 className="mb-6 text-display">Looks</h1>
       <section aria-label="Recents">
         <SectionHeader
           title="Recents"
@@ -113,6 +116,7 @@ export function Saved() {
             {savedOutfits.map((outfit) => ({
                 id: outfit.id,
                 name: outfit.ownedName,
+                outfit,
                 content: (
                   <Photo
                     src={outfit.imageUrl}
@@ -139,6 +143,11 @@ export function Saved() {
                 >
                   {item.content}
                 </PillButton>
+                <div className="mt-screen">
+                  <p className="text-body-sm font-semibold">{item.outfit.lookName}</p>
+                  <ul className="text-caption text-muted-foreground">{item.outfit.products.map((piece) => <li key={`${piece.role}:${piece.name}`}>{piece.name}</li>)}</ul>
+                  {!savedEdit && <div className="mt-screen"><SecondaryButton fullWidth onClick={() => { postSavedLook(item.outfit); toast("Posted to Feed"); }}>Get feedback</SecondaryButton></div>}
+                </div>
                 {savedEdit && (
                   <DeleteIcon
                     name={item.name}

@@ -38,6 +38,7 @@ use the editor.
 - Style result reuse uses original-byte SHA-256 or built-in sample IDs plus all generation inputs including sent body stats; check an externally authored, empty-by-default preset registry before IndexedDB (20 newest entries, successes only), and bypass both on Regenerate/nocache; why: repeat results need no inference while failed slots remain explicitly retryable.
 - Keep selected Style concept in shared React state and expand only Style results on desktop; why: look selection survives tab navigation without widening other screens.
 - Saved collections and uploads remain in React state with literal mock seeds; why: this demo intentionally resets on refresh without a backend.
+- Feed posts/comments and saved-look feedback image mappings remain in shared React state; closet feedback resolves to seeded real-photo posts instead of duplicating them, and vote counts never change on timers; why: the Looks → Feed demo stays deterministic.
 - Mock data lives in `src/data/*`, pure logic in `src/lib/*` with vitest tests beside it; why: keeps rules testable without UI.
 - Share swipe gestures through SwipePhotoCard across quiz and Social; why: keeps drag, tilt, stamps, and cancellation consistent.
 - Store quiz axis scores, skip status, and exploration separately from the internal style code; why: Reveal needs continuous markers and Results can later consume exploration without changing types.
