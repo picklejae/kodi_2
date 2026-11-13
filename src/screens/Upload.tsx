@@ -123,9 +123,9 @@ export function Upload() {
                 {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
               </div>
               <label htmlFor="outfit-note" className="mt-6 block text-sm font-medium">Anything else? A place or a vibe.</label>
-              {/* Examples live in the field's ▼ menu (demo helper), plus "Type my own" to write freely. */}
+              {/* Tapping the field (or ▼) opens the examples menu (demo helper); typing closes it. "Type my own" focuses the field without reopening it. */}
               <div ref={vibeRef} className="relative mt-2">
-                <input ref={noteRef} id="outfit-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Gallery curator in the fall in Paris"
+                <input ref={noteRef} id="outfit-note" value={note} onClick={() => setVibeOpen(true)} onChange={(e) => { setNote(e.target.value); setVibeOpen(false); }} autoComplete="off" placeholder="Gallery curator in the fall in Paris"
                   className="h-10 w-full rounded-lg border border-border bg-card pl-3 pr-10 text-sm outline-none focus:border-foreground" />
                 <button type="button" aria-label="Show examples" aria-expanded={vibeOpen} onClick={() => setVibeOpen(!vibeOpen)}
                   className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-[10px] text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">▼</button>
