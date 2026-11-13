@@ -27,7 +27,7 @@ export function Reveal() {
         {pieces.map((piece) => <div key={piece.id}><Photo src={piece.image} alt={piece.name} className="aspect-[3/4] rounded-lg" /><p className="mt-2 text-[11px] leading-snug">{piece.name}</p></div>)}
       </div>
       <div className="sticky bottom-0 mt-auto bg-background pb-screen pt-screen">
-        <PillButton onClick={() => go("budget")}>Let's get started</PillButton>
+        <PillButton onClick={() => go("budget")}>Start exploring!</PillButton>
       </div>
       </div>
     </div>
