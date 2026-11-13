@@ -36,6 +36,17 @@ function priceLabel(price: number | null, currency: string | null = "USD") {
 type Lookup = RealProduct | "loading" | { error: string };
 
 function HotspotImage({ imageUrl, products }: { imageUrl: string; products: ConceptItem[] }) {
+  return (
+    <div className="relative aspect-[3/4]">
+      <Photo src={imageUrl} alt="Saved outfit" className="h-full w-full rounded-2xl [&_img]:object-contain" />
+      <HotspotLayer products={products} />
+    </div>
+  );
+}
+
+/** "+" pins over an outfit image (absolute, fills its positioned parent). Tapping a pin looks the piece up
+ *  in stores via Firecrawl and links to the store page. Used by Saved and by Results. */
+export function HotspotLayer({ products }: { products: ConceptItem[] }) {
   const [open, setOpen] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { countShopClick, stylePreference } = usePairly();
@@ -65,12 +76,11 @@ function HotspotImage({ imageUrl, products }: { imageUrl: string; products: Conc
     };
   }, []);
   return (
-    <div ref={ref} className="relative aspect-[3/4]" onClick={() => setOpen(null)}>
-      <Photo src={imageUrl} alt="Saved outfit" className="h-full w-full rounded-2xl [&_img]:object-contain" />
+    <div ref={ref} className="pointer-events-none absolute inset-0">
       {placements.map(({ product, x, y }, index) => {
         const key = `${product.name}-${index}`;
         return (
-          <div key={key} className="absolute" style={{ left: `${x}%`, top: `${y}%` }}>
+          <div key={key} className="pointer-events-auto absolute" style={{ left: `${x}%`, top: `${y}%` }}>
             <button
               type="button"
               aria-label={`View ${product.name}`}

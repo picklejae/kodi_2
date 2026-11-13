@@ -9,6 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    // Node 25+ ships its own global localStorage that hides jsdom's (localStorage.clear is undefined).
+    execArgv: ["--no-experimental-webstorage"],
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },
