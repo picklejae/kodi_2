@@ -23,7 +23,6 @@ export function Social() {
   const [pinnedSheet, setPinnedSheet] = useState(false);
   const castVote = (id: string, v: "up" | "down") => { vote(id, v); setLastVoted(id); };
   const [highlight, setHighlight] = useState<string | null>(null);
-  const postsRef = useRef<HTMLElement>(null);
   const others = posts.filter((post) => !post.isUserPost);
   const stack = (filter === "similar" ? filterPosts(others, type, filter) : [...others].sort((a, b) => b.votesUp + b.votesDown - (a.votesUp + a.votesDown))).filter((post) => !userVotes[post.id]);
   const mine = myPosts(posts);
@@ -58,7 +57,7 @@ export function Social() {
         {([["similar", "For you"], ["adventurous", "Trending"]] as const).map(([v, label]) => <button key={v} type="button" aria-pressed={filter === v} onClick={() => setFilter(v)} className={cn("-mb-px h-touch border-b-2 text-body-sm font-medium transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring", filter === v ? "border-foreground text-foreground" : "border-transparent text-muted-foreground")}>{label}</button>)}
       </div>
       <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card lg:col-start-1 lg:row-span-6">
-        {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => postsRef.current?.scrollIntoView({ behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
+        {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => castVote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
       </div>
       {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span><StyleBadge type={stack[0].styleType} /></div><p className="text-body-sm">{stack[0].question}</p></div>}
       <div className="mt-screen flex items-center justify-between" aria-label="Outfit feedback">
@@ -71,18 +70,6 @@ export function Social() {
         <TextLinkButton onClick={() => setLastVoted(null)}>Skip</TextLinkButton>
       </div>}
       <div className="mt-screen lg:col-start-2"><PrimaryButton className="capitalize" aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
-      <section ref={postsRef} className="mt-screen lg:col-start-2" aria-label="My posts">
-        <h2 className="text-title">My posts</h2>
-        <div className="flex flex-col gap-screen mt-screen">
-          {mine.map((post) => <article id={`feed-${post.id}`} key={post.id} className={`scroll-mt-screen ${highlight === post.id ? "outline outline-border-strong" : ""}`}>
-            <PhotoCard src={post.image} alt={post.question} ratio="look" onClick={() => setDetailId(post.id)} />
-            <div className="mt-screen flex flex-wrap items-center gap-screen text-caption"><span>{post.author}</span><StyleBadge type={post.styleType} /><span className="text-muted-foreground">{timeAgo(post)}</span></div>
-            <TextLinkButton onClick={() => setDetailId(post.id)}>{post.question}</TextLinkButton>
-            <VoteSplitBar up={post.votesUp} down={post.votesDown} />
-            <Comments post={post} />
-          </article>)}
-        </div>
-      </section>
       <BottomSheet open={!!commentId} onClose={() => setCommentId(null)} title="Comment on outfit">
         <form className="flex flex-col gap-screen" onSubmit={(event) => { event.preventDefault(); postComment(); }}>
           <h2 className="text-heading">Comment on outfit</h2>
