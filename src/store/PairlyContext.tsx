@@ -13,7 +13,7 @@ import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { POSTS, type SocialPost } from "@/data/social";
 import { jasonPosts } from "@/data/jasonPosts";
-import { savedLook, feedbackPost, appendComment } from "@/lib/feedFlow";
+import { savedLook, feedbackPost, appendComment, bumpPost } from "@/lib/feedFlow";
 import type { PresetRequest } from "@/lib/devPresets";
 import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "@/data/saved";
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
@@ -346,13 +346,12 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
         voteGroups: [...p.voteGroups, { styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, yes: v === "up" ? 1 : 0, no: v === "down" ? 1 : 0 }] } : p),
     })),
     addFeedback: (id, text) => setState((s) => ({ ...s, posts: appendComment(s.posts, id, { text, author: "@jason", styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, createdAt: new Date().toISOString() }) })),
-    createPost: (p) => setState((s) => {
-      const id = `u${crypto.randomUUID()}`;
+    createPost: (p) => { const id = `u${crypto.randomUUID()}`; [1200, 2600, 4200, 6000].forEach((ms, step) => setTimeout(() => setState((s) => ({ ...s, posts: bumpPost(s.posts, id, step) })), ms)); setState((s) => {
       return {
         ...s, draft: null, activeTab: "feed", highlightedPost: id,
         posts: [{ ...p, ...(s.draft?.look ? { look: s.draft.look } : {}), ...(s.draft?.ownedImage ? { ownedImage: s.draft.ownedImage } : {}), id, author: "@jason", createdAt: new Date().toISOString(), styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true }, ...s.posts],
       };
-    }),
+    }); },
     postSavedLook: (outfit) => setState((s) => {
       const post: SocialPost = { id: `u${crypto.randomUUID()}`, author: "@jason", image: outfit.feedbackImage ?? outfit.imageUrl, question: `${outfit.lookName}. Does it work?`, occasion: s.occasion, styleType: s.styleType ?? DEFAULT_CODE, exploreLevel: s.exploreLevel, createdAt: new Date().toISOString(), votesUp: 0, votesDown: 0, topFeedback: [], voteGroups: [], feedback: [], isUserPost: true };
       const result = feedbackPost(s.posts, outfit, post);
