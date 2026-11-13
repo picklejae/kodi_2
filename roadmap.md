@@ -58,3 +58,5 @@
 - [x] Results: remove More casual/Lower budget; heart save button on photo top-right
 - [x] Smaller bold unified screen titles; 2x2 style bars on Reveal and Me
 - [x] Reveal CTA fixed at bottom while scrolling
+- [x] Style result: remove the "AI styling concepts" caption wording
+- [x] Feed: show Jason’s two real-photo posts (jason-heritage, jason-leather) from the start, after Reset demo and in every DEV preset, with votes and comments; saving a look must never duplicate them
