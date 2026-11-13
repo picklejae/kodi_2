@@ -88,10 +88,7 @@ export function Upload() {
                     {CATEGORIES.map((c) => <SelectChip key={c} active={uploadedItem.category === c} onClick={() => setCategory(c)}><span className="capitalize">{c}</span></SelectChip>)}
                   </div>
                 </div>
-              ) : (
-                <p className="mt-5 font-serif text-xl">{uploadedItem.name}</p>
-              )}
-              <div className="mt-3 flex flex-wrap gap-2">{uploadedItem.attributes.map((a) => <Chip key={a}>{a}</Chip>)}</div>
+              ) : null}
               <p className="mt-6 text-sm font-medium">Where are you wearing it? <span className="text-muted-foreground font-normal">(optional)</span></p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {OCCASIONS.map((o) => <SelectChip key={o.id} active={occasion === o.id} onClick={() => setOccasion(occasion === o.id ? null : o.id)}>{o.label}</SelectChip>)}
