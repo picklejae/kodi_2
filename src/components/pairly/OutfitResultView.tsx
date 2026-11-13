@@ -58,18 +58,18 @@ function HotspotImage({ imageUrl, products }: { imageUrl: string; products: Conc
         const key = `${product.name}-${index}`;
         return (
           <div key={key} className="absolute" style={{ left: `${x}%`, top: `${y}%` }}>
-            <PillButton
+            <button
+              type="button"
               aria-label={`View ${product.name}`}
               aria-expanded={open === key}
-              variant="ghost"
               onClick={(e) => {
                 e.stopPropagation();
                 setOpen(open === key ? null : key);
               }}
-              className="hotspot h-7 w-7 -translate-x-1/2 -translate-y-1/2 px-0"
+              className="flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-foreground shadow-soft backdrop-blur-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <Plus className="h-4 w-4" />
-            </PillButton>
+            </button>
             {open === key && (
               <div
                 role="dialog"
