@@ -32,9 +32,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-audit --no-fund
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
       - name: Build static prototype
-        run: npm run build:pages
+        run: bun run build:pages
         env:
           PAGES_BASE: /kodi_2/
       - run: touch dist-pages/.nojekyll
