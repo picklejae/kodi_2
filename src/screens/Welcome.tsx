@@ -11,7 +11,7 @@ export function Welcome() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-screen px-screen pb-screen pt-topbar text-center">
       <Logo size="hero" />
-      <h1 className="text-display font-bold">You own it. KODI styles it.</h1>
+      <h1 className="text-display font-bold">You own it.<br />KODI styles it.</h1>
       <p className="text-body-sm text-muted-foreground">Swipe a few looks to find your style. Then get 3 ways to wear one piece you own.</p>
       {preferenceLoaded && (
         <div className="flex w-full flex-col gap-screen text-left">
