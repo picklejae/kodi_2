@@ -10,7 +10,7 @@ export function Welcome() {
   const quiz = stylePreference ? quizAvailable(stylePreference) : true;
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-screen px-screen pb-screen pt-topbar text-center">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-screen">
       <Logo size="hero" />
       <h1 className="text-title font-bold">You own it.<br />KODI styles it.</h1>
       </div>
