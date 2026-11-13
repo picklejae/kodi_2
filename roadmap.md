@@ -1,6 +1,5 @@
 # Roadmap
-- [ ] Restyle selected uploaded onboarding outfits into consistent studio portraits and fill five style gaps
-- [ ] Connect 16 quiz cards, Welcome photos and liked-photo Reveal; verify quiz and demo presets
+- [ ] Studio onboarding photos: paused after interrupted edits; waiting for the photo task to resume
 - [x] Diagnose and improve Style loading without changing image quality, model preferences, or shopping
 - [x] Verify partial success, reuse, duplicate protection, retries, and practical timing measurements
 - [x] Investigate returning-user quiz bypass and actual sign-in; report only, no behavior changes
@@ -27,4 +26,5 @@
 - [x] Add Social badges, cohort filters and summaries, latest pinned post, and Me look history
 - [x] Verify filters, summaries, saved and posted look history, and demo presets
 - [x] Clothing preference choice (Welcome, Style, Me), persisted, passed to generation
-- [ ] Live shopping: blocked on cost review before linking the existing Firecrawl connection
+- [ ] Live shopping: on-demand, bounded per-role searches with real product pages and result reuse
+- [ ] Verify real shopping inside Style, outbound links, error/no-match behavior, and usage
