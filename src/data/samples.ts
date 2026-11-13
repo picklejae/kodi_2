@@ -42,7 +42,7 @@ export const GENERIC_ATTRIBUTES: Record<ItemCategory, string[]> = {
 export type Occasion = "coffee" | "recruiting" | "date" | "weekend";
 export const OCCASIONS: { id: Occasion; label: string }[] = [
   { id: "coffee", label: "Coffee chat" },
-  { id: "recruiting", label: "Recruiting dinner" },
+  { id: "recruiting", label: "Recruiting" },
   { id: "date", label: "Date" },
   { id: "weekend", label: "Weekend" },
 ];
