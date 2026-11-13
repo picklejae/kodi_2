@@ -33,3 +33,6 @@ dist-ssr
 
 # Lovable sandbox workspace directory
 .workspace/
+dist-pages
+pages/public/__l5e
+package-lock.json
