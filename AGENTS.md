@@ -30,7 +30,9 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Project rules
-- Single route `/` switches screens from the global `PairlyContext` store; why: demo flow shares one in-memory state, no URLs needed.
+- Main demo screens switch through PairlyContext on `/`; saved outfit details use `/saved/$id`, with the provider at the root so in-memory collections survive navigation.
+- Share OutfitResultView between recommendations and saved details; why: board, product rows and future layout updates must stay consistent.
+- Saved collections and uploads remain in React state with literal mock seeds; why: this demo intentionally resets on refresh without a backend.
 - Mock data lives in `src/data/*`, pure logic in `src/lib/*` with vitest tests beside it; why: keeps rules testable without UI.
 - Share swipe gestures through SwipePhotoCard across quiz and Social; why: keeps drag, tilt, stamps, and cancellation consistent.
 - Store quiz axis scores, skip status, and exploration separately from the internal style code; why: Reveal needs continuous markers and Results can later consume exploration without changing types.

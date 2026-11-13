@@ -1,4 +1,4 @@
-export type ItemCategory = "jacket" | "coat" | "pants" | "shirt";
+export type ItemCategory = "jacket" | "coat" | "pants" | "shirt" | "knit" | "shoes";
 export const CATEGORIES: ItemCategory[] = ["jacket", "coat", "pants", "shirt"];
 
 export interface SampleItem { id: string; name: string; image: string; category: ItemCategory; attributes: string[] }
@@ -18,6 +18,8 @@ export const GENERIC_ATTRIBUTES: Record<ItemCategory, string[]> = {
   coat: ["Neutral", "Wool", "Long"],
   pants: ["Neutral", "Cotton", "Straight"],
   shirt: ["Light", "Cotton", "Classic"],
+  knit: ["Soft", "Knitted", "Relaxed"],
+  shoes: ["Leather", "Classic"],
 };
 
 export type Occasion = "coffee" | "recruiting" | "date" | "weekend";

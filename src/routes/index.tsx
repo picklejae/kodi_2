@@ -12,7 +12,7 @@ import { Me } from "@/screens/Me";
 import { BottomTabBar } from "@/components/pairly/BottomTabBar";
 import { CreatePostSheet } from "@/components/pairly/CreatePostSheet";
 import { DevJumper } from "@/components/pairly/DevJumper";
-import { PairlyProvider, usePairly } from "@/store/PairlyContext";
+import { usePairly } from "@/store/PairlyContext";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,9 +49,9 @@ function Screens() {
 
 function Index() {
   return (
-    <PairlyProvider>
+    <>
       <PhoneFrame><Screens /></PhoneFrame>
       <DevJumper />
-    </PairlyProvider>
+    </>
   );
 }

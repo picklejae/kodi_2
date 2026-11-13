@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, Heart } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Chip } from "@/components/pairly/Chip";
 import { Photo } from "@/components/pairly/Photo";
-import { OutfitBoard } from "@/components/pairly/OutfitBoard";
+import { OutfitResultView } from "@/components/pairly/OutfitResultView";
 import { PillButton } from "@/components/pairly/PillButton";
 import { StyleTypeChip } from "@/components/pairly/StyleTypeChip";
-import { BOLDNESS_LABEL, type Boldness, type CatalogItem } from "@/data/catalog";
-import { lookOrder, type Pick } from "@/lib/matching";
+import { BOLDNESS_LABEL, type Boldness } from "@/data/catalog";
+import { lookOrder } from "@/lib/matching";
 import { makeOutfitBoard } from "@/lib/outfitBoard";
-import { cn } from "@/lib/utils";
 import { usePairly } from "@/store/PairlyContext";
 
 const DIAL: Boldness[] = ["safe", "step", "bold"];
@@ -74,7 +73,7 @@ export function Results() {
         {DIAL.map((b) => <PillButton key={b} variant={active === b ? "primary" : "ghost"} role="tab" aria-selected={active === b} onClick={() => select(b)} className="h-9 flex-1 px-1 text-xs">{BOLDNESS_LABEL[b]}</PillButton>)}
       </div>
       <div className="mt-5 space-y-6">
-        {order.map((b) => <div key={b} ref={(el) => { refs.current[b] = el; }} className="scroll-mt-16"><LookCard pick={picks[b]} itemImage={uploadedItem.image} highlighted={active === b} /></div>)}
+        {order.map((b) => <div key={b} ref={(el) => { refs.current[b] = el; }} className="scroll-mt-16"><OutfitResultView pick={picks[b]} itemImage={uploadedItem.image} highlighted={active === b} /></div>)}
       </div>
       <p className="mt-5 text-center text-xs text-muted-foreground">Ranked by fit with your style. No sponsored placements.</p>
       <div className="mt-8 space-y-3">
@@ -83,33 +82,4 @@ export function Results() {
       </div>
     </div>
   );
-}
-
-function LookCard({ pick, itemImage, highlighted }: { pick: Pick; itemImage: string; highlighted: boolean }) {
-  return <article aria-label={`${BOLDNESS_LABEL[pick.boldness]} look`} className={cn("rounded-3xl bg-card p-4 shadow-soft ring-2 transition", highlighted ? "ring-primary" : "ring-transparent")}>
-    <OutfitBoard itemImage={itemImage} items={pick.items} />
-    <div className="mt-4 flex flex-wrap items-center gap-2">
-      <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold">{BOLDNESS_LABEL[pick.boldness]}</span>
-      {pick.boldness === "step" && <Chip className="px-2 text-[10px]">Recommended for you</Chip>}
-    </div>
-    <p className="mt-3 text-sm"><span className="font-semibold">Why it works: </span>{pick.reason}</p>
-    <div className="mt-4 divide-y divide-border">{pick.items.map((item) => <PickRow key={item.id} item={item} />)}</div>
-  </article>;
-}
-
-function PickRow({ item }: { item: CatalogItem }) {
-  const { savedItems, toggleSave, countShopClick } = usePairly();
-  const saved = savedItems.includes(item.id);
-  return <div className="flex gap-3 py-4 first:pt-0 last:pb-0">
-    <Photo src={item.image} alt={item.name} className="h-28 w-20 shrink-0 rounded-lg" />
-    <div className="min-w-0 flex-1">
-      <div className="flex items-start gap-1">
-        <h3 className="flex-1 font-serif text-lg leading-snug">{item.name}</h3>
-        <PillButton variant="ghost" aria-label={saved ? "Unsave" : "Save"} aria-pressed={saved} onClick={() => { if (toggleSave(item.id)) toast("Saved"); }} className="h-8 w-8 shrink-0 px-0"><Heart className={cn("h-4 w-4", saved && "fill-foreground")} /></PillButton>
-      </div>
-      <p className="text-xs text-muted-foreground">{item.brand}</p>
-      <p className="mt-1 text-sm font-semibold">${item.price}</p>
-      <PillButton variant="outline" className="mt-2 h-9" onClick={() => { countShopClick(); window.open(item.buyUrl, "_blank", "noopener,noreferrer"); }}>Shop</PillButton>
-    </div>
-  </div>;
 }

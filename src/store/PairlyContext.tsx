@@ -9,6 +9,8 @@ import { CATALOG } from "@/data/catalog";
 import { DEFAULT_CODE } from "@/data/styleTypes";
 import { POSTS, mockFeedback, type SocialPost } from "@/data/social";
 import type { PresetRequest } from "@/lib/devPresets";
+import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "@/data/saved";
+import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
 
 export type Screen = "welcome" | "diagnosis" | "reveal" | "upload" | "results";
 export type Tab = "match" | "social" | "saved" | "me";
@@ -24,6 +26,8 @@ export interface UploadedItem {
 }
 
 interface PairlyState {
+  recentItems: RecentItem[];
+  savedOutfits: SavedOutfit[];
   screen: Screen;
   answers: Answer[];
   styleType: StyleTypeCode | null;
@@ -43,9 +47,12 @@ interface PairlyState {
   draft: PostDraft | null;
 }
 
-const initial: PairlyState = { screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
+const initial: PairlyState = { recentItems: RECENT_ITEMS, savedOutfits: SAVED_OUTFITS, screen: "welcome", answers: [], styleType: null, axisScores: null, exploreLevel: "low", quizSkipped: false, uploadedItem: null, occasion: null, note: "", shopClicks: 0, picks: null, savedItems: [], savedLooks: [], activeTab: "match", posts: POSTS, userVotes: {}, draft: null };
 
 interface PairlyCtx extends PairlyState {
+  recordUpload: (image: string, name?: string, category?: ItemCategory) => void;
+  deleteRecent: (id: string) => void;
+  deleteSavedOutfit: (id: string) => void;
   go: (s: Screen) => void;
   answer: (a: Answer) => void;
   skipQuiz: () => void;
@@ -76,6 +83,9 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PairlyState>(initial);
   const value = useMemo<PairlyCtx>(() => ({
     ...state,
+    recordUpload: (image, name = "Uploaded jacket", category = "jacket") => setState((s) => ({ ...s, recentItems: addRecent(s.recentItems, { id: crypto.randomUUID(), imageUrl: image, productName: name, category, uploadedAt: new Date().toISOString() }) })),
+    deleteRecent: (id) => setState((s) => ({ ...s, recentItems: removeRecent(s.recentItems, id) })),
+    deleteSavedOutfit: (id) => setState((s) => ({ ...s, savedOutfits: removeOutfit(s.savedOutfits, id), savedLooks: s.savedLooks.filter((entry) => entry.id !== id) })),
     go: (screen) => setState((s) => ({ ...s, screen, activeTab: screen === "upload" || screen === "results" ? "match" : s.activeTab })),
     answer: (a) =>
       setState((s) => {
@@ -146,7 +156,7 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
       const base: PairlyState = { ...initial, styleType: preset === "welcome" || preset === "diagnosis" ? null : type };
       if (preset === "welcome" || preset === "diagnosis" || preset === "reveal" || preset === "upload") return setState({ ...base, screen: preset });
       const picks = generatePicks(CATALOG, item.category, item.name ?? item.category, type, null);
-      setState({ ...base, uploadedItem: item, picks, screen: "results", activeTab: preset === "social" ? "social" : "match" });
+      setState({ ...base, uploadedItem: item, picks, screen: "results", activeTab: preset === "social" ? "social" : preset === "saved" ? "saved" : "match" });
     },
   }), [state]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

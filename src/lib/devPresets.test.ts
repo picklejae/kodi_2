@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { devButtonVisible, parsePresetParams } from "./devPresets";
 
 describe("parsePresetParams", () => {
+  it("opens Saved from the URL preset", () => expect(parsePresetParams("?screen=saved")?.preset).toBe("saved"));
   it("reads screen, type and sample", () => {
     const r = parsePresetParams("?screen=results&type=RNDS&sample=coat");
     expect(r?.preset).toBe("results");

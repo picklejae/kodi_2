@@ -1,4 +1,9 @@
 # Roadmap
+- [x] Make Recents a content-height iOS-style sheet capped at 50dvh
+- [x] Replace Saved navigation heart with a matching wardrobe outline icon
+- [x] Add Saved to DEV navigation and URL presets
+- [x] Redesign Saved with Recents, full outfits, independent delete modes, shared detail page and hotspots
+- [x] Verify uploads, collection deletion, detail shopping, return navigation and demo shortcuts
 - [x] Plan for Chunks 1-4
 - [x] Chunk 1: Welcome, 8-round quiz, Style Type reveal
 - [x] Chunk 2: Upload screen

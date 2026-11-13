@@ -128,3 +128,13 @@
 @utility bg-soft-gradient {
   background-image: var(--gradient-soft);
 }
+
+.recent-carousel { scrollbar-width: none; }
+.recent-carousel::-webkit-scrollbar { display: none; }
+:root { --hotspot-fill: oklch(0.2 0 0 / 0.48); --hotspot-ink: oklch(1 0 0); --hotspot-glow: 0 0 0 4px oklch(1 0 0 / 0.35), 0 2px 8px oklch(0 0 0 / 0.15); }
+.hotspot { background: var(--hotspot-fill); color: var(--hotspot-ink); box-shadow: var(--hotspot-glow); }
+:root { --sheet-backdrop: oklch(0 0 0 / 0.3); }
+.recent-sheet-backdrop { background: var(--sheet-backdrop); }
+.recent-sheet { padding-bottom: calc(16px + env(safe-area-inset-bottom)); transition-duration: 300ms !important; transition-timing-function: ease-out !important; animation-duration: 300ms !important; animation-timing-function: ease-out !important; }
+.recent-sheet::after { display: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0ms !important; animation-duration: 0ms !important; } }

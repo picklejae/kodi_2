@@ -7,6 +7,14 @@ import { EXCLUDED, generatePicks, lookOrder } from "./matching";
 const codes = Object.keys(STYLE_TYPES) as StyleTypeCode[];
 
 describe("generatePicks", () => {
+  it("styles recent knits and shoes without duplicating the owned category", () => {
+    for (const category of ["knit", "shoes"] as const) {
+      for (const look of Object.values(generatePicks(CATALOG, category, "recent piece", "TNPF", null))) {
+        expect(look.items.some((item) => item.category === "pants")).toBe(true);
+        expect(look.items.every((item) => !EXCLUDED[category].includes(item.category))).toBe(true);
+      }
+    }
+  });
   it("returns exactly three looks with two picks each", () => {
     const p = generatePicks(CATALOG, "jacket", "Navy blazer", "TNPF", null);
     expect(Object.keys(p)).toEqual(["safe", "step", "bold"]);

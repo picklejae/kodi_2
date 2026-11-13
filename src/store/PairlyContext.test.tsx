@@ -3,6 +3,19 @@ import { describe, expect, it } from "vitest";
 import { PairlyProvider, usePairly } from "./PairlyContext";
 
 describe("quiz state", () => {
+  it("records uploads and deletes photos independently of saved outfits", () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.recordUpload("new-photo", "Blue shirt", "shirt"));
+    expect(result.current.recentItems[0]?.imageUrl).toBe("new-photo");
+    expect(result.current.recentItems).toHaveLength(7);
+    act(() => result.current.deleteRecent("recent-1"));
+    expect(result.current.savedOutfits.some((outfit) => outfit.ownedItemId === "recent-1")).toBe(true);
+    act(() => result.current.deleteSavedOutfit("outfit-1"));
+    expect(result.current.savedOutfits).toHaveLength(5);
+    act(() => result.current.reset());
+    expect(result.current.recentItems).toHaveLength(6);
+    expect(result.current.savedOutfits).toHaveLength(6);
+  });
   it("saving a pick retains its whole look and owned image after another upload", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setUploadedItem({ image: "first-piece", category: "jacket", attributes: [], source: "upload" }));

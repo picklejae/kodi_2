@@ -12,7 +12,7 @@ import { usePairly } from "@/store/PairlyContext";
 import { OutfitBoard } from "./OutfitBoard";
 
 export function CreatePostSheet() {
-  const { draft, openDraft, createPost, occasion: storeOccasion } = usePairly();
+  const { draft, openDraft, createPost, occasion: storeOccasion, recordUpload } = usePairly();
   const [image, setImage] = useState<string | null>(null);
   const [question, setQuestion] = useState("How does this look?");
   const [occasion, setOccasion] = useState<Occasion | null>(null);
@@ -23,7 +23,7 @@ export function CreatePostSheet() {
     setImage(draft.image); setQuestion("How does this look?"); setOccasion(draft.pickImages ? storeOccasion : null);
   }, [draft]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onFile = (f?: File) => { if (!f) return; const r = new FileReader(); r.onload = () => setImage(String(r.result)); r.readAsDataURL(f); };
+  const onFile = (f?: File) => { if (!f) return; const r = new FileReader(); r.onload = () => { const image = String(r.result); setImage(image); recordUpload(image); }; r.readAsDataURL(f); };
   const post = () => { if (!image) return; createPost({ image, ...(draft?.pickImages ? { pickImages: draft.pickImages } : {}), question: question.trim() || "How does this look?", occasion }); toast("Posted"); };
 
   return (

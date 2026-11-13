@@ -9,7 +9,7 @@ import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, SAMPLES, type ItemCategory }
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload } = usePairly();
   const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -25,7 +25,7 @@ export function Upload() {
   const onFile = (f?: File) => {
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = () => pick({ image: String(reader.result), category: "jacket", attributes: GENERIC_ATTRIBUTES.jacket, source: "upload" });
+    reader.onload = () => { const image = String(reader.result); recordUpload(image); pick({ image, category: "jacket", attributes: GENERIC_ATTRIBUTES.jacket, source: "upload" }); };
     reader.readAsDataURL(f);
   };
 
