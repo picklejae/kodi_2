@@ -9,7 +9,7 @@ export function Diagnosis() {
   const i = answers.length;
   const ROUNDS = roundsFor(stylePreference);
   if (stylePreference && !quizAvailable(stylePreference)) return (
-    <div className="flex flex-1 flex-col justify-center gap-4 px-screen"><h2 className="font-serif text-3xl">Womenswear quiz looks are coming soon</h2><p className="text-sm text-muted-foreground">The current swipe photos are menswear only, so we skip the quiz for womenswear.</p><PillButton onClick={skipQuiz}>Start styling</PillButton></div>
+    <div className="flex flex-1 flex-col justify-center gap-4 px-screen"><h2 className="font-serif text-3xl">Womenswear quiz looks are coming soon</h2><p className="text-sm text-muted-foreground">The current swipe photos are menswear only, so we skip the quiz for womenswear.</p><PillButton onClick={skipQuiz}>Start Styling</PillButton></div>
   );
   if (!ROUNDS[i]) return null;
   return (
@@ -34,7 +34,7 @@ export function Diagnosis() {
         <PillButton aria-label="Yes" title="Yes" onClick={() => answer("yes")} className="h-14 w-14 px-0 shadow-soft"><Heart className="h-6 w-6" /></PillButton>
       </div>
       <div className="mt-auto pt-4 text-center">
-        <PillButton variant="ghost" onClick={skipQuiz} className="h-9 w-auto px-2 underline underline-offset-4">Skip quiz</PillButton>
+        <PillButton variant="ghost" onClick={skipQuiz} className="h-9 w-auto px-2 underline underline-offset-4">Skip Quiz</PillButton>
       </div>
     </div>
   );

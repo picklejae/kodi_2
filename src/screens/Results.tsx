@@ -11,10 +11,10 @@ import { usePairly } from "@/store/PairlyContext";
 
 export function Results() {
   const { styleType, quizSkipped, uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, regenerate, saveLook, savedOutfits, deleteSavedOutfit } = usePairly();
-  if (!uploadedItem) return <div className="flex flex-1 items-center justify-center px-screen"><PillButton onClick={() => go("upload")}>Pick a piece first</PillButton></div>;
+  if (!uploadedItem) return <div className="flex flex-1 items-center justify-center px-screen"><PillButton onClick={() => go("upload")}>Pick A Piece</PillButton></div>;
   const looks = generatedLooks ?? [];
   const active = looks[selectedConcept] ?? looks[0];
-  if (!active) return <div className="px-screen pb-12 pt-12"><PillButton variant="ghost" aria-label="Back to Style" onClick={() => go("upload")} className="h-9 w-9 px-0"><ChevronLeft className="h-5 w-5" /></PillButton><h1 className="mt-6 text-title font-bold">Style your piece</h1><div role="status" className="mt-8 flex aspect-[3/4] flex-col items-center justify-center gap-5 rounded-2xl bg-secondary p-6 text-center">{planning ? <><Loader2 className="h-8 w-8 animate-spin" /><p>Creating your three styling directions…</p></> : <><ImageIcon className="h-8 w-8" /><p>{generationError || "Ready to style your piece"}</p><PillButton onClick={findMatches}>{generationError ? "Try generation again" : "Create outfit moodboards"}</PillButton></>}</div></div>;
+  if (!active) return <div className="px-screen pb-12 pt-12"><PillButton variant="ghost" aria-label="Back to Style" onClick={() => go("upload")} className="h-9 w-9 px-0"><ChevronLeft className="h-5 w-5" /></PillButton><h1 className="mt-6 text-title font-bold">Style your piece</h1><div role="status" className="mt-8 flex aspect-[3/4] flex-col items-center justify-center gap-5 rounded-2xl bg-secondary p-6 text-center">{planning ? <><Loader2 className="h-8 w-8 animate-spin" /><p>Creating your three styling directions…</p></> : <><ImageIcon className="h-8 w-8" /><p>{generationError || "Ready to style your piece"}</p><PillButton onClick={findMatches}>{generationError ? "Try Generation Again" : "Create Outfit Moodboards"}</PillButton></>}</div></div>;
   const occasionLabel = OCCASIONS.find((entry) => entry.id === occasion)?.label;
   return (
     <div className="flex flex-1 flex-col px-screen pb-screen pt-topbar">
@@ -31,7 +31,7 @@ export function Results() {
       </div>
       <PillButton variant="ghost" onClick={regenerate} disabled={planning || looks.some((look) => look.status === "loading")} className="mt-2 h-8 w-auto self-start px-0 text-xs font-normal underline underline-offset-4">Regenerate</PillButton>
       <p className="mt-4 text-[10px] text-muted-foreground">{active.demoSet ? "Demo outfit" : looks[0]?.id === "jason-closet" ? "Your closet photo + two AI styling concepts" : "AI styling concepts · garment details and fit may vary"}</p>
-      {looks.some((look) => look.status === "idle") && <PillButton className="mt-3" onClick={findMatches}>Create two new looks</PillButton>}
+      {looks.some((look) => look.status === "idle") && <PillButton className="mt-3" onClick={findMatches}>Create New Looks</PillButton>}
       <div className="lg:grid lg:grid-cols-[14fr_11fr] lg:items-start lg:gap-screen">
       <div className="mt-screen" aria-label="Outfit moodboards">
         {looks.map((look, index) => <div key={look.id} className={cn(active.id !== look.id && "hidden")}><div className="relative">
@@ -41,7 +41,7 @@ export function Results() {
           {look.status === "success" && look.image && (() => { const sid = `${look.id}:${look.image?.length}`; const saved = savedOutfits.some((outfit) => outfit.id === sid); return <button type="button" aria-label={saved ? `Unsave ${look.name} look` : `Save ${look.name} look`} aria-pressed={saved} onClick={() => { if (saved) deleteSavedOutfit(sid); else if (saveLook(look)) toast("Saved"); }} className="absolute right-0 top-0 flex min-h-touch min-w-touch items-center justify-center text-foreground transition-colors duration-200 ease-kodi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><Heart className={cn("h-5 w-5", saved && "fill-current")} /></button>; })()}
           </div>
           <p className="mt-3 text-[10px] text-muted-foreground">{look.id === "jason-closet" ? "From your closet · Your photo" : look.status === "success" ? "AI styling concept" : look.status === "loading" ? "Generating this look" : look.status === "idle" ? "Ready to generate" : "Generation failed · no demo fallback"}</p>
-          {look.status === "failed" && <PillButton variant="outline" onClick={() => retryLook(index)} className="mt-3"><RefreshCw className="mr-2 h-4 w-4" />Retry this look</PillButton>}
+          {look.status === "failed" && <PillButton variant="outline" onClick={() => retryLook(index)} className="mt-3"><RefreshCw className="mr-2 h-4 w-4" />Retry This Look</PillButton>}
         </div>)}
       </div>
       <div id="selected-concept" role="tabpanel" aria-labelledby={`concept-${active.id}`} className="mt-screen">

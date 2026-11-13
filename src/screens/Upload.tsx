@@ -52,8 +52,8 @@ export function Upload() {
             <ImageIcon className="h-8 w-8 text-muted-foreground" />
             <p className="mt-3 text-sm text-muted-foreground"><Sentences text="A jacket, coat, pants or shirt. Flat or on a hanger works best." /></p>
             <div className="mt-6 w-full space-y-3">
-              <PillButton onClick={() => camRef.current?.click()}><Camera className="mr-2 h-4 w-4" />Take photo</PillButton>
-              <PillButton variant="outline" onClick={() => libRef.current?.click()}>Choose from library</PillButton>
+              <PillButton onClick={() => camRef.current?.click()}><Camera className="mr-2 h-4 w-4" />Take Photo</PillButton>
+              <PillButton variant="outline" onClick={() => libRef.current?.click()}>Choose From Library</PillButton>
             </div>
           </div>
           <p className="mt-7 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Or try a sample</p>
@@ -102,7 +102,7 @@ export function Upload() {
 
       </div>
       <div className="mt-auto pt-8 lg:mt-0">
-        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating looks" : <>Kodi <span className="text-brand-orange">me</span></>}</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View Generating Looks" : <>Kodi <span className="text-brand-orange">Me</span></>}</PillButton>
       </div>
     </div>
   );
