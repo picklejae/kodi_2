@@ -1,22 +1,23 @@
 import { useRef, useState, useEffect } from "react";
-import { ImageIcon } from "lucide-react";
+import { Camera } from "lucide-react";
+import { Button } from "@/design-system/kodi-design-system-ac5f73";
 import { toast } from "sonner";
 import { BottomSheet } from "./BottomSheet";
 import { Photo } from "./Photo";
 import { PillButton } from "./PillButton";
 import { SelectChip } from "./SelectChip";
-import { StyleTypeChip } from "./StyleTypeChip";
-import { OCCASIONS, SAMPLES, type Occasion } from "@/data/samples";
+import { OCCASIONS, type Occasion } from "@/data/samples";
 import { cn } from "@/lib/utils";
 import { usePairly } from "@/store/PairlyContext";
 import { OutfitBoard } from "./OutfitBoard";
 
 export function CreatePostSheet() {
-  const { draft, openDraft, createPost, occasion: storeOccasion, recordUpload } = usePairly();
+  const { draft, openDraft, createPost, occasion: storeOccasion, recordUpload, recentItems } = usePairly();
   const [image, setImage] = useState<string | null>(null);
   const [question, setQuestion] = useState("How does this look?");
   const [occasion, setOccasion] = useState<Occasion | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const camRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!draft) return;
@@ -28,8 +29,8 @@ export function CreatePostSheet() {
 
   return (
     <BottomSheet open={!!draft} onClose={() => openDraft(null)} title="Get feedback">
-      <div className="mt-2"><StyleTypeChip /></div>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+      <input ref={camRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       {draft?.look && draft.ownedImage ? (
         <div className="mt-4"><OutfitBoard itemImage={draft.ownedImage} items={draft.look.items} /><p className="mt-3 text-sm">{draft.look.reason}</p></div>
       ) : image ? (
@@ -40,15 +41,17 @@ export function CreatePostSheet() {
           )}
         </div>
       ) : (
-        <button onClick={() => fileRef.current?.click()} className="mt-4 flex h-32 w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-foreground/25 text-sm text-muted-foreground">
-          <ImageIcon className="mb-2 h-6 w-6" />Upload your outfit photo
-        </button>
+        // Same two buttons as the Style upload box.
+        <div className="mt-4 space-y-2">
+          <Button fullWidth className="h-[47px] text-body-sm" onClick={() => camRef.current?.click()}><Camera className="h-4 w-4" />Upload Photo</Button>
+          <Button fullWidth variant="secondary" className="h-[43px]" onClick={() => fileRef.current?.click()}>Choose From Library</Button>
+        </div>
       )}
       {!draft?.pickImages && (
         <div className="mt-3 grid grid-cols-4 gap-2">
-          {SAMPLES.map((s) => (
-            <button key={s.id} onClick={() => setImage(s.image)} aria-label={s.name}>
-              <Photo src={s.image} alt={s.name} className={cn("aspect-square rounded-xl ring-2", image === s.image ? "ring-primary" : "ring-transparent")} />
+          {recentItems.map((r) => (
+            <button key={r.id} type="button" onClick={() => setImage(r.imageUrl)} aria-label={r.productName}>
+              <Photo src={r.imageUrl} alt={r.productName} className={cn("aspect-square w-full rounded-xl ring-2", image === r.imageUrl ? "ring-primary" : "ring-transparent")} />
             </button>
           ))}
         </div>
