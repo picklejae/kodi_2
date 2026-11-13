@@ -83,14 +83,14 @@ describe("quiz state", () => {
   it("stores body stats, units and budget range until reset", () => {
     const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
     act(() => result.current.setBody({ heightCm: 178, weightKg: 72 }));
-    act(() => result.current.setUnits("imperial"));
+    act(() => result.current.setUnits("metric"));
     act(() => result.current.setBudget({ min: 50, max: 200 }));
     expect(result.current.body).toEqual({ heightCm: 178, weightKg: 72 });
-    expect(result.current.units).toBe("imperial");
+    expect(result.current.units).toBe("metric");
     expect(result.current.budget).toEqual({ min: 50, max: 200 });
     act(() => result.current.reset());
     expect(result.current.body).toEqual({ heightCm: null, weightKg: null });
-    expect(result.current.units).toBe("metric");
+    expect(result.current.units).toBe("imperial");
     expect(result.current.budget).toEqual({ min: 0, max: 500 });
   });
   it("posting retains both old and new boards with their pick metadata", () => {
