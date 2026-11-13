@@ -5,6 +5,7 @@ import { PillButton } from "@/components/pairly/PillButton";
 import { OCCASIONS } from "@/data/samples";
 import { cn } from "@/lib/utils";
 import { usePairly } from "@/store/PairlyContext";
+import { ShoppingSection } from "@/components/pairly/ShoppingSection";
 
 export function Results() {
   const { uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches } = usePairly();
@@ -40,15 +41,7 @@ export function Results() {
         <h2 className="font-serif text-3xl">{active.name}</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed">{active.explanation}</p>
         <div className="mt-5 flex flex-wrap gap-2"><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">More casual · Demo</PillButton><PillButton variant="outline" disabled className="h-9 w-auto px-3 text-xs">Lower budget · Demo</PillButton></div>
-        <h2 className="mt-9 font-serif text-2xl">Recreate this look</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Demo pieces · prices and shopping links not connected</p>
-        <div className="mt-4 divide-y divide-border">
-          {active.items.map((item, index) => <article key={`${item.role}-${index}`} className="flex gap-4 py-4">
-            {item.image ? <Photo src={item.image} alt={item.name} className="h-20 w-16 shrink-0 rounded-lg" /> : <div aria-label={`${item.role} image pending`} className="flex h-20 w-16 shrink-0 items-center justify-center rounded-lg bg-secondary"><ImageIcon className="h-5 w-5 text-muted-foreground" /></div>}
-            <div className="min-w-0 flex-1"><p className="text-[10px] font-semibold uppercase text-muted-foreground">{item.role}{item.highlight ? " · Key addition" : ""}</p><h3 className="mt-1 text-sm font-semibold">{item.name}</h3><p className="mt-1 text-xs text-muted-foreground">{item.owned ? "Already yours · no purchase needed" : "Demo item · brand and price pending"}</p></div>
-            {!item.owned && <div className="text-center"><PillButton variant="ghost" disabled aria-label={`Swap ${item.name} (demo, not connected)`} title="Swap this item · not connected" className="h-9 w-9 shrink-0 px-0"><RefreshCw className="h-4 w-4" /></PillButton><span className="text-[9px] text-muted-foreground">Demo swap</span></div>}
-          </article>)}
-        </div>
+        <ShoppingSection look={active} />
       </div>
     </div>
   );

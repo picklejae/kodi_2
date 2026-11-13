@@ -26,5 +26,6 @@
 - [x] Add Social badges, cohort filters and summaries, latest pinned post, and Me look history
 - [x] Verify filters, summaries, saved and posted look history, and demo presets
 - [x] Clothing preference choice (Welcome, Style, Me), persisted, passed to generation
-- [ ] Live shopping: on-demand, bounded per-role searches with real product pages and result reuse
-- [ ] Verify real shopping inside Style, outbound links, error/no-match behavior, and usage
+- [x] Live shopping: linked existing Firecrawl; on-demand bounded per-role discovery, real product data, alternatives and shared result reuse
+- [x] Verify real Menswear/Womenswear products in Style, role association, alternatives, no-match, test service errors and usage
+- [ ] Retailer destination verification: COS/Macy’s block browser access; Nordstrom returns blank page in sandbox; shopper destination rendering remains unverified

@@ -2,9 +2,10 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PairlyProvider, usePairly } from "./PairlyContext";
 
-const mocks = vi.hoisted(() => ({ plan: vi.fn(), render: vi.fn(), photo: vi.fn() }));
+const mocks = vi.hoisted(() => ({ plan: vi.fn(), render: vi.fn(), photo: vi.fn(), shopping: vi.fn() }));
 vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: unknown) => fn }));
 vi.mock("@/lib/styleGeneration.functions", () => ({ planStyle: mocks.plan, renderStyleLook: mocks.render }));
+vi.mock("@/lib/shopping.functions", () => ({ findShoppingProducts: mocks.shopping }));
 vi.mock("@/lib/styleGeneration", async (load) => ({ ...await load<object>(), photoReference: mocks.photo }));
 function deferred() {
   let resolve: (value: { ok: boolean; image?: string; error?: string }) => void = () => {};
@@ -14,6 +15,41 @@ function deferred() {
 const plan = { presentation: "Same studio", looks: [0, 1, 2].map((i) => ({ name: `Look ${i}`, explanation: "Garment-specific outfit", styling: `Style ${i}`, items: [{ role: "Bottoms", name: "Trousers", highlight: true }, { role: "Shoes", name: "Loafers", highlight: false }] })) };
 beforeEach(() => { localStorage.clear(); vi.resetAllMocks(); mocks.photo.mockResolvedValue("reference"); mocks.plan.mockResolvedValue({ ok: true, plan }); mocks.render.mockResolvedValue({ ok: true, image: "new-image" }); });
 describe("Style loading", () => {
+  it("shopping errors and no-match keep moodboards and bound retry to two attempts", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("womenswear"));
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(result.current.generatedLooks?.[0]?.status).toBe("success"));
+    const look = result.current.generatedLooks?.[0], item = look?.items[1];
+    if (!look || !item) throw new Error("Missing look");
+    mocks.shopping.mockResolvedValueOnce({ status: "error", error: "Service unavailable", products: [], usage: { credits: 0, calls: 1, complete: false }, blocked: [], retrievedAt: new Date().toISOString() });
+    act(() => result.current.searchShopping(look, item));
+    await waitFor(() => expect(Object.values(result.current.shopping ?? {})[0]?.status).toBe("error"));
+    mocks.shopping.mockResolvedValueOnce({ status: "no-match", products: [], usage: { credits: 4, calls: 2, complete: true }, blocked: [], retrievedAt: new Date().toISOString() });
+    act(() => result.current.searchShopping(look, item));
+    await waitFor(() => expect(Object.values(result.current.shopping ?? {})[0]?.status).toBe("no-match"));
+    act(() => result.current.searchShopping(look, item));
+    expect(mocks.shopping).toHaveBeenCalledTimes(2);
+    expect(result.current.generatedLooks?.[0]?.image).toBe("new-image");
+    expect(mocks.render).toHaveBeenCalledTimes(3);
+  });
+  it("searches independently, prevents duplicate taps, and reuses products across tabs without regenerating images", async () => {
+    const { result } = renderHook(() => usePairly(), { wrapper: PairlyProvider });
+    act(() => result.current.setStylePreference("menswear"));
+    act(() => result.current.setUploadedItem({ image: "garment", category: "coat", attributes: [], source: "upload" }));
+    act(() => result.current.findMatches());
+    await waitFor(() => expect(result.current.generatedLooks?.[0]?.status).toBe("success"));
+    const look = result.current.generatedLooks?.[0], item = look?.items[1];
+    if (!look || !item) throw new Error("Missing look");
+    mocks.shopping.mockResolvedValue({ status: "success", products: [{ name: "Real trousers" }], usage: { credits: 3, calls: 2, complete: true }, blocked: [], retrievedAt: new Date().toISOString() });
+    act(() => { result.current.searchShopping(look, item); result.current.searchShopping(look, item); });
+    await waitFor(() => expect(Object.values(result.current.shopping ?? {})[0]?.status).toBe("success"));
+    act(() => { result.current.setTab("feed"); result.current.setTab("style"); result.current.searchShopping(look, item); });
+    expect(mocks.shopping).toHaveBeenCalledTimes(1);
+    expect(mocks.plan).toHaveBeenCalledTimes(1); expect(mocks.render).toHaveBeenCalledTimes(3);
+    expect(result.current.generatedLooks?.[0]?.image).toBe("new-image");
+  });
   it("reveals the first completed look while others generate, reuses unchanged inputs, and retries only a failure", async () => {
     const jobs = [deferred(), deferred(), deferred()];
     jobs.forEach((job) => mocks.render.mockReturnValueOnce(job.promise));

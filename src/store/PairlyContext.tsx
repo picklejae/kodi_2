@@ -14,6 +14,9 @@ import { POSTS, mockFeedback, type SocialPost } from "@/data/social";
 import type { PresetRequest } from "@/lib/devPresets";
 import { RECENT_ITEMS, SAVED_OUTFITS, type RecentItem, type SavedOutfit } from "@/data/saved";
 import { addRecent, removeRecent, removeOutfit } from "@/lib/saved";
+import { findShoppingProducts } from "@/lib/shopping.functions";
+import { MAX_ATTEMPTS, SHOPPING_TTL, shoppingKey, type ShoppingInput, type ShoppingRecord } from "@/lib/shopping";
+import type { ConceptItem } from "@/data/moodboards";
 
 export type StylePreference = "menswear" | "womenswear";
 export const PREFERENCE_KEY = "pairly.stylePreference";
@@ -47,6 +50,7 @@ interface PairlyState {
   shopClicks: number;
   selectedConcept: number;
   generatedLooks?: GeneratedLook[];
+  shopping?: Record<string, ShoppingRecord>;
   generationError?: string;
   planning?: boolean;
   picks: Picks | null;
@@ -79,6 +83,7 @@ interface PairlyCtx extends PairlyState {
   countShopClick: () => void;
   findMatches: () => void;
   retryLook: (index: number) => void;
+  searchShopping: (look: GeneratedLook, item: ConceptItem, country?: string, budget?: ShoppingInput["budget"]) => void;
   toggleSave: (id: string) => boolean;
   setTab: (t: Tab) => void;
   dismissFeedHint: () => void;
@@ -99,6 +104,9 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PairlyState>(initial);
   const planFn = useServerFn(planStyle);
   const renderFn = useServerFn(renderStyleLook);
+  const shoppingFn = useServerFn(findShoppingProducts);
+  const shoppingPending = useRef(new Set<string>());
+  const shoppingCache = useRef<Record<string, ShoppingRecord>>({});
   const running = useRef(false);
   const runId = useRef(0);
   const inFlight = useRef(new Set<number>());
@@ -153,6 +161,24 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
   };
   const value = useMemo<PairlyCtx>(() => ({
     ...state,
+    searchShopping: (look, item, country, budget) => {
+      if (item.owned || item.role === "Your piece" || look.preference !== state.stylePreference) return;
+      const key = shoppingKey(look, item, country, budget);
+      const cached = shoppingCache.current[key];
+      if (shoppingPending.current.has(key) || (cached?.status === "success" && Date.now() - Date.parse(cached.retrievedAt) < SHOPPING_TTL) || (cached && cached.attempts >= MAX_ATTEMPTS)) return;
+      const record: ShoppingRecord = { status: "loading", products: [], usage: { credits: 0, calls: 0, complete: true }, blocked: [], retrievedAt: new Date().toISOString(), attempts: (cached?.attempts ?? 0) + 1 };
+      shoppingPending.current.add(key); shoppingCache.current[key] = record;
+      setState((s) => ({ ...s, shopping: { ...s.shopping, [key]: record } }));
+      void shoppingFn({ data: { role: item.role, description: item.name, preference: look.preference, ...(country ? { country } : {}), ...(budget ? { budget } : {}) } }).then((result) => {
+        const completed = { ...result, attempts: record.attempts };
+        shoppingCache.current[key] = completed;
+        setState((s) => ({ ...s, shopping: { ...s.shopping, [key]: completed } }));
+      }).catch(() => {
+        const failed: ShoppingRecord = { ...record, status: "error", error: "Shopping connection interrupted. Your outfit is unchanged.", usage: { ...record.usage, complete: false } };
+        shoppingCache.current[key] = failed;
+        setState((s) => ({ ...s, shopping: { ...s.shopping, [key]: failed } }));
+      }).finally(() => shoppingPending.current.delete(key));
+    },
     recordUpload: (image, name = "Uploaded jacket", category = "jacket") => setState((s) => ({ ...s, recentItems: addRecent(s.recentItems, { id: crypto.randomUUID(), imageUrl: image, productName: name, category, uploadedAt: new Date().toISOString() }) })),
     deleteRecent: (id) => setState((s) => ({ ...s, recentItems: removeRecent(s.recentItems, id) })),
     deleteSavedOutfit: (id) => setState((s) => ({ ...s, savedOutfits: removeOutfit(s.savedOutfits, id), savedLooks: s.savedLooks.filter((entry) => entry.id !== id) })),

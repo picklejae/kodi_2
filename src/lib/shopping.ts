@@ -43,7 +43,7 @@ export interface ShoppingResponse {
   status: "success" | "no-match" | "error"; products: RealProduct[]; error?: string;
   usage: { credits: number; calls: number; complete: boolean }; blocked: string[]; retrievedAt: string;
 }
-export type ShoppingRecord = ShoppingResponse & { status: ShoppingResponse["status"] | "loading"; attempts: number };
+export type ShoppingRecord = Omit<ShoppingResponse, "status"> & { status: ShoppingResponse["status"] | "loading"; attempts: number };
 export function shoppingKey(look: GeneratedLook, item: ConceptItem, country?: string, budget?: ShoppingInput["budget"]) {
   return JSON.stringify([look.preference, look.styling, look.items.map((i) => [i.role, i.name]), item.role, item.name, country ?? "", budget ?? null]);
 }
@@ -57,7 +57,7 @@ export function shoppingQuery(input: ShoppingInput) {
 }
 const groups = [
   ["shirt", "blouse", "button-up", "poplin"], ["knit", "sweater", "crewneck", "jumper", "cardigan", "turtleneck"],
-  ["tee", "t-shirt"], ["trousers", "pants", "chinos"], ["jeans", "denim"], ["skirt"], ["shorts"],
+  ["hoodie", "hooded", "sweatshirt"], ["tee", "t-shirt"], ["trousers", "pants", "chinos"], ["jeans", "denim"], ["skirt"], ["shorts"],
   ["flats", "ballerina", "ballet"], ["loafers", "loafer"], ["sneakers", "trainers", "sneaker"], ["boots", "boot"],
   ["sandals", "sandal"], ["belt"], ["scarf"], ["bag", "tote"], ["jewelry", "necklace", "earrings"],
 ];

@@ -43,3 +43,4 @@ use the editor.
 - Feedback composes the selected outfit board into a browser-generated image and retains its two pick images; why: Social can show full-look posts without altering its flow.
 - Keep attributed vote cohorts and feedback on mock posts, and retain saved look snapshots plus posted boards in the shared store; why: Social filters and Me history must stay consistent after switching pieces.
 - Persist the Menswear/Womenswear clothing preference in localStorage (read in an effect) and include it in the Style request key; why: returning visitors skip the choice and a change invalidates stale moodboards.
+- Keep shopping RPCs server-side and on-demand, restrict discovery to configured retailer product paths, and key shared per-role results by outfit, preference, market and budget; why: browsing never regenerates moodboards or exposes unrestricted URL fetching.
