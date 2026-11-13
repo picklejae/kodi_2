@@ -53,10 +53,12 @@ const rows: R[] = [
   ["@max.v", u("1506794778202-cad84cf45f1d"), "TNPF", "date", "Shirt tucked or untucked?", 120, 16, ["Great fit", "Too formal", "Try darker shoes"]],
 ];
 const MEMBER_POSTS: SocialPost[] = rows.map(([author, image, styleType, occasion, question, votesUp, votesDown, topFeedback], i) => ({ id: `p${i + 1}`, author, image, styleType, occasion, question, votesUp, votesDown, topFeedback, exploreLevel: styleType.includes("C") ? "high" : "low", voteGroups: mockVoteGroups(votesUp, votesDown), feedback: mockFeedback(topFeedback) }));
-// Feed reference photos: credited to their source site, no invented votes or comments (they start at zero).
-const REFERENCE_POSTS: SocialPost[] = FEED_REFERENCES.map((photo) => ({
-  id: photo.id, author: `via ${photo.credit.creator}`, image: photo.image, styleType: photo.styleType, occasion: null,
-  question: photo.title, votesUp: 0, votesDown: 0, topFeedback: [], exploreLevel: photo.styleType.includes("C") ? "high" : "low",
+// Feed reference photos: demo handles and questions on the card (user request); the source credit stays in the detail sheet.
+const DEMO_HANDLES = ["@mina.fits", "@yuna_wears", "@chloe.k", "@sora.style", "@hana.daily", "@ella.m", "@jiwoo.ootd", "@nora_lee", "@ari.layers", "@lena.p",
+  "@leo.fits", "@minho_wears", "@ethan.k", "@dan.style", "@kai.daily", "@noah.m", "@jay.ootd", "@sean_lee", "@theo.layers", "@ryan.p"];
+const REFERENCE_POSTS: SocialPost[] = FEED_REFERENCES.map((photo, i) => ({
+  id: photo.id, author: DEMO_HANDLES[i % DEMO_HANDLES.length]!, image: photo.image, styleType: photo.styleType, occasion: null,
+  question: `${photo.title}. Does it work?`, votesUp: 0, votesDown: 0, topFeedback: [], exploreLevel: photo.styleType.includes("C") ? "high" : "low",
   voteGroups: [], feedback: [], department: photo.department, credit: photo.credit,
 }));
 export const POSTS: SocialPost[] = [...REFERENCE_POSTS, ...MEMBER_POSTS];
