@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Connect reference-photo planning and per-look AI generation to Style with retries and duplicate-request protection
+- [x] Verify returned sample images and synthetic garment file upload; 45 tests pass (real user garment not supplied)
 - [x] Replace Style results with three coordinated model-worn demo concepts and complete outfit items
 - [x] Verify Camel coat input, selectors, preserved preferences, desktop layout and unchanged tabs
 - [x] Rename navigation to Style, Feed, Closet and Me, including headers, detail route and DEV names

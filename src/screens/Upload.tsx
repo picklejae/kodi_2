@@ -9,7 +9,7 @@ import { CATEGORIES, GENERIC_ATTRIBUTES, OCCASIONS, SAMPLES, type ItemCategory }
 import { usePairly, type UploadedItem } from "@/store/PairlyContext";
 
 export function Upload() {
-  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload } = usePairly();
+  const { uploadedItem, setUploadedItem, occasion, setOccasion, note, setNote, go, findMatches, recordUpload, planning, generatedLooks } = usePairly();
   const [analyzing, setAnalyzing] = useState(false);
   const libRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -102,7 +102,7 @@ export function Upload() {
       )}
 
       <div className="mt-auto pt-8">
-        <PillButton disabled={!uploadedItem || analyzing} onClick={findMatches}>Create outfit moodboards</PillButton>
+        <PillButton disabled={!uploadedItem || analyzing || planning || generatedLooks?.some((look) => look.status === "loading")} onClick={findMatches}>Create outfit moodboards</PillButton>
       </div>
     </div>
   );

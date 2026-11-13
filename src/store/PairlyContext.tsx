@@ -1,5 +1,8 @@
 import type React from "react";
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { planStyle, renderStyleLook } from "@/lib/styleGeneration.functions";
+import { looksFromPlan, photoReference, type GeneratedLook } from "@/lib/styleGeneration";
 import { ROUNDS } from "@/data/diagnosis";
 import type { ItemCategory, Occasion } from "@/data/samples";
 import type { StyleTypeCode } from "@/data/styleTypes";
@@ -39,6 +42,9 @@ interface PairlyState {
   note: string;
   shopClicks: number;
   selectedConcept: number;
+  generatedLooks?: GeneratedLook[];
+  generationError?: string;
+  planning?: boolean;
   picks: Picks | null;
   savedItems: string[];
   savedLooks: SavedLook[];
@@ -67,6 +73,7 @@ interface PairlyCtx extends PairlyState {
   setSelectedConcept: (index: number) => void;
   countShopClick: () => void;
   findMatches: () => void;
+  retryLook: (index: number) => void;
   toggleSave: (id: string) => boolean;
   setTab: (t: Tab) => void;
   dismissFeedHint: () => void;
@@ -85,6 +92,44 @@ const Ctx = (g.__pairlyCtx ??= createContext<PairlyCtx | null>(null));
 
 export function PairlyProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PairlyState>(initial);
+  const planFn = useServerFn(planStyle);
+  const renderFn = useServerFn(renderStyleLook);
+  const running = useRef(false);
+  const runId = useRef(0);
+  const inFlight = useRef(new Set<number>());
+  const generation = useRef<{ reference: string; presentation: string; occasion: string; mood: string } | null>(null);
+  const renderLook = async (index: number, look: GeneratedLook, token: number) => {
+    const request = generation.current;
+    if (!request || inFlight.current.has(index)) return;
+    inFlight.current.add(index);
+    setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? { ...entry, status: "loading", error: "" } : entry) ?? [] }));
+    try {
+      const result = await renderFn({ data: { ...request, styling: look.styling } });
+      if (runId.current !== token) return;
+      setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i !== index ? entry : result.ok ? { ...entry, status: "success", image: result.image, error: "" } : { ...entry, status: "failed", error: result.error }) ?? [] }));
+    } catch {
+      if (runId.current === token) setState((s) => ({ ...s, generatedLooks: s.generatedLooks?.map((entry, i) => i === index ? { ...entry, status: "failed", error: "Connection interrupted. This attempt may have started; retry only for a new attempt." } : entry) ?? [] }));
+    } finally { inFlight.current.delete(index); }
+  };
+  const createMoodboards = async () => {
+    if (!state.uploadedItem || running.current || inFlight.current.size) return;
+    running.current = true;
+    const token = ++runId.current;
+    setState((s) => ({ ...s, screen: "results", activeTab: "style", selectedConcept: 0, generatedLooks: [], planning: true, generationError: "", picks: s.uploadedItem ? generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion) : s.picks }));
+    try {
+      const reference = await photoReference(state.uploadedItem.image);
+      const request = { reference, occasion: state.occasion ?? "", mood: state.note.slice(0, 600) };
+      const result = await planFn({ data: { ...request, category: state.uploadedItem.category, name: state.uploadedItem.name ?? state.uploadedItem.category } });
+      if (runId.current !== token) return;
+      if (!result.ok) throw new Error(result.error);
+      const looks = looksFromPlan(result.plan, state.uploadedItem.name ?? state.uploadedItem.category, state.uploadedItem.image);
+      generation.current = { ...request, presentation: result.plan.presentation };
+      setState((s) => ({ ...s, generatedLooks: looks, planning: false }));
+      await Promise.all(looks.map((look, index) => renderLook(index, look, token)));
+    } catch (error) {
+      if (runId.current === token) setState((s) => ({ ...s, planning: false, generationError: error instanceof Error ? error.message : "Couldn't prepare your styling directions." }));
+    } finally { running.current = false; }
+  };
   const value = useMemo<PairlyCtx>(() => ({
     ...state,
     recordUpload: (image, name = "Uploaded jacket", category = "jacket") => setState((s) => ({ ...s, recentItems: addRecent(s.recentItems, { id: crypto.randomUUID(), imageUrl: image, productName: name, category, uploadedAt: new Date().toISOString() }) })),
@@ -114,17 +159,14 @@ export function PairlyProvider({ children }: { children: ReactNode }) {
     back: () =>
       setState((s) => (s.answers.length ? { ...s, answers: s.answers.slice(0, -1) } : { ...s, screen: "welcome" })),
     retake: () => setState((s) => ({ ...s, answers: [], quizSkipped: false, screen: "diagnosis" })),
-    reset: () => setState(initial),
-    setUploadedItem: (uploadedItem) => setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0 })),
+    reset: () => { runId.current++; setState(initial); },
+    setUploadedItem: (uploadedItem) => { if (state.uploadedItem?.image !== uploadedItem?.image) runId.current++; setState((s) => ({ ...s, uploadedItem, selectedConcept: s.uploadedItem?.image === uploadedItem?.image ? s.selectedConcept : 0, generatedLooks: s.uploadedItem?.image === uploadedItem?.image ? s.generatedLooks ?? [] : [], planning: s.uploadedItem?.image === uploadedItem?.image ? s.planning ?? false : false, generationError: "" })); },
     setOccasion: (occasion) => setState((s) => ({ ...s, occasion })),
     setNote: (note) => setState((s) => ({ ...s, note })),
     setSelectedConcept: (selectedConcept) => setState((s) => ({ ...s, selectedConcept })),
     countShopClick: () => setState((s) => ({ ...s, shopClicks: s.shopClicks + 1 })),
-    findMatches: () =>
-      setState((s) => s.uploadedItem ? {
-        ...s, screen: "results",
-        picks: generatePicks(CATALOG, s.uploadedItem.category, s.uploadedItem.name ?? s.uploadedItem.category, s.styleType ?? DEFAULT_CODE, s.occasion),
-      } : s),
+    findMatches: () => { void createMoodboards(); },
+    retryLook: (index) => { const look = state.generatedLooks?.[index]; if (look?.status === "failed") void renderLook(index, look, runId.current); },
     toggleSave: (id) => {
       const saving = !state.savedItems.includes(id);
       setState((s) => {
