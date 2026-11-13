@@ -8,7 +8,6 @@ import { TIER_LABELS } from "@/lib/styleGeneration";
 import { DEFAULT_CODE, STYLE_TYPES } from "@/data/styleTypes";
 import { cn } from "@/lib/utils";
 import { usePairly } from "@/store/PairlyContext";
-import { ShoppingSection } from "@/components/pairly/ShoppingSection";
 
 export function Results() {
   const { styleType, quizSkipped, uploadedItem, occasion, note, go, selectedConcept, setSelectedConcept, generatedLooks, planning, generationError, retryLook, findMatches, regenerate, saveLook, savedOutfits, deleteSavedOutfit } = usePairly();
