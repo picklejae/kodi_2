@@ -32,7 +32,7 @@ export function Reveal() {
         })}
       </div>
       </div>
-      <div className="flex flex-1 flex-col lg:flex-none">
+      <div className="flex flex-1 flex-col">
       <p className="mt-6 text-sm">{line}</p>
       <div className="mt-4 flex flex-wrap gap-2">{t.keywords.map((k) => <Chip key={k}>{k}</Chip>)}</div>
       <h2 className="mt-6 font-serif text-xl">Pieces people like you wear</h2>
