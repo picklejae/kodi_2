@@ -10,11 +10,11 @@ describe("social", () => {
     if (!first || !last) throw new Error("Missing top-rated posts");
     expect(upPercent(first.votesUp, first.votesDown)).toBeGreaterThanOrEqual(upPercent(last.votesUp, last.votesDown));
   });
-  it("has 15 member posts, 20 credited ALT ME photos and 5 trends", () => {
+  it("has 15 member posts, 19 credited reference photos and 5 trends", () => {
     expect(POSTS.filter((p) => !p.credit)).toHaveLength(15);
     expect(POSTS.filter((p) => p.credit && p.department === "womenswear")).toHaveLength(10);
-    expect(POSTS.filter((p) => p.credit && p.department === "menswear")).toHaveLength(10);
-    expect(POSTS.filter((p) => p.credit).every((p) => p.votesUp === 0 && p.feedback.length === 0 && p.credit?.licenseUrl.startsWith("https://"))).toBe(true);
+    expect(POSTS.filter((p) => p.credit && p.department === "menswear")).toHaveLength(9);
+    expect(POSTS.filter((p) => p.credit).every((p) => p.votesUp === 0 && p.feedback.length === 0 && p.credit?.sourceUrl.startsWith("https://"))).toBe(true);
     expect(TRENDS).toHaveLength(5);
   });
   it("People like me includes styles sharing at least three axes", () => {

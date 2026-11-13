@@ -24,23 +24,23 @@ import women11 from "@/assets/onboarding/women-11.jpg";
 import women12 from "@/assets/onboarding/women-12.jpg";
 import type { StyleTypeCode } from "./styleTypes";
 
-export interface DiagnosisCard { id: number; image: string; tags: StyleTypeCode }
+export interface DiagnosisCard { id: number; image: string; tags: StyleTypeCode; name?: string }
 
 // Original AI-generated menswear lookbook photos (faces cropped), one consistent studio style.
 // Tags are demo annotations, not visible labels or image-analysis results. All 16 Style Types are reachable.
 export const ROUNDS: DiagnosisCard[] = [
-  { id: 1, image: men01, tags: "TNPF" }, // black suit, white shirt, coat over arm
-  { id: 2, image: men02, tags: "RCPS" }, // denim shirt, olive tank, white linen trousers
-  { id: 3, image: men03, tags: "RNDF" }, // navy suede blouson, brown pleated trousers
-  { id: 4, image: men04, tags: "RNDS" }, // black technical hoodie, wide trousers
-  { id: 5, image: men05, tags: "TCPF" }, // brown suit, black shirt
-  { id: 6, image: men06, tags: "RNPF" }, // grey oversized blazer, white tee, black pleated trousers
-  { id: 7, image: men07, tags: "RCDS" }, // silver satin shirt, scarf, black wide jeans
-  { id: 8, image: men08, tags: "TNPS" }, // navy ringer tee, light jeans
-  { id: 9, image: men09, tags: "TCDF" }, // camel cable vest, blue oxford, navy pleated trousers
-  { id: 10, image: men10, tags: "RNPF" }, // cream knit polo, charcoal wide trousers
-  { id: 11, image: men11, tags: "TNDF" }, // black utility blazer, striped shirt and tie, leather trousers
-  { id: 12, image: men12, tags: "RCDS" }, // green shell jacket, olive cargo trousers
+  { id: 1, image: men01, tags: "TNPF", name: "Black suit, coat in hand" }, // black suit, white shirt, coat over arm
+  { id: 2, image: men02, tags: "RCPS", name: "Denim shirt, linen trousers" }, // denim shirt, olive tank, white linen trousers
+  { id: 3, image: men03, tags: "RNDF", name: "Suede blouson, pleated trousers" }, // navy suede blouson, brown pleated trousers
+  { id: 4, image: men04, tags: "RNDS", name: "Technical hoodie, wide trousers" }, // black technical hoodie, wide trousers
+  { id: 5, image: men05, tags: "TCPF", name: "Brown suit, black shirt" }, // brown suit, black shirt
+  { id: 6, image: men06, tags: "RNPF", name: "Grey blazer, white tee" }, // grey oversized blazer, white tee, black pleated trousers
+  { id: 7, image: men07, tags: "RCDS", name: "Satin shirt, wide black jeans" }, // silver satin shirt, scarf, black wide jeans
+  { id: 8, image: men08, tags: "TNPS", name: "Ringer tee, light jeans" }, // navy ringer tee, light jeans
+  { id: 9, image: men09, tags: "TCDF", name: "Cable vest, oxford shirt" }, // camel cable vest, blue oxford, navy pleated trousers
+  { id: 10, image: men10, tags: "RNPF", name: "Knit polo, wide trousers" }, // cream knit polo, charcoal wide trousers
+  { id: 11, image: men11, tags: "TNDF", name: "Utility blazer, leather trousers" }, // black utility blazer, striped shirt and tie, leather trousers
+  { id: 12, image: men12, tags: "RCDS", name: "Shell jacket, cargo trousers" }, // green shell jacket, olive cargo trousers
 ];
 
 // Original AI-generated womenswear lookbook photos (faces cropped), same studio style as menswear.
