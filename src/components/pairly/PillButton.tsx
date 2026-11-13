@@ -9,6 +9,6 @@ export function PillButton({ variant = "primary", className, ...p }: ButtonHTMLA
     const margin = value.match(/^(m[trblxy]?)-/);
     return margin ? [`${margin[1]}-screen`] : [];
   }).join(" ");
-  if (variant === "ghost") return <TextLinkButton {...p} className={cn(placement, variant === "primary" && "capitalize")} />;
+  if (variant === "ghost") return <TextLinkButton {...p} className={placement} />;
   return <Button {...p} variant={variant === "outline" ? "secondary" : "primary"} fullWidth={!className?.includes("w-auto")} className={cn(placement, variant === "primary" && "capitalize")} />;
 }
