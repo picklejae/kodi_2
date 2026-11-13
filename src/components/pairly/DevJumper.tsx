@@ -32,7 +32,7 @@ export function DevJumper() {
 
   if (!visible) return null;
   return (
-    <div className="fixed left-2 top-2 z-[100] text-xs">
+    <div className="fixed left-2 top-2 z-[100] hidden text-xs md:block">
       <button
         onClick={() => setOpen((o) => !o)}
         className="rounded-md bg-foreground/80 px-2 py-1 font-mono font-bold text-background opacity-60 hover:opacity-100"
