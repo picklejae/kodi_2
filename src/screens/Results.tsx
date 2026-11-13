@@ -49,7 +49,7 @@ export function Results() {
         <h2 className="text-title">{active.name}</h2>
         <p className="mt-screen text-body-sm">{active.explanation}</p>
         {!active.demoSet && <p className="mt-2 text-xs text-muted-foreground">{active.tier === "safe" ? `Within your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}` : `${active.tier === "step" ? "One step" : "A bold move"} from your ${STYLE_TYPES[quizSkipped ? DEFAULT_CODE : styleType ?? DEFAULT_CODE].name}${active.shift ? `: ${active.shift}` : ""}`}</p>}
-                {active.id === "jason-closet" ? <section className="mt-7"><h3 className="font-serif text-2xl">In your closet</h3><div className="mt-3 divide-y divide-border">{active.items.map((item) => <div key={item.name} className="flex flex-wrap items-center justify-between gap-2 py-3"><p className="text-sm">{item.name}{item.role === "Your piece" ? " (your piece)" : ""}</p><Chip className="text-[10px]">In your closet</Chip></div>)}</div></section> : <ShoppingSection look={active} />}
+                
       </div>
       </div>
     </div>
