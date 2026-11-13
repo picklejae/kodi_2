@@ -52,3 +52,4 @@ use the editor.
 - Pass garment first and the fixed avatar reference second to image edits; isolate presentation-version caches so old human-model renders cannot restore into new runs.
 - Keep unknown budget explicit in shared state; apply ranges only to shopping, not outfit rendering or static demo sets, so budget changes never replace fixed outfits.
 - DEV Set results and exact original-byte hash matches use static uploaded image pointers and literal descriptive piece data, never inference; Regenerate/nocache still bypass upload matches; why: demo photos load fixed outfits without filename-based false matches.
+- Every screen, the tab bar and the Reset link share one `page-container` width with a responsive `--spacing-screen`; why: identical widths per breakpoint without screen-specific max widths.

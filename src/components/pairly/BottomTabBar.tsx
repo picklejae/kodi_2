@@ -18,7 +18,7 @@ export function BottomTabBar() {
     }
   });
   return (
-    <div ref={bar} className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-mobile">
+    <div ref={bar} className="fixed inset-x-0 bottom-0 z-30 page-container">
       <KodiTabBar active={activeTab} onChange={(id) => {
             if (location.pathname !== "/") {
               if (screen === "welcome") go("upload");

@@ -112,7 +112,7 @@ export function Saved() {
         {!outfitCount ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No saved outfits yet</p>
         ) : (
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
             {savedOutfits.map((outfit) => ({
                 id: outfit.id,
                 name: outfit.ownedName,
@@ -170,7 +170,7 @@ export function Saved() {
           <DrawerPrimitive.Overlay className="recent-sheet-backdrop fixed inset-0 z-40" />
           <DrawerPrimitive.Content
             aria-describedby={undefined}
-            className="recent-sheet fixed bottom-0 left-1/2 z-50 h-auto max-h-[50dvh] w-full max-w-[390px] -translate-x-1/2 rounded-t-[20px] bg-background px-4 pt-6 outline-none"
+            className="recent-sheet fixed bottom-0 left-1/2 z-50 h-auto max-h-[50dvh] w-full max-w-sheet -translate-x-1/2 rounded-t-[20px] bg-background px-4 pt-6 outline-none"
           >
             <div className="absolute left-1/2 top-2 h-[5px] w-9 -translate-x-1/2 rounded-full bg-muted-foreground/40" />
             {selected && (
@@ -217,7 +217,7 @@ export function Saved() {
           if (!open) setPending(null);
         }}
       >
-        <AlertDialogContent className="max-w-[342px] rounded-2xl">
+        <AlertDialogContent className="max-w-sheet rounded-2xl">
           <AlertDialogTitle className="font-serif text-2xl">Delete this item?</AlertDialogTitle>
           <AlertDialogDescription className="sr-only">
             Remove this item from this collection.

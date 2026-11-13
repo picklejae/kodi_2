@@ -34,7 +34,8 @@ export function Upload() {
     uploadedItem && setUploadedItem({ ...uploadedItem, category: c, attributes: GENERIC_ATTRIBUTES[c] });
 
   return (
-    <div className="flex flex-1 flex-col px-6 pb-8 pt-12">
+    <div className="flex flex-1 flex-col px-screen pb-8 pt-12 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+      <div>
       <div className="flex items-center gap-2">
         <button onClick={() => go("reveal")} aria-label="Back" className="-ml-2 p-2"><ChevronLeft className="h-5 w-5" /></button>
         <StyleTypeChip />
@@ -102,7 +103,8 @@ export function Upload() {
         </div>
       )}
 
-      <div className="mt-auto pt-8">
+      </div>
+      <div className="mt-auto pt-8 lg:mt-0">
         <div className="mb-4"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Looking for</p><PreferenceChoice compact /></div>
         <PillButton disabled={!uploadedItem || analyzing || !stylePreference} onClick={findMatches}>{planning || generatedLooks?.some((look) => look.status === "loading") ? "View generating moodboards" : "Create outfit moodboards"}</PillButton>
       </div>

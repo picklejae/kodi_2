@@ -28,7 +28,8 @@ export function Me() {
     setBody({ ...body, heightCm: ((ft ?? 0) * 12 + (inch ?? 0)) * CM_PER_IN });
   };
   return (
-    <div className="px-6 pb-8 pt-12">
+    <div className="px-screen pb-8 pt-12 lg:grid lg:grid-cols-[11fr_9fr] lg:items-center lg:gap-screen">
+      <div>
       <h1 className="font-serif text-4xl">Me</h1>
 
       <section className="mt-8" aria-label="Your Style Type">
@@ -42,6 +43,8 @@ export function Me() {
         </div>
       </section>
 
+      </div>
+      <div>
       <section className="mt-8" aria-label="Body">
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Body</h2>
         <div className="mt-3 rounded-2xl bg-card px-4 shadow-soft">
@@ -56,7 +59,7 @@ export function Me() {
                   onClick={() => setUnits(option)}
                   className="w-auto"
                 >
-                  <span className="whitespace-nowrap">{option === "metric" ? "cm · kg" : "ft·in · lb"}</span>
+                  <span className="inline-block min-w-16 whitespace-nowrap px-2 text-center">{option === "metric" ? "cm · kg" : "ft·in · lb"}</span>
                 </PillButton>
               ))}
             </div>
@@ -114,7 +117,7 @@ export function Me() {
         <div className="mt-3 rounded-2xl bg-card px-4 py-4 shadow-soft">
           <div className="flex items-center justify-between">
             <span className="text-sm">Price range</span>
-            <span className="text-sm font-semibold">{budgetKnown ? `$${budget.min} – $${budget.max}` : "Not sure yet"}</span>
+            <span className={cn("text-sm font-semibold", !budgetKnown && "underline underline-offset-4")}>{budgetKnown ? `$${budget.min} – $${budget.max}` : "Not sure yet"}</span>
           </div>
           <Slider
             className="mt-4"
@@ -139,6 +142,7 @@ export function Me() {
         <p className="mt-2 text-sm text-muted-foreground">Changing this clears current moodboards.</p>
         <div className="mt-3"><PreferenceChoice compact /></div>
       </section>
+      </div>
     </div>
   );
 }

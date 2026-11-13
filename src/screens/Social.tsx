@@ -38,13 +38,13 @@ export function Social() {
     setCommentId(null); setComment(""); toast("Thanks for the feedback");
   };
   return (
-    <div className="px-screen pt-topbar pb-tabbar">
-      <h1 className="text-display">Feed</h1>
-      <div className="mt-screen flex flex-wrap gap-screen" role="group" aria-label="Feed filter">
+    <div className="px-screen pt-topbar pb-tabbar lg:grid lg:grid-flow-dense lg:grid-cols-2 lg:items-start lg:gap-x-screen">
+      <h1 className="text-display lg:col-span-2">Feed</h1>
+      <div className="mt-screen flex flex-wrap gap-screen lg:col-start-2" role="group" aria-label="Feed filter">
         <TextLinkButton aria-pressed={filter === "similar"} onClick={() => setFilter("similar")}>People like me</TextLinkButton>
         <TextLinkButton aria-pressed={filter === "adventurous"} onClick={() => setFilter("adventurous")}>More adventurous</TextLinkButton>
       </div>
-      <div className="relative mt-screen aspect-[3/4]">
+      <div className="relative mx-auto mt-screen aspect-[3/4] w-full max-w-card lg:col-start-1 lg:row-span-6">
         {stack.length === 0 ? <div className="flex h-full flex-col items-center justify-center bg-secondary text-center"><p className="text-heading">You're all caught up</p><TextLinkButton onClick={() => postsRef.current?.scrollIntoView({ behavior: "smooth" })}>View my posts</TextLinkButton></div> : stack.slice(0, 2).reverse().map((post, index, arr) => <SwipePhotoCard key={post.id} image={post.image} alt={post.question} top={index === arr.length - 1} onSwipe={(positive) => vote(post.id, positive ? "up" : "down")} positiveStamp="👍" negativeStamp="👎" />)}
       </div>
       {stack[0] && <div className="mt-screen"><div className="flex flex-wrap items-center gap-screen text-caption"><span>{stack[0].author}</span><StyleBadge type={stack[0].styleType} /></div><p className="text-body-sm">{stack[0].question}</p></div>}
@@ -53,8 +53,8 @@ export function Social() {
         <TextLinkButton disabled={!stack[0]} onClick={() => { if (stack[0]) { setCommentId(stack[0].id); setComment(""); } }}><MessageCircle />Comment</TextLinkButton>
         <SecondaryButton aria-label="Thumbs up" title="Thumbs up" disabled={!stack[0]} onClick={() => stack[0] && vote(stack[0].id, "up")}><ThumbsUp /></SecondaryButton>
       </div>
-      <div className="mt-screen"><PrimaryButton aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
-      <section ref={postsRef} className="mt-screen" aria-label="My posts">
+      <div className="mt-screen lg:col-start-2"><PrimaryButton aria-label="New post" onClick={() => openDraft({ image: null })}><Plus />New post</PrimaryButton></div>
+      <section ref={postsRef} className="mt-screen lg:col-start-2" aria-label="My posts">
         <h2 className="text-title">My posts</h2>
         <div className="flex flex-col gap-screen mt-screen">
           {mine.map((post) => <article id={`feed-${post.id}`} key={post.id} className={`scroll-mt-screen ${highlight === post.id ? "outline outline-border-strong" : ""}`}>

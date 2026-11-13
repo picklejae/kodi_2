@@ -8,11 +8,11 @@ export function Diagnosis() {
   const { answers, answer, back, skipQuiz, stylePreference } = usePairly();
   const i = answers.length;
   if (stylePreference && !quizAvailable(stylePreference)) return (
-    <div className="flex flex-1 flex-col justify-center gap-4 px-6"><h2 className="font-serif text-3xl">Womenswear quiz looks are coming soon</h2><p className="text-sm text-muted-foreground">The current swipe photos are menswear only, so we skip the quiz for womenswear.</p><PillButton onClick={skipQuiz}>Start styling</PillButton></div>
+    <div className="flex flex-1 flex-col justify-center gap-4 px-screen"><h2 className="font-serif text-3xl">Womenswear quiz looks are coming soon</h2><p className="text-sm text-muted-foreground">The current swipe photos are menswear only, so we skip the quiz for womenswear.</p><PillButton onClick={skipQuiz}>Start styling</PillButton></div>
   );
   if (!ROUNDS[i]) return null;
   return (
-    <div className="flex flex-1 flex-col overflow-x-clip px-5 pb-8 pt-12">
+    <div className="flex flex-1 flex-col overflow-x-clip px-screen pb-8 pt-12">
       <div className="flex items-center justify-between">
         <PillButton variant="ghost" onClick={back} disabled={!answers.length} aria-label="Undo last swipe" title="Undo last swipe" className="h-10 w-10 px-0"><Undo2 className="h-5 w-5" /></PillButton>
         <span className="text-xs font-medium text-muted-foreground" aria-live="polite">{i + 1} of {ROUNDS.length}</span>
@@ -22,7 +22,7 @@ export function Diagnosis() {
         <div className="h-full bg-primary transition-all" style={{ width: `${((i + 1) / ROUNDS.length) * 100}%` }} />
       </div>
       <h2 className="mt-5 font-serif text-3xl">Does this feel like you?</h2>
-      <div className="relative mt-5 h-[min(440px,52svh)]">
+      <div className="relative mx-auto mt-5 h-[min(440px,52svh)] w-full max-w-card">
         {ROUNDS.slice(i, i + 2).reverse().map((card, index, cards) => (
           <SwipePhotoCard key={card.id} image={card.image} alt={`Outfit ${card.id}`} top={index === cards.length - 1}
             onSwipe={(yes) => answer(yes ? "yes" : "no")} positiveStamp={<Heart className="h-7 w-7" />} negativeStamp={<X className="h-7 w-7" />} />

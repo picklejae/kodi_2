@@ -44,3 +44,7 @@
 - [x] Live shopping: linked existing Firecrawl; on-demand bounded per-role discovery, real product data, alternatives and shared result reuse
 - [x] Verify real Menswear/Womenswear products in Style, role association, alternatives, no-match, test service errors and usage
 - [ ] Retailer destination verification: COS/Macy’s block browser access; Nordstrom returns blank page in sandbox; shopper destination rendering remains unverified
+
+- [x] Welcome/PreferenceChoice segmented toggle, stable photo area
+- [x] Responsive page container (phone/iPad/Mac)
+- [x] Me: wider units capsule; price range max thumb; underline Not sure yet
