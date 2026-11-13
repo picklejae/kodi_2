@@ -14,10 +14,9 @@ export function Welcome() {
       <div className="flex flex-col items-center gap-screen">
       <Logo size="hero" />
       <h1 className="text-display font-bold">You own it.<br />KODI styles it.</h1>
-      <p className="text-body-sm text-muted-foreground"><Sentences text="Swipe a few looks to find your style. Then get 3 ways to wear one piece you own." /></p>
       </div>
       {preferenceLoaded && (
-        <div className="flex w-full flex-col gap-screen border-t border-border pt-screen">
+        <div className="flex w-full flex-col gap-screen">
           <h2 className="text-heading">What are you looking for?</h2>
           <PreferenceChoice />
           {stylePreference && <PillButton onClick={quiz ? () => go("diagnosis") : skipQuiz}>{quiz ? "Find my style" : "Start styling"}</PillButton>}
